@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Old Montréal Sunday Family Walk — Interactive Map & Half-Day Plan</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#f8fafc" />
+  <style>
+    :root {
+      --background: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --card-border: #eef2f6;
+      --foreground: #0f172a;
+      --muted-foreground: #64748b;
+      --primary: #2563eb;
+      --primary-foreground: #ffffff;
+      --secondary: #f1f5f9;
+      --secondary-foreground: #1e293b;
+      --link: #2563eb;
+      --success: #16a34a;
+      --warning: #d97706;
+      --error: #dc2626;
+      --chart-1: #0284c7;
+      --chart-2: #059669;
+      --chart-3: #7c3aed;
+      --chart-4: #ea580c;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #0b1120;
+        --card: #111827;
+        --border: #1f2937;
+        --card-border: #1f2937;
+        --foreground: #f8fafc;
+        --muted-foreground: #94a3b8;
+        --primary: #3b82f6;
+        --primary-foreground: #ffffff;
+        --secondary: #1e293b;
+        --secondary-foreground: #f1f5f9;
+        --link: #60a5fa;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --error: #f87171;
+        --chart-1: #38bdf8;
+        --chart-2: #34d399;
+        --chart-3: #a78bfa;
+        --chart-4: #fb923c;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; padding: 0; background-color: var(--background); color: var(--foreground); -webkit-font-smoothing: antialiased; }
+    button, select { font: inherit; color: inherit; background: transparent; border: 0; cursor: pointer; }
+    a { text-decoration: none; }
+    h1, h2, p { margin: 0; }
+
+    /* Layout & spacing utilities */
+    .max-w-\[1380px\] { max-width: 1380px; }
+    .max-w-\[230px\] { max-width: 230px; }
+    .min-w-0 { min-width: 0; }
+    .w-full { width: 100%; }
+    .h-full { height: 100%; }
+    .w-2\.5 { width: 0.625rem; } .h-2\.5 { height: 0.625rem; }
+    .w-4 { width: 1rem; } .h-4 { height: 1rem; }
+    .w-5 { width: 1.25rem; } .h-5 { height: 1.25rem; }
+    .w-7 { width: 1.75rem; } .h-7 { height: 1.75rem; }
+    .w-8 { width: 2rem; } .h-8 { height: 2rem; }
+    .min-h-\[340px\] { min-height: 300px; }
+    .max-h-\[540px\] { max-height: 540px; }
+    .max-h-\[340px\] { max-height: 360px; }
+    .max-h-\[148px\] { max-height: 156px; }
+    .aspect-\[16\/10\.5\] { aspect-ratio: 16 / 10.5; }
+    .aspect-\[320\/106\] { aspect-ratio: 320 / 106; }
+
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .-mx-4 { margin-left: -1rem; margin-right: -1rem; }
+    .-mt-4 { margin-top: -1rem; }
+    .mb-0\.5 { margin-bottom: 0.125rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .ml-1 { margin-left: 0.25rem; }
+    .mr-1 { margin-right: 0.25rem; }
+    .mt-0\.5 { margin-top: 0.125rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-3 { margin-top: 0.75rem; }
+
+    .p-2\.5 { padding: 0.625rem; }
+    .p-3\.5 { padding: 0.875rem; }
+    .p-4 { padding: 1rem; }
+    .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+    .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .px-3\.5 { padding-left: 0.875rem; padding-right: 0.875rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+    .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+    .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+    .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+    .pt-3 { padding-top: 0.75rem; }
+
+    .space-y-2 > * + * { margin-top: 0.5rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .divide-y > * + * { border-top: 1px solid var(--card-border); }
+
+    .block { display: block; }
+    .inline-block { display: inline-block; }
+    .flex { display: flex; }
+    .inline-flex { display: inline-flex; }
+    .grid { display: grid; }
+    .hidden { display: none; }
+    .flex-col { flex-direction: column; }
+    .flex-wrap { flex-wrap: wrap; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .shrink-0 { flex-shrink: 0; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gap-1 { gap: 0.25rem; }
+    .gap-1\.5 { gap: 0.375rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-2\.5 { gap: 0.625rem; }
+    .gap-3 { gap: 0.75rem; }
+
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .top-2\.5 { top: 0.625rem; }
+    .left-3 { left: 0.75rem; }
+    .right-3 { right: 0.75rem; }
+    .-top-1 { top: -0.25rem; }
+    .-left-1 { left: -0.25rem; }
+    .z-20 { z-index: 20; }
+
+    .overflow-hidden { overflow: hidden; }
+    .overflow-y-auto { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .pointer-events-none { pointer-events: none; }
+    .cursor-pointer { cursor: pointer; }
+    .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Typography */
+    .text-\[10px\] { font-size: 10px; }
+    .text-xs { font-size: 12px; line-height: 1.45; }
+    .text-sm { font-size: 14px; line-height: 1.45; }
+    .text-base { font-size: 16px; line-height: 1.4; }
+    .text-lg { font-size: 18px; line-height: 1.3; }
+    .font-medium { font-weight: 500; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .font-extrabold { font-weight: 800; }
+    .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    .uppercase { text-transform: uppercase; }
+    .tracking-tight { letter-spacing: -0.02em; }
+    .tracking-wide { letter-spacing: 0.04em; }
+    .tracking-wider { letter-spacing: 0.06em; }
+    .leading-tight { line-height: 1.25; }
+    .leading-snug { line-height: 1.35; }
+    .leading-relaxed { line-height: 1.55; }
+    .text-left { text-align: left; }
+    .text-center { text-align: center; }
+    .line-through { text-decoration: line-through; }
+    .opacity-65 { opacity: 0.65; }
+
+    /* Colors, borders, radii, shadows */
+    .bg-transparent { background-color: transparent; }
+    .bg-\[var\(--background\)\] { background-color: var(--background); }
+    .bg-\[var\(--background\)\]\/60 { background-color: color-mix(in srgb, var(--background) 60%, transparent); }
+    .bg-\[var\(--card\)\] { background-color: var(--card); }
+    .bg-\[var\(--card\)\]\/90 { background-color: color-mix(in srgb, var(--card) 90%, transparent); }
+    .bg-\[var\(--card\)\]\/95 { background-color: color-mix(in srgb, var(--card) 95%, transparent); }
+    .bg-\[var\(--secondary\)\] { background-color: var(--secondary); }
+    .bg-\[var\(--secondary\)\]\/80 { background-color: color-mix(in srgb, var(--secondary) 80%, transparent); }
+    .text-\[var\(--foreground\)\] { color: var(--foreground); }
+    .text-\[var\(--muted-foreground\)\] { color: var(--muted-foreground); }
+    .text-\[var\(--secondary-foreground\)\] { color: var(--secondary-foreground); }
+    .text-\[var\(--link\)\] { color: var(--link); }
+
+    .border { border: 1px solid var(--border); }
+    .border-2 { border: 2px solid var(--border); }
+    .border-t { border-top: 1px solid var(--card-border); }
+    .border-b { border-bottom: 1px solid var(--card-border); }
+    .border-l { border-left: 1px solid var(--border); }
+    .border-dashed { border-style: dashed; }
+    .border-\[var\(--border\)\] { border-color: var(--border); }
+    .border-\[var\(--card\)\] { border-color: var(--card); }
+    .border-\[var\(--card-border\)\] { border-color: var(--card-border); }
+    .border-\[var\(--muted-foreground\)\] { border-color: var(--muted-foreground); }
+
+    .rounded-md { border-radius: 0.375rem; }
+    .rounded-lg { border-radius: 0.5rem; }
+    .rounded-xl { border-radius: 0.75rem; }
+    .rounded-t-xl { border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; }
+    .rounded-full { border-radius: 9999px; }
+    .shadow-sm { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.07); }
+    .shadow-md { box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14); }
+    .transition-colors { transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
+
+    .hover\:bg-\[var\(--secondary\)\]:hover { background-color: var(--secondary); }
+    .hover\:bg-\[var\(--secondary\)\]\/50:hover { background-color: color-mix(in srgb, var(--secondary) 50%, transparent); }
+    .hover\:underline:hover { text-decoration: underline; }
+    .focus\:outline-none:focus { outline: none; }
+    button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Responsive breakpoints */
+    @media (min-width: 640px) {
+      .sm\:px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .sm\:text-xl { font-size: 20px; }
+    }
+    @media (min-width: 768px) {
+      .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1024px) {
+      .lg\:flex-row { flex-direction: row; }
+      .lg\:items-center { align-items: center; }
+      .lg\:justify-between { justify-content: space-between; }
+      .lg\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+      .lg\:col-span-7 { grid-column: span 7 / span 7; }
+      .lg\:col-span-5 { grid-column: span 5 / span 5; }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      margin: 0;
+      padding: 0;
+    }
+    .map-viewport {
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+    }
+    .map-viewport:active {
+      cursor: grabbing;
+    }
+    @keyframes routeFlow {
+      to { stroke-dashoffset: -28; }
+    }
+    .route-animated {
+      stroke-dasharray: 8 6;
+      animation: routeFlow 1.6s linear infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(1); opacity: 0.75; }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+    .pin-pulse {
+      pointer-events: none;
+      transform-origin: 0px 0px;
+      animation: pulseRing 1.8s ease-out infinite;
+    }
+    .pin-group {
+      cursor: pointer;
+    }
+    .pin-dot {
+      transform-origin: 0px 0px;
+      transition: transform 0.15s ease;
+    }
+    .pin-group:hover .pin-dot,
+    .pin-group:focus-visible .pin-dot {
+      transform: scale(1.14);
+    }
+    .pin-label-pill {
+      transition: stroke 0.15s ease;
+    }
+    .pin-group:hover .pin-label-pill {
+      stroke: var(--foreground);
+    }
+    .thin-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .thin-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 9999px;
+    }
+    .thin-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
+  <div class="max-w-[1380px] mx-auto px-3 sm:px-5 py-4 space-y-3">
+
+    <!-- Top Header & Live Half-Day Metrics -->
+    <header class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-[var(--foreground)]">
+              Old Montréal Sunday Family Walk
+            </h1>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+              Sunday · Half-Day Plan
+            </span>
+            <span id="halfDayBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+            </span>
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">
+            Click any pin on the map or stop in the schedule to inspect Sunday hours, kid tips, tweak time spent, or customize your loop.
+          </p>
+        </div>
+
+        <!-- Dynamic Summary Pills -->
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-1.5 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-xs">
+            <span class="text-[var(--muted-foreground)] font-medium">Start:</span>
+            <select id="startTimeSelect" class="bg-transparent text-[var(--foreground)] font-semibold focus:outline-none cursor-pointer">
+              <option value="570">9:30 AM</option>
+              <option value="600" selected>10:00 AM</option>
+              <option value="630">10:30 AM</option>
+              <option value="660">11:00 AM</option>
+              <option value="750">12:30 PM</option>
+              <option value="780">1:00 PM</option>
+            </select>
+          </label>
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs">
+            <span class="text-[var(--muted-foreground)]">Total:</span>
+            <span id="metricDuration" class="font-bold tabular-nums ml-1">3h 35m</span>
+            <span id="metricWindow" class="text-[var(--muted-foreground)] tabular-nums ml-1">(10:00–1:35)</span>
+          </div>
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs">
+            <span class="text-[var(--muted-foreground)]">Walk:</span>
+            <span id="metricWalk" class="font-bold tabular-nums ml-1">1.9 km · 30 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preset Selector Strip -->
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-[var(--card-border)]">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs font-medium text-[var(--muted-foreground)] mr-1">Route Presets:</span>
+          <button data-preset="classic" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
+          <button data-preset="little" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
+          <button data-preset="older" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
+          <button data-preset="budget" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
+        </div>
+        <div id="scheduleWarningBanner" class="hidden items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg border"></div>
+      </div>
+    </header>
+
+    <!-- Main 2-Column Interactive Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+
+      <!-- Left Column (7 cols): Interactive Vector Map -->
+      <section class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm flex flex-col">
+        <!-- Map Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 border-b border-[var(--card-border)]">
+          <div class="flex flex-wrap items-center gap-1.5" id="filterBar">
+            <button data-filter="all" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">All Spots</button>
+            <button data-filter="active" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">In My Plan</button>
+            <button data-filter="indoor" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Indoor / Warm</button>
+            <button data-filter="food" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Food & Treats</button>
+            <button data-filter="free" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Free</button>
+          </div>
+          <div class="flex items-center gap-1">
+            <button id="zoomOutBtn" title="Zoom out" class="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-sm font-bold flex items-center justify-center">−</button>
+            <button id="zoomResetBtn" title="Reset view" class="px-2 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-medium">Reset</button>
+            <button id="zoomInBtn" title="Zoom in" class="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-sm font-bold flex items-center justify-center">+</button>
+          </div>
+        </div>
+
+        <!-- SVG Map Container -->
+        <div id="mapContainer" class="relative w-full aspect-[16/10.5] min-h-[340px] max-h-[540px] overflow-hidden bg-[var(--background)] map-viewport">
+          <svg id="mapSvg" viewBox="0 0 840 520" class="w-full h-full block" role="img" aria-label="Interactive walking map of Old Montreal and the Old Port">
+            <defs>
+              <pattern id="riverPattern" width="32" height="16" patternUnits="userSpaceOnUse">
+                <path d="M0 8 Q8 4 16 8 T32 8" fill="none" stroke="var(--chart-1)" stroke-opacity="0.16" stroke-width="1.2" />
+              </pattern>
+              <pattern id="cobblePattern" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="var(--chart-4)" fill-opacity="0.06" />
+                <circle cx="3" cy="3" r="1" fill="var(--muted-foreground)" fill-opacity="0.18" />
+                <circle cx="9" cy="9" r="1" fill="var(--muted-foreground)" fill-opacity="0.18" />
+              </pattern>
+              <filter id="pinShadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-opacity="0.28" />
+              </filter>
+            </defs>
+
+            <!-- Pan & Zoom Group -->
+            <g id="viewportGroup">
+              <!-- Base Land & Historic District Tint -->
+              <rect x="-200" y="-200" width="1240" height="920" fill="var(--background)" />
+
+              <!-- Old Montreal Historic Quarter Highlight -->
+              <path d="M 65 135 L 725 135 L 725 365 L 65 365 Z" fill="var(--card)" fill-opacity="0.55" />
+
+              <!-- Green Parks (Champ-de-Mars, Place d'Armes, Place Royale, Old Port Promenade) -->
+              <rect x="520" y="72" width="150" height="58" rx="8" fill="var(--chart-2)" fill-opacity="0.16" stroke="var(--chart-2)" stroke-opacity="0.3" stroke-width="1" />
+              <text x="595" y="105" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--chart-2)" opacity="0.9">Parc Champ-de-Mars</text>
+
+              <!-- Place d'Armes Square -->
+              <rect x="274" y="170" width="46" height="36" rx="5" fill="var(--chart-2)" fill-opacity="0.18" stroke="var(--chart-2)" stroke-opacity="0.35" stroke-width="1" />
+              <text x="297" y="164" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--muted-foreground)">Place d'Armes</text>
+
+              <!-- Place Jacques-Cartier Pedestrian Plaza -->
+              <polygon points="535,204 567,204 556,336 524,336" fill="url(#cobblePattern)" stroke="var(--chart-4)" stroke-opacity="0.4" stroke-width="1" />
+              <text x="546" y="254" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--muted-foreground)" transform="rotate(-84 546 254)">Place Jacques-Cartier</text>
+
+              <!-- Place Royale -->
+              <rect x="212" y="308" width="44" height="28" rx="4" fill="var(--chart-4)" fill-opacity="0.14" stroke="var(--chart-4)" stroke-opacity="0.35" stroke-width="1" />
+
+              <!-- Waterfront Promenade Park Strip -->
+              <rect x="30" y="348" width="790" height="24" fill="var(--chart-2)" fill-opacity="0.14" />
+
+              <!-- St. Lawrence River -->
+              <path d="M -100 370 L 940 370 L 940 620 L -100 620 Z" fill="var(--chart-1)" fill-opacity="0.16" />
+              <path d="M -100 370 L 940 370 L 940 620 L -100 620 Z" fill="url(#riverPattern)" />
+              <line x1="-100" y1="370" x2="940" y2="370" stroke="var(--chart-1)" stroke-opacity="0.45" stroke-width="2" />
+
+              <!-- Old Port Piers jutting into St. Lawrence River -->
+              <!-- Grand Quay (Alexandra Pier) -->
+              <path d="M 186 368 L 230 368 L 240 462 L 194 462 Z" fill="var(--card)" stroke="var(--border)" stroke-width="1.5" />
+              <text x="213" y="438" text-anchor="middle" font-size="9.5" fill="var(--muted-foreground)" font-weight="600">Grand Quay</text>
+
+              <!-- King Edward Pier (Science Centre) -->
+              <path d="M 332 368 L 414 368 L 424 456 L 340 456 Z" fill="var(--card)" stroke="var(--border)" stroke-width="1.5" />
+              <text x="379" y="446" text-anchor="middle" font-size="9.5" fill="var(--muted-foreground)" font-weight="600">King Edward Pier</text>
+
+              <!-- Jacques-Cartier Pier -->
+              <path d="M 484 368 L 544 368 L 552 448 L 492 448 Z" fill="var(--card)" stroke="var(--border)" stroke-width="1.5" />
+              <text x="518" y="438" text-anchor="middle" font-size="9.5" fill="var(--muted-foreground)" font-weight="600">Jacques-Cartier</text>
+
+              <!-- Bonsecours Basin & Island (La Grande Roue) -->
+              <rect x="556" y="388" width="90" height="58" rx="14" fill="var(--card)" stroke="var(--border)" stroke-width="1.5" />
+              <line x1="544" y1="406" x2="560" y2="406" stroke="var(--border)" stroke-width="4" />
+              <line x1="600" y1="368" x2="600" y2="390" stroke="var(--border)" stroke-width="4" />
+              <text x="601" y="460" text-anchor="middle" font-size="9.5" fill="var(--muted-foreground)" font-weight="600">Bonsecours Basin</text>
+
+              <!-- Clock Tower Pier (Quai de l'Horloge) -->
+              <path d="M 730 368 L 788 368 L 798 468 L 740 468 Z" fill="var(--card)" stroke="var(--border)" stroke-width="1.5" />
+              <text x="765" y="458" text-anchor="middle" font-size="9.5" fill="var(--muted-foreground)" font-weight="600">Clock Tower</text>
+
+              <!-- Playful River Sailboats -->
+              <g transform="translate(115, 456)" opacity="0.82">
+                <path d="M -14 4 L 14 4 L 9 11 L -9 11 Z" fill="#E05A47" />
+                <line x1="0" y1="4" x2="0" y2="-13" stroke="var(--foreground)" stroke-width="1.4" />
+                <polygon points="1,-12 12,2 1,2" fill="#FFFDF7" stroke="var(--border)" stroke-width="0.6" />
+                <polygon points="-1,-9 -9,2 -1,2" fill="#FDE68A" stroke="var(--border)" stroke-width="0.6" />
+              </g>
+              <g transform="translate(675, 458) scale(0.88)" opacity="0.82">
+                <path d="M -14 4 L 14 4 L 9 11 L -9 11 Z" fill="#2563EB" />
+                <line x1="0" y1="4" x2="0" y2="-13" stroke="var(--foreground)" stroke-width="1.4" />
+                <polygon points="1,-12 12,2 1,2" fill="#FFFDF7" stroke="var(--border)" stroke-width="0.6" />
+                <polygon points="-1,-9 -9,2 -1,2" fill="#FBCFE8" stroke="var(--border)" stroke-width="0.6" />
+              </g>
+
+              <!-- River Label -->
+              <text x="420" y="497" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="3.5" fill="var(--chart-1)" opacity="0.72">
+                ST. LAWRENCE RIVER · OLD PORT (VIEUX-PORT)
+              </text>
+
+              <!-- City Street Grid (Old Montreal) -->
+              <g stroke="var(--border)" stroke-linecap="round">
+                <!-- Cross streets (NW to SE) -->
+                <line x1="125" y1="70" x2="125" y2="352" stroke-width="3.5" />
+                <line x1="215" y1="70" x2="215" y2="352" stroke-width="3.5" />
+                <line x1="305" y1="55" x2="305" y2="352" stroke-width="5" />
+                <line x1="395" y1="70" x2="395" y2="352" stroke-width="3.5" />
+                <line x1="470" y1="70" x2="470" y2="352" stroke-width="3.5" />
+                <line x1="546" y1="130" x2="546" y2="352" stroke-width="5" stroke-dasharray="3 3" />
+                <line x1="635" y1="62" x2="635" y2="352" stroke-width="4" />
+                <line x1="720" y1="90" x2="720" y2="352" stroke-width="3.5" />
+
+                <!-- Major Longitudinal Streets (SW to NE) -->
+                <!-- Rue Saint-Antoine -->
+                <line x1="40" y1="150" x2="780" y2="150" stroke-width="6" />
+                <!-- Rue Saint-Jacques -->
+                <line x1="40" y1="184" x2="520" y2="184" stroke-width="3.5" />
+                <!-- Rue Notre-Dame -->
+                <line x1="40" y1="215" x2="780" y2="215" stroke-width="6.5" />
+                <!-- Rue Saint-Paul (Historic Cobblestone) -->
+                <line x1="40" y1="295" x2="780" y2="295" stroke="var(--chart-4)" stroke-opacity="0.5" stroke-width="7.5" />
+                <!-- Rue de la Commune -->
+                <line x1="40" y1="342" x2="800" y2="342" stroke-width="6.5" />
+              </g>
+
+              <!-- Street Name Labels -->
+              <g font-size="10.5" font-weight="600" fill="var(--muted-foreground)">
+                <text x="415" y="144" text-anchor="middle">Rue Saint-Antoine</text>
+                <text x="415" y="209" text-anchor="middle">Rue Notre-Dame</text>
+                <text x="385" y="287" text-anchor="middle" fill="var(--chart-4)">Rue Saint-Paul (Historic Cobblestones)</text>
+                <text x="275" y="336" text-anchor="middle">Rue de la Commune (Waterfront)</text>
+                <text x="118" y="256" text-anchor="middle" transform="rotate(-90 118 256)" font-size="9.5">Rue McGill</text>
+                <text x="297" y="256" text-anchor="middle" transform="rotate(-90 297 256)" font-size="9.5">Rue St-Sulpice</text>
+                <text x="646" y="256" text-anchor="middle" transform="rotate(-90 646 256)" font-size="9.5">Rue Bonsecours</text>
+              </g>
+
+              <!-- Metro Stations (Orange Line) -->
+              <g class="metro-marker" transform="translate(305, 52)">
+                <rect x="-68" y="-13" width="136" height="24" rx="12" fill="var(--card)" stroke="var(--chart-4)" stroke-width="1.6" />
+                <circle cx="-54" cy="-1" r="8" fill="var(--chart-4)" />
+                <text x="-54" y="2.5" text-anchor="middle" font-size="10" font-weight="800" fill="var(--background)">M</text>
+                <text x="-40" y="3" font-size="10.5" font-weight="700" fill="var(--foreground)">Place-d'Armes</text>
+              </g>
+
+              <g class="metro-marker" transform="translate(615, 52)">
+                <rect x="-70" y="-13" width="140" height="24" rx="12" fill="var(--card)" stroke="var(--chart-4)" stroke-width="1.6" />
+                <circle cx="-56" cy="-1" r="8" fill="var(--chart-4)" />
+                <text x="-56" y="2.5" text-anchor="middle" font-size="10" font-weight="800" fill="var(--background)">M</text>
+                <text x="-42" y="3" font-size="10.5" font-weight="700" fill="var(--foreground)">Champ-de-Mars</text>
+              </g>
+
+              <!-- Dynamic Route Layer (populated by JS) -->
+              <g id="routeLayer"></g>
+
+              <!-- Dynamic Pins Layer (populated by JS) -->
+              <g id="pinsLayer"></g>
+            </g>
+
+            <!-- Fixed Compass Rose & Scale Bar (top-left & bottom-left overlay inside SVG) -->
+            <g transform="translate(42, 44)">
+              <circle cx="0" cy="0" r="18" fill="var(--card)" fill-opacity="0.92" stroke="var(--border)" stroke-width="1.2" />
+              <g transform="rotate(-22)">
+                <polygon points="0,-12 3.5,0 0,-2.5 -3.5,0" fill="var(--primary)" />
+                <polygon points="0,12 3.5,0 0,2.5 -3.5,0" fill="var(--muted-foreground)" opacity="0.5" />
+                <text x="0" y="-13" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--foreground)"></text>
+              </g>
+              <text x="-6" y="-21" font-size="9" font-weight="700" fill="var(--muted-foreground)">N</text>
+            </g>
+
+            <g transform="translate(22, 496)">
+              <rect x="-6" y="-14" width="124" height="20" rx="5" fill="var(--card)" fill-opacity="0.9" stroke="var(--border)" stroke-width="1" />
+              <line x1="2" y1="-2" x2="56" y2="-2" stroke="var(--foreground)" stroke-width="2" />
+              <line x1="2" y1="-5" x2="2" y2="1" stroke="var(--foreground)" stroke-width="1.5" />
+              <line x1="56" y1="-5" x2="56" y2="1" stroke="var(--foreground)" stroke-width="1.5" />
+              <text x="64" y="1" font-size="10" font-weight="600" fill="var(--muted-foreground)">~100 m</text>
+            </g>
+          </svg>
+
+          <!-- Floating Hover Tooltip -->
+          <div id="mapTooltip" class="pointer-events-none hidden absolute z-20 px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] shadow-md text-xs max-w-[230px]"></div>
+        </div>
+
+        <!-- Map Legend Footer -->
+        <div class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 border-t border-[var(--card-border)] bg-[var(--card)] text-xs text-[var(--muted-foreground)]">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-1);"></span>Kid Attraction</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-2);"></span>Landmark / Walk</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-3);"></span>Museum</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-4);"></span>Food & Treats</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border-2 border-dashed inline-block border-[var(--muted-foreground)]"></span>Optional Swap</span>
+          </div>
+          <span class="text-xs">Drag to pan · Scroll or +/− to zoom</span>
+        </div>
+      </section>
+
+      <!-- Right Column (5 cols): Selected Attraction Inspector + Interactive Schedule -->
+      <aside class="lg:col-span-5 flex flex-col gap-3">
+
+        <!-- Selected Attraction Inspector Card -->
+        <div id="inspectorCard" class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Interactive Chronological Timeline -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between px-4 py-2.5 border-b border-[var(--card-border)]">
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-[var(--foreground)]">Your Walking Schedule</h2>
+              <span id="stopCountPill" class="px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]"></span>
+            </div>
+            <button id="toggleOptionalBtn" class="text-xs font-medium text-[var(--link)] hover:underline">
+              Show optional swaps
+            </button>
+          </div>
+          <div id="timelineList" class="divide-y divide-[var(--card-border)] max-h-[340px] overflow-y-auto thin-scroll">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Sunday Practical Notes Footer -->
+    <footer class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 text-xs text-[var(--muted-foreground)] grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="flex items-start gap-2">
+        <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs" style="background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning);">!</span>
+        <div>
+          <strong class="text-[var(--foreground)]">Sunday & Late-Nov Hours:</strong>
+          Notre-Dame Basilica sightseeing starts at <strong>12:30 PM</strong> (morning Masses). Seasonal summer attractions (<em>SOS Labyrinthe</em>, <em>Voiles en Voiles</em>) are closed in November.
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs" style="background: color-mix(in srgb, var(--chart-1) 18%, transparent); color: var(--chart-1);">i</span>
+        <div>
+          <strong class="text-[var(--foreground)]">Getting There & Strollers:</strong>
+          Start near <strong>Champ-de-Mars Metro</strong> (Orange Line) and finish by <strong>Place-d'Armes Metro</strong>. Rue Saint-Paul cobblestones are bumpy — larger stroller wheels or carriers help!
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs" style="background: color-mix(in srgb, var(--chart-2) 18%, transparent); color: var(--chart-2);">✓</span>
+        <div>
+          <strong class="text-[var(--foreground)]">Warm-Up Strategy:</strong>
+          The route alternates short 4–7 min outdoor walks with cozy indoor stops (heated Grande Roue cabins, Marché Bonsecours, Science Centre / museums, and warm pastries).
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // =========================================================================
+    // Verified Old Montreal Attractions Data (Sunday, Late November)
+    // Coordinates mapped accurately via 22-deg rotated Old Montreal projection
+    // =========================================================================
+    const ATTRACTIONS = [
+      {
+        id: 'grande-roue',
+        name: 'La Grande Roue de Montréal',
+        frenchName: 'Observation Wheel · Old Port',
+        address: '362 Rue de la Commune Est',
+        lat: 45.5078,
+        lon: -73.5491,
+        x: 601,
+        y: 415,
+        category: 'attraction',
+        categoryLabel: 'Kid Attraction',
+        colorVar: '--chart-1',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1320, // 10:00 PM
+        sundayHoursText: 'Sun 10:00 AM – 10:00 PM',
+        defaultDuration: 30,
+        ages: 'All ages',
+        cost: '~$25–30 adult / ~$20–23 kid (under 3 free)',
+        stroller: 'Stroller parking & washrooms at base',
+        kidsLove: 'Canada’s tallest Ferris wheel (60 m) with 3 full rotations (~20 min) in heated glass cabins — kids can spot the river, bridges, and landmarks from above.',
+        parentTip: 'Going right at 10:00 AM avoids afternoon lines, and the climate-controlled cabins are a great warm start to a crisp November morning.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=La+Grande+Roue+de+Montreal+362+Rue+de+la+Commune+Est'
+      },
+      {
+        id: 'marche-bonsecours',
+        name: 'Marché Bonsecours & Rue Saint-Paul',
+        frenchName: 'Historic Domed Market Hall',
+        address: '350 Rue Saint-Paul Est',
+        lat: 45.5091,
+        lon: -73.5515,
+        x: 628,
+        y: 292,
+        category: 'landmark',
+        categoryLabel: 'Landmark & Walk',
+        colorVar: '--chart-2',
+        indoor: true,
+        free: true,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1080, // 6:00 PM
+        sundayHoursText: 'Sun 10:00 AM – 6:00 PM',
+        defaultDuration: 20,
+        ages: 'All ages',
+        cost: 'Free admission',
+        stroller: 'Indoor ramps & public restrooms',
+        kidsLove: 'The gleaming silver dome outside, quirky Quebec craft shops inside, and stepping onto Old Montréal’s oldest cobblestone street right outside the doors.',
+        parentTip: 'Treat this as a relaxed 15–20 min warm-up & restroom stop before strolling west down charming Rue Saint-Paul Est.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Marche+Bonsecours+350+Rue+Saint-Paul+Est+Montreal'
+      },
+      {
+        id: 'beavertails-pjc',
+        name: 'Place Jacques-Cartier & BeaverTails',
+        frenchName: 'Queues de Castor · Cobblestone Plaza',
+        address: '136 Rue Saint-Paul Est',
+        lat: 45.5075,
+        lon: -73.5532,
+        x: 534,
+        y: 288,
+        category: 'food',
+        categoryLabel: 'Food & Treats',
+        colorVar: '--chart-4',
+        indoor: false,
+        free: false,
+        food: true,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1350, // 10:30 PM
+        sundayHoursText: 'Sun 10:00 AM – 10:30 PM',
+        defaultDuration: 20,
+        ages: 'All ages',
+        cost: 'Free plaza · Pastries ~$7–10',
+        stroller: 'Pedestrian-only cobblestone plaza (slight slope)',
+        kidsLove: 'Warm, hand-stretched fried pastries topped with cinnamon-sugar, maple, or chocolate-hazelnut — plus room to run around the car-free plaza!',
+        parentTip: 'Use the Rue Saint-Paul Est shop (open year-round; the Rue de la Commune waterfront kiosk is closed off-season). Grab hot chocolates here for the waterfront walk.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Queues+de+Castor+136+Rue+Saint-Paul+Est+Montreal'
+      },
+      {
+        id: 'science-centre',
+        name: 'Montréal Science Centre',
+        frenchName: 'Centre des sciences de Montréal',
+        address: '2 Rue de la Commune Ouest (King Edward Pier)',
+        lat: 45.5046,
+        lon: -73.5515,
+        x: 377,
+        y: 394,
+        category: 'museum',
+        categoryLabel: 'Hands-On Museum',
+        colorVar: '--chart-3',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1020, // 5:00 PM
+        sundayHoursText: 'Sun 10:00 AM – 5:00 PM',
+        defaultDuration: 70,
+        ages: 'Ages 2–14 (Mini Mondo for 0–7)',
+        cost: '~$29 adult / ~$20 child (under 2 free)',
+        stroller: 'Fully stroller-accessible · Lockers & cafés',
+        kidsLove: '100% hands-on! Little ones adore Mini Mondo (kid-sized city, forest & river), while older kids dive into Explore & Fabrik2 tinkering labs.',
+        parentTip: 'This is your main warm indoor centerpiece — budget 60–90 min so kids don’t feel rushed. Buying tickets online before arriving skips Sunday weekend lines.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Montreal+Science+Centre+2+Rue+de+la+Commune+Ouest'
+      },
+      {
+        id: 'notre-dame',
+        name: 'Notre-Dame Basilica & Place d’Armes',
+        frenchName: 'Basilique Notre-Dame de Montréal',
+        address: '110 Rue Notre-Dame Ouest',
+        lat: 45.5045,
+        lon: -73.5561,
+        x: 297,
+        y: 215,
+        category: 'landmark',
+        categoryLabel: 'Iconic Landmark',
+        colorVar: '--chart-2',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 750,   // 12:30 PM!! (Sunday morning Masses)
+        sundayClose: 960,  // 4:00 PM
+        sundayHoursText: 'Sun 12:30 PM – 4:00 PM (Mass in AM)',
+        defaultDuration: 30,
+        ages: 'All ages (short awe-inspiring visit)',
+        cost: '~$16 adult / ~$10 ages 7–17 / Free under 7',
+        stroller: 'Step-free access via side entrance',
+        kidsLove: 'Stepping inside feels like entering a starry midnight-blue castle with gold stars, towering stained glass, and a massive 7,000-pipe organ.',
+        parentTip: 'Crucial Sunday rule: sightseeing opens at 12:30 PM after morning Masses! Our default loop times your arrival right after 12:40 PM.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Notre-Dame+Basilica+110+Rue+Notre-Dame+Ouest+Montreal'
+      },
+      {
+        id: 'olive-gourmando',
+        name: 'Olive et Gourmando',
+        frenchName: 'Artisan Bakery & Panini Café',
+        address: '351 Rue Saint-Paul Ouest',
+        lat: 45.5013,
+        lon: -73.5559,
+        x: 124,
+        y: 296,
+        category: 'food',
+        categoryLabel: 'Lunch / Bakery',
+        colorVar: '--chart-4',
+        indoor: true,
+        free: false,
+        food: true,
+        sundayOpen: 480,   // 8:00 AM
+        sundayClose: 1020, // 5:00 PM
+        sundayHoursText: 'Sun 8:00 AM – 5:00 PM',
+        defaultDuration: 30,
+        ages: 'All ages',
+        cost: '~$14–22 per sandwich / $5 pastries',
+        stroller: 'Cozy interior — best for counter pickup with big strollers',
+        kidsLove: 'Warm grilled paninis (Cuban, grilled cheese), gooey chocolate brownies, giant brioches, and rich hot chocolate.',
+        parentTip: 'No reservations and Sunday sit-down tables fill up fast — skip the wait by ordering warm sandwiches & pastries directly at the front bakery counter!',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Olive+et+Gourmando+351+Rue+Saint-Paul+Ouest+Montreal'
+      },
+      {
+        id: 'pointe-a-calliere',
+        name: 'Pointe-à-Callière Museum',
+        frenchName: 'Archaeology & History Complex',
+        address: '350 Place Royale',
+        lat: 45.5028,
+        lon: -73.5542,
+        x: 234,
+        y: 325,
+        category: 'museum',
+        categoryLabel: 'History Museum',
+        colorVar: '--chart-3',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 660,   // 11:00 AM
+        sundayClose: 1020, // 5:00 PM
+        sundayHoursText: 'Sun 11:00 AM – 5:00 PM',
+        defaultDuration: 70,
+        ages: 'Best for ages 5+',
+        cost: '~$27 adult / ~$10 child (under 5 free)',
+        stroller: 'Elevators & reserved stroller parking',
+        kidsLove: 'Walking underneath Old Montréal through real lit-up archaeological ruins, an old underground collector sewer tunnel, and an exciting multimedia show.',
+        parentTip: 'Great swap for the Science Centre if your kids prefer history, pirates, or underground tunnels over science experiments. Opens at 11:00 AM on Sundays.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Pointe-a-Calliere+350+Place+Royale+Montreal'
+      },
+      {
+        id: 'museum-illusions',
+        name: 'Museum of Illusions Montréal',
+        frenchName: 'Musée de l’Illusion',
+        address: '44 Rue Saint-Antoine Ouest',
+        lat: 45.5059,
+        lon: -73.5568,
+        x: 365,
+        y: 151,
+        category: 'attraction',
+        categoryLabel: 'Interactive Fun',
+        colorVar: '--chart-1',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1200, // 8:00 PM
+        sundayHoursText: 'Sun 10:00 AM – 8:00 PM',
+        defaultDuration: 45,
+        ages: 'Best for ages 5+',
+        cost: '~$26 adult / ~$20 child (under 5 free)',
+        stroller: 'Compact indoor space — baby carrier easiest',
+        kidsLove: 'Vortex spinning tunnel, upside-down room, Ames shrinking room, and holograms — hilarious family photo ops at every corner.',
+        parentTip: 'Right next to Place-d’Armes Metro! Ideal indoor swap if you want a playful 45-minute finale instead of Notre-Dame Basilica.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Museum+of+Illusions+44+Rue+Saint-Antoine+Ouest+Montreal'
+      },
+      {
+        id: 'clock-tower',
+        name: 'Old Port Promenade & Clock Tower View',
+        frenchName: 'Quai de l’Horloge · Waterfront Stroll',
+        address: 'Quai de l’Horloge, Old Port',
+        lat: 45.5105,
+        lon: -73.5468,
+        x: 758,
+        y: 410,
+        category: 'landmark',
+        categoryLabel: 'Free Waterfront',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,   // 6:00 AM
+        sundayClose: 1440, // Midnight
+        sundayHoursText: 'Open daily (exterior boardwalk)',
+        defaultDuration: 20,
+        ages: 'All ages',
+        cost: 'Free',
+        stroller: 'Wide, flat paved promenade (stroller-friendly!)',
+        kidsLove: 'Wide-open riverside boardwalk to run safely, watch river views & Jacques Cartier Bridge, and see the iconic 1922 white Sailors’ Memorial Clock Tower.',
+        parentTip: 'Note: Climbing inside the tower is summer-only, so only add this extra stretch if the sun is out and kids want extra outdoor walking.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Clock+Tower+Pier+Old+Port+Montreal'
+      }
+    ];
+
+    const PRESETS = {
+      classic: {
+        label: 'Classic Half-Day',
+        startTime: 600,
+        ids: ['grande-roue', 'marche-bonsecours', 'beavertails-pjc', 'science-centre', 'notre-dame', 'olive-gourmando']
+      },
+      little: {
+        label: 'Little Kids (2–6)',
+        startTime: 600,
+        ids: ['grande-roue', 'marche-bonsecours', 'beavertails-pjc', 'science-centre']
+      },
+      older: {
+        label: 'Explorers (6+)',
+        startTime: 630,
+        ids: ['grande-roue', 'beavertails-pjc', 'pointe-a-calliere', 'notre-dame', 'museum-illusions']
+      },
+      budget: {
+        label: 'Free / Budget Walk',
+        startTime: 630,
+        ids: ['clock-tower', 'marche-bonsecours', 'beavertails-pjc', 'olive-gourmando', 'notre-dame']
+      }
+    };
+
+    // =========================================================================
+    // Application State
+    // =========================================================================
+    const state = {
+      activePreset: 'classic',
+      startTime: 600, // minutes from midnight (10:00 AM)
+      planIds: [...PRESETS.classic.ids],
+      durations: Object.fromEntries(ATTRACTIONS.map(a => [a.id, a.defaultDuration])),
+      visitedIds: new Set(),
+      selectedId: 'grande-roue',
+      filter: 'all',
+      showOptionalInList: false,
+      // Map pan/zoom
+      zoom: 1,
+      panX: 0,
+      panY: 0
+    };
+
+    const byId = Object.fromEntries(ATTRACTIONS.map(a => [a.id, a]));
+
+    // =========================================================================
+    // Geo & Time Helpers
+    // =========================================================================
+    function haversineMeters(a, b) {
+      const R = 6371000;
+      const toRad = d => (d * Math.PI) / 180;
+      const dLat = toRad(b.lat - a.lat);
+      const dLon = toRad(b.lon - a.lon);
+      const s1 = Math.sin(dLat / 2);
+      const s2 = Math.sin(dLon / 2);
+      const h = s1 * s1 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * s2 * s2;
+      return 2 * R * Math.asin(Math.sqrt(h));
+    }
+
+    function walkBetween(a, b) {
+      // Street-grid multiplier ~1.28; kid-friendly pace ~62 m/min (~3.7 km/h)
+      const meters = Math.round((haversineMeters(a, b) * 1.28) / 10) * 10;
+      const mins = Math.max(3, Math.round(meters / 62));
+      return { meters, mins };
+    }
+
+    function formatClock(mins) {
+      const normalized = ((mins % 1440) + 1440) % 1440;
+      const h24 = Math.floor(normalized / 60);
+      const m = normalized % 60;
+      const period = h24 >= 12 ? 'PM' : 'AM';
+      const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+      return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+    }
+
+    function formatClockShort(mins) {
+      const normalized = ((mins % 1440) + 1440) % 1440;
+      const h24 = Math.floor(normalized / 60);
+      const m = normalized % 60;
+      const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+      return `${h12}:${String(m).padStart(2, '0')}`;
+    }
+
+    function formatDuration(mins) {
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      if (h === 0) return `${m}m`;
+      if (m === 0) return `${h}h`;
+      return `${h}h ${m}m`;
+    }
+
+    function computeSchedule() {
+      let cursor = state.startTime;
+      let totalWalkMeters = 0;
+      let totalWalkMins = 0;
+      const items = [];
+      const warnings = [];
+
+      state.planIds.forEach((id, idx) => {
+        const spot = byId[id];
+        let walkFromPrev = null;
+        if (idx > 0) {
+          walkFromPrev = walkBetween(byId[state.planIds[idx - 1]], spot);
+          cursor += walkFromPrev.mins;
+          totalWalkMeters += walkFromPrev.meters;
+          totalWalkMins += walkFromPrev.mins;
+        }
+        const arrive = cursor;
+        const stay = state.durations[id];
+        const depart = arrive + stay;
+        cursor = depart;
+
+        let hoursStatus = 'open';
+        let hoursNote = '';
+        if (arrive < spot.sundayOpen) {
+          hoursStatus = 'early';
+          hoursNote = `Opens ${formatClock(spot.sundayOpen)} (${spot.sundayOpen - arrive} min after arrival)`;
+          warnings.push(`${spot.name} opens at ${formatClock(spot.sundayOpen)}`);
+        } else if (arrive >= spot.sundayClose) {
+          hoursStatus = 'closed';
+          hoursNote = `Closed at ${formatClock(spot.sundayClose)}`;
+          warnings.push(`${spot.name} closes at ${formatClock(spot.sundayClose)}`);
+        } else if (depart > spot.sundayClose) {
+          hoursStatus = 'closing';
+          hoursNote = `Closes at ${formatClock(spot.sundayClose)}`;
+        }
+
+        items.push({
+          spot,
+          index: idx + 1,
+          arrive,
+          depart,
+          stay,
+          walkFromPrev,
+          hoursStatus,
+          hoursNote
+        });
+      });
+
+      const totalDuration = items.length > 0 ? items[items.length - 1].depart - state.startTime : 0;
+      const endTime = state.startTime + totalDuration;
+      return { items, totalDuration, endTime, totalWalkMeters, totalWalkMins, warnings };
+    }
+
+    function matchesFilter(spot) {
+      if (state.filter === 'all') return true;
+      if (state.filter === 'active') return state.planIds.includes(spot.id);
+      if (state.filter === 'indoor') return spot.indoor;
+      if (state.filter === 'food') return spot.food;
+      if (state.filter === 'free') return spot.free;
+      return true;
+    }
+
+    // =========================================================================
+    // Rendering: Header, Presets, Filters
+    // =========================================================================
+    function renderHeader(schedule) {
+      document.getElementById('startTimeSelect').value = String(state.startTime);
+      document.getElementById('metricDuration').textContent = formatDuration(schedule.totalDuration);
+      document.getElementById('metricWindow').textContent =
+        schedule.items.length
+          ? `(${formatClockShort(state.startTime)}–${formatClock(schedule.endTime)})`
+          : '(no stops)';
+
+      const km = (schedule.totalWalkMeters / 1000).toFixed(1);
+      document.getElementById('metricWalk').textContent = `${km} km · ${schedule.totalWalkMins} min`;
+
+      // Half-day badge (<= 240 mins = 4 hours)
+      const badge = document.getElementById('halfDayBadge');
+      if (schedule.totalDuration <= 240) {
+        badge.textContent = '✓ Fits Half-Day (≤ 4h)';
+        badge.style.background = 'color-mix(in srgb, var(--success) 16%, transparent)';
+        badge.style.color = 'var(--success)';
+        badge.style.border = '1px solid color-mix(in srgb, var(--success) 35%, transparent)';
+      } else {
+        badge.textContent = `⚠ ${formatDuration(schedule.totalDuration)} (Over 4h)`;
+        badge.style.background = 'color-mix(in srgb, var(--warning) 16%, transparent)';
+        badge.style.color = 'var(--warning)';
+        badge.style.border = '1px solid color-mix(in srgb, var(--warning) 35%, transparent)';
+      }
+
+      // Warning banner for Sunday hours conflicts
+      const warnEl = document.getElementById('scheduleWarningBanner');
+      if (schedule.warnings.length > 0) {
+        warnEl.classList.remove('hidden');
+        warnEl.classList.add('inline-flex');
+        warnEl.style.background = 'color-mix(in srgb, var(--warning) 14%, transparent)';
+        warnEl.style.color = 'var(--warning)';
+        warnEl.style.borderColor = 'color-mix(in srgb, var(--warning) 35%, transparent)';
+        warnEl.textContent = `⚠ Sunday hours note: ${schedule.warnings[0]} — shift start time or reorder.`;
+      } else {
+        warnEl.classList.add('hidden');
+        warnEl.classList.remove('inline-flex');
+      }
+
+      // Preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        const key = btn.dataset.preset;
+        btn.textContent = PRESETS[key].label;
+        const isActive = state.activePreset === key;
+        if (isActive) {
+          btn.style.background = 'var(--primary)';
+          btn.style.color = 'var(--primary-foreground)';
+          btn.style.borderColor = 'var(--primary)';
+        } else {
+          btn.style.background = 'var(--background)';
+          btn.style.color = 'var(--foreground)';
+          btn.style.borderColor = 'var(--border)';
+        }
+      });
+
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        const isActive = state.filter === btn.dataset.filter;
+        if (isActive) {
+          btn.style.background = 'var(--secondary)';
+          btn.style.color = 'var(--secondary-foreground)';
+          btn.style.borderColor = 'var(--primary)';
+        } else {
+          btn.style.background = 'var(--background)';
+          btn.style.color = 'var(--muted-foreground)';
+          btn.style.borderColor = 'var(--border)';
+        }
+      });
+    }
+
+    // =========================================================================
+    // Kid-Friendly Custom SVG Icons (24x24) & Illustrated Hero Scenes (320x116)
+    // =========================================================================
+    const ATTRACTION_ICONS = {
+      'grande-roue': `
+        <circle cx="12" cy="10.5" r="7.2" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>
+        <circle cx="12" cy="10.5" r="2" fill="#FDE047"/>
+        <path d="M12 3.3V17.7M4.8 10.5H19.2M6.9 5.4L17.1 15.6M17.1 5.4L6.9 15.6" stroke="#FFFFFF" stroke-width="1" opacity="0.85"/>
+        <circle cx="12" cy="3.2" r="1.5" fill="#F87171"/>
+        <circle cx="19.2" cy="10.5" r="1.5" fill="#FDE047"/>
+        <circle cx="4.8" cy="10.5" r="1.5" fill="#34D399"/>
+        <circle cx="17.1" cy="5.4" r="1.4" fill="#F472B6"/>
+        <circle cx="6.9" cy="5.4" r="1.4" fill="#60A5FA"/>
+        <path d="M8.2 20.5L12 11.8L15.8 20.5M7 20.5H17" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      `,
+      'marche-bonsecours': `
+        <path d="M12 3.2V5.2" stroke="#FDE047" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M7.5 11C7.5 7.4 9.4 5.2 12 5.2C14.6 5.2 16.5 7.4 16.5 11Z" fill="#E2E8F0" stroke="#FFFFFF" stroke-width="1.1"/>
+        <rect x="4" y="11" width="16" height="8.5" rx="1" fill="#FFFFFF"/>
+        <path d="M6.5 13.5V17.5M10 13.5V17.5M14 13.5V17.5M17.5 13.5V17.5" stroke="#475569" stroke-width="1.4" stroke-linecap="round"/>
+        <rect x="3" y="19" width="18" height="1.8" rx="0.8" fill="#FDE047"/>
+      `,
+      'beavertails-pjc': `
+        <ellipse cx="12" cy="12.5" rx="8.2" ry="4.8" transform="rotate(-18 12 12.5)" fill="#F59E0B" stroke="#FEF3C7" stroke-width="1.3"/>
+        <path d="M6.8 13.5C8.5 10.8 11.2 13.6 13.2 10.6C14.8 8.3 16.5 11.2 17.5 10.5" fill="none" stroke="#78350F" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="9.2" cy="10.4" r="0.9" fill="#FFFFFF"/>
+        <circle cx="13.4" cy="13.8" r="0.9" fill="#FFFFFF"/>
+        <circle cx="15.2" cy="9.4" r="0.9" fill="#F43F5E"/>
+        <path d="M9 5.5C9 4.3 10.2 4.3 10.2 3.1M13 5C13 3.8 14.2 3.8 14.2 2.6" fill="none" stroke="#FEF3C7" stroke-width="1.2" stroke-linecap="round"/>
+      `,
+      'science-centre': `
+        <path d="M12 3.2C15 5.4 16.2 9.4 15.6 14.4H8.4C7.8 9.4 9 5.4 12 3.2Z" fill="#FFFFFF"/>
+        <path d="M12 3.2C13.6 4.4 14.6 6 15.1 7.6H8.9C9.4 6 10.4 4.4 12 3.2Z" fill="#EF4444"/>
+        <circle cx="12" cy="10.2" r="2.1" fill="#38BDF8" stroke="#1E3A8A" stroke-width="1"/>
+        <path d="M8.4 12.2L5.6 15.4H8.6ZM15.6 12.2L18.4 15.4H15.4Z" fill="#F59E0B"/>
+        <path d="M10.2 15.2L12 20.5L13.8 15.2Z" fill="#FDE047"/>
+      `,
+      'notre-dame': `
+        <rect x="5" y="6.5" width="4.2" height="13.5" rx="0.6" fill="#E0E7FF"/>
+        <rect x="14.8" y="6.5" width="4.2" height="13.5" rx="0.6" fill="#E0E7FF"/>
+        <polygon points="5,6.5 7.1,3 9.2,6.5" fill="#FDE047"/>
+        <polygon points="14.8,6.5 16.9,3 19,6.5" fill="#FDE047"/>
+        <rect x="9" y="10.5" width="6" height="9.5" fill="#C7D2FE"/>
+        <circle cx="12" cy="13.4" r="1.9" fill="#3B82F6" stroke="#FDE047" stroke-width="0.9"/>
+        <path d="M10.5 20V17.4C10.5 16.6 13.5 16.6 13.5 17.4V20Z" fill="#1E3A8A"/>
+      `,
+      'olive-gourmando': `
+        <path d="M4.5 14.5C5.2 9.5 8.2 7.5 12 7.5C15.8 7.5 18.8 9.5 19.5 14.5C19.8 16.4 18 17.6 16.3 16.8C14.8 16.1 13.8 15.2 12 15.2C10.2 15.2 9.2 16.1 7.7 16.8C6 17.6 4.2 16.4 4.5 14.5Z" fill="#FBBF24" stroke="#FEF3C7" stroke-width="1.2"/>
+        <path d="M8.8 8.3L9.8 15.2M15.2 8.3L14.2 15.2" stroke="#B45309" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M12 7.6V15" stroke="#D97706" stroke-width="1.2" stroke-linecap="round"/>
+      `,
+      'pointe-a-calliere': `
+        <path d="M5 19.5V11.5C5 7.4 8.1 4.5 12 4.5C15.9 4.5 19 7.4 19 11.5V19.5Z" fill="#1E293B" stroke="#FDE68A" stroke-width="1.5"/>
+        <path d="M8.2 19.5V12.2C8.2 9.9 9.9 8.2 12 8.2C14.1 8.2 15.8 9.9 15.8 12.2V19.5Z" fill="#F59E0B" opacity="0.9"/>
+        <circle cx="12" cy="13.2" r="2.2" fill="#FEF08A"/>
+        <rect x="3.5" y="19" width="17" height="1.8" rx="0.8" fill="#CBD5E1"/>
+      `,
+      'museum-illusions': `
+        <circle cx="12" cy="12" r="8.2" fill="#312E81" stroke="#FFFFFF" stroke-width="1.4"/>
+        <path d="M12 5.4A6.6 6.6 0 1 1 6.2 15.2A4.8 4.8 0 1 1 15.2 9.2A3 3 0 1 1 10.2 13.5" fill="none" stroke="#FDE047" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="1.4" fill="#38BDF8"/>
+      `,
+      'clock-tower': `
+        <polygon points="9.2,7.5 12,3.4 14.8,7.5" fill="#10B981"/>
+        <rect x="8.8" y="7.5" width="6.4" height="12.5" rx="0.6" fill="#FFFFFF"/>
+        <circle cx="12" cy="11.2" r="2.3" fill="#FEF3C7" stroke="#0F172A" stroke-width="0.9"/>
+        <path d="M12 11.2V9.8M12 11.2L13.2 11.7" stroke="#0F172A" stroke-width="0.9" stroke-linecap="round"/>
+        <path d="M4.5 20.2Q8.2 18.4 12 20.2T19.5 20.2" fill="none" stroke="#7DD3FC" stroke-width="1.6" stroke-linecap="round"/>
+      `
+    };
+
+    const ATTRACTION_SCENES = {
+      'grande-roue': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of La Grande Roue Ferris wheel over the St. Lawrence River">
+          <defs>
+            <linearGradient id="sky-gr" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38BDF8"/>
+              <stop offset="68%" stop-color="#BAE6FD"/>
+              <stop offset="100%" stop-color="#FDE68A"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#sky-gr)"/>
+          <!-- Sun & fluffy clouds -->
+          <circle cx="48" cy="30" r="15" fill="#FDE047" opacity="0.95"/>
+          <g fill="#FFFFFF" opacity="0.9">
+            <ellipse cx="96" cy="24" rx="18" ry="8"/><ellipse cx="110" cy="22" rx="13" ry="7"/><ellipse cx="83" cy="26" rx="11" ry="6"/>
+            <ellipse cx="268" cy="28" rx="17" ry="7"/><ellipse cx="282" cy="26" rx="12" ry="6"/>
+          </g>
+          <!-- Distant skyline silhouette -->
+          <path d="M0 84 L0 64 L16 64 L16 56 L30 56 L30 70 L46 70 L46 50 L62 50 L62 66 L78 66 L78 84 Z" fill="#0369A1" opacity="0.24"/>
+          <path d="M235 84 L235 62 L252 62 L252 52 L270 52 L270 67 L292 67 L292 58 L320 58 L320 84 Z" fill="#0369A1" opacity="0.22"/>
+          <!-- Giant Ferris Wheel -->
+          <g transform="translate(162, 48)">
+            <circle r="37" fill="none" stroke="#FFFFFF" stroke-width="3.2"/>
+            <circle r="29" fill="none" stroke="#E0F2FE" stroke-width="1.4" stroke-dasharray="4 3"/>
+            <g stroke="#FFFFFF" stroke-width="1.3" opacity="0.9">
+              <line x1="0" y1="-37" x2="0" y2="37"/><line x1="-37" y1="0" x2="37" y2="0"/>
+              <line x1="-26" y1="-26" x2="26" y2="26"/><line x1="26" y1="-26" x2="-26" y2="26"/>
+            </g>
+            <!-- Support A-frame -->
+            <path d="M-24 44 L0 0 L24 44" fill="none" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle r="6" fill="#FDE047" stroke="#1E3A8A" stroke-width="2"/>
+            <!-- Colorful heated gondolas -->
+            <rect x="-5" y="-42" width="10" height="8" rx="3" fill="#EF4444" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="21" y="-31" width="10" height="8" rx="3" fill="#F59E0B" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="33" y="-4" width="10" height="8" rx="3" fill="#10B981" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="21" y="22" width="10" height="8" rx="3" fill="#8B5CF6" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="-5" y="33" width="10" height="8" rx="3" fill="#EC4899" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="-31" y="22" width="10" height="8" rx="3" fill="#06B6D4" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="-43" y="-4" width="10" height="8" rx="3" fill="#F97316" stroke="#FFFFFF" stroke-width="1"/>
+            <rect x="-31" y="-31" width="10" height="8" rx="3" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1"/>
+          </g>
+          <!-- Sparkling St. Lawrence River -->
+          <rect x="0" y="84" width="320" height="28" fill="#0284C7"/>
+          <path d="M0 90 Q18 85 36 90 T72 90 T108 90 T144 90 T180 90 T216 90 T252 90 T288 90 T320 90" fill="none" stroke="#BAE6FD" stroke-width="2" opacity="0.8"/>
+          <path d="M20 101 Q38 97 56 101 T92 101 M210 102 Q228 98 246 102 T282 102" fill="none" stroke="#E0F2FE" stroke-width="1.6" opacity="0.7"/>
+        </svg>
+      `,
+      'marche-bonsecours': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Marché Bonsecours silver-domed historic market hall">
+          <defs>
+            <linearGradient id="sky-mb" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#60A5FA"/>
+              <stop offset="100%" stop-color="#FDE68A"/>
+            </linearGradient>
+            <linearGradient id="dome-mb" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#F8FAFC"/>
+              <stop offset="50%" stop-color="#CBD5E1"/>
+              <stop offset="100%" stop-color="#64748B"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#sky-mb)"/>
+          <!-- Fluffy clouds -->
+          <g fill="#FFFFFF" opacity="0.85">
+            <ellipse cx="52" cy="24" rx="18" ry="7"/><ellipse cx="66" cy="22" rx="12" ry="6"/>
+            <ellipse cx="268" cy="22" rx="18" ry="7"/><ellipse cx="252" cy="24" rx="11" ry="5"/>
+          </g>
+          <!-- Gleaming Silver Dome -->
+          <line x1="160" y1="10" x2="160" y2="21" stroke="#F8FAFC" stroke-width="2"/>
+          <polygon points="160,11 171,14 160,17" fill="#EF4444"/>
+          <rect x="152" y="20" width="16" height="8" rx="2" fill="#E2E8F0"/>
+          <path d="M126 52 C126 28 140 24 160 24 C180 24 194 28 194 52 Z" fill="url(#dome-mb)" stroke="#475569" stroke-width="1.2"/>
+          <path d="M142 52 C142 32 150 25 160 25" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.7"/>
+          <!-- Main Historic Stone Building -->
+          <rect x="52" y="52" width="216" height="44" rx="2" fill="#F1F5F9" stroke="#64748B" stroke-width="1.3"/>
+          <polygon points="122,52 160,39 198,52" fill="#E2E8F0" stroke="#64748B" stroke-width="1.2"/>
+          <!-- Classical Columns & Arched Windows -->
+          <g fill="#38BDF8" stroke="#475569" stroke-width="1">
+            <rect x="64" y="61" width="12" height="15" rx="6"/><rect x="84" y="61" width="12" height="15" rx="6"/><rect x="104" y="61" width="12" height="15" rx="6"/>
+            <rect x="204" y="61" width="12" height="15" rx="6"/><rect x="224" y="61" width="12" height="15" rx="6"/><rect x="244" y="61" width="12" height="15" rx="6"/>
+          </g>
+          <g fill="#CBD5E1">
+            <rect x="128" y="54" width="5" height="40"/><rect x="142" y="54" width="5" height="40"/>
+            <rect x="173" y="54" width="5" height="40"/><rect x="187" y="54" width="5" height="40"/>
+          </g>
+          <path d="M151 96 V72 C151 66 169 66 169 72 V96 Z" fill="#F59E0B" stroke="#78350F" stroke-width="1.2"/>
+          <!-- Vintage Streetlamp -->
+          <line x1="28" y1="98" x2="28" y2="54" stroke="#1E293B" stroke-width="2.5"/>
+          <circle cx="28" cy="50" r="6" fill="#FEF08A" stroke="#1E293B" stroke-width="1.2"/>
+          <!-- Cobblestone Rue Saint-Paul -->
+          <rect x="0" y="94" width="320" height="18" fill="#78716C"/>
+          <g fill="#A8A29E">
+            <rect x="10" y="98" width="16" height="5" rx="2"/><rect x="34" y="103" width="18" height="5" rx="2"/>
+            <rect x="66" y="98" width="16" height="5" rx="2"/><rect x="98" y="103" width="18" height="5" rx="2"/>
+            <rect x="132" y="98" width="18" height="5" rx="2"/><rect x="168" y="103" width="18" height="5" rx="2"/>
+            <rect x="204" y="98" width="16" height="5" rx="2"/><rect x="240" y="103" width="18" height="5" rx="2"/>
+            <rect x="276" y="98" width="18" height="5" rx="2"/>
+          </g>
+        </svg>
+      `,
+      'beavertails-pjc': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of warm BeaverTails pastry and hot chocolate on Place Jacques-Cartier">
+          <defs>
+            <linearGradient id="bg-bt" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#F97316"/>
+              <stop offset="55%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#FDE047"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#bg-bt)"/>
+          <!-- Festive plaza bunting -->
+          <path d="M0 16 Q80 34 160 16 T320 16" fill="none" stroke="#78350F" stroke-width="1.5" opacity="0.6"/>
+          <polygon points="34,22 48,25 40,34" fill="#EF4444"/><polygon points="74,25 88,25 81,35" fill="#FFFFFF"/>
+          <polygon points="114,23 128,20 122,32" fill="#3B82F6"/><polygon points="194,21 208,24 200,33" fill="#10B981"/>
+          <polygon points="236,24 250,23 243,34" fill="#EF4444"/><polygon points="278,20 292,17 286,29" fill="#FFFFFF"/>
+          <!-- Giant Crispy BeaverTail Pastry -->
+          <g transform="translate(122, 66) rotate(-9)">
+            <ellipse cx="0" cy="4" rx="74" ry="26" fill="#78350F" opacity="0.25"/>
+            <ellipse cx="0" cy="0" rx="72" ry="25" fill="#D97706" stroke="#FEF3C7" stroke-width="3"/>
+            <ellipse cx="0" cy="-2" rx="64" ry="19" fill="#F59E0B"/>
+            <!-- Chocolate-hazelnut drizzle -->
+            <path d="M-52 2 C-40 -14 -30 14 -16 -10 C-4 -14 6 12 18 -10 C30 -14 40 12 52 -4" fill="none" stroke="#451A03" stroke-width="5.5" stroke-linecap="round"/>
+            <!-- Banana slices & sprinkles -->
+            <circle cx="-36" cy="-4" r="6" fill="#FEF9C3" stroke="#EAB308" stroke-width="1"/>
+            <circle cx="-6" cy="5" r="6" fill="#FEF9C3" stroke="#EAB308" stroke-width="1"/>
+            <circle cx="24" cy="-5" r="6" fill="#FEF9C3" stroke="#EAB308" stroke-width="1"/>
+            <circle cx="44" cy="4" r="5" fill="#FEF9C3" stroke="#EAB308" stroke-width="1"/>
+            <circle cx="-22" cy="-9" r="2.2" fill="#FFFFFF"/><circle cx="10" cy="-10" r="2.2" fill="#F43F5E"/>
+            <circle cx="34" cy="8" r="2.2" fill="#FFFFFF"/><circle cx="-46" cy="8" r="2" fill="#38BDF8"/>
+          </g>
+          <!-- Steaming Hot Chocolate Mug -->
+          <g transform="translate(244, 62)">
+            <path d="M-6 -26 C-6 -34 2 -34 2 -42 M6 -24 C6 -32 14 -32 14 -40" fill="none" stroke="#FFFBEB" stroke-width="2.4" stroke-linecap="round" opacity="0.9"/>
+            <path d="M22 -4 C34 -4 34 16 22 16" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+            <rect x="-20" y="-12" width="44" height="40" rx="7" fill="#DC2626" stroke="#FFFFFF" stroke-width="2"/>
+            <path d="M-15 -12 Q-6 -24 4 -15 Q14 -24 20 -12 Z" fill="#FFFBEB"/>
+            <rect x="-10" y="-19" width="8" height="7" rx="2" fill="#FFFFFF" stroke="#FDE68A" stroke-width="1"/>
+            <rect x="4" y="-20" width="8" height="7" rx="2" fill="#FFFFFF" stroke="#FDE68A" stroke-width="1"/>
+            <!-- Cute maple leaf on mug -->
+            <circle cx="2" cy="9" r="9" fill="#FFFFFF" opacity="0.92"/>
+            <path d="M2 3 L4 7 L7 6 L5 10 L7 12 L2 11 L2 15 L1 15 L1 11 L-3 12 L-1 10 L-3 6 L0 7 Z" fill="#DC2626"/>
+          </g>
+        </svg>
+      `,
+      'science-centre': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Montreal Science Centre rocket, chemistry flasks, and atom">
+          <defs>
+            <linearGradient id="bg-sc" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#312E81"/>
+              <stop offset="55%" stop-color="#4F46E5"/>
+              <stop offset="100%" stop-color="#06B6D4"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#bg-sc)"/>
+          <!-- Stars & sparkles -->
+          <g fill="#FDE047">
+            <circle cx="28" cy="22" r="2"/><circle cx="78" cy="18" r="1.6"/><circle cx="222" cy="20" r="2.2"/>
+            <circle cx="294" cy="28" r="1.8"/><circle cx="194" cy="84" r="1.6"/>
+          </g>
+          <!-- Bubbling Chemistry Flask (left) -->
+          <g transform="translate(64, 72)">
+            <circle cx="-4" cy="-34" r="4" fill="#34D399" opacity="0.85"/>
+            <circle cx="6" cy="-42" r="3" fill="#6EE7B7" opacity="0.85"/>
+            <circle cx="1" cy="-24" r="2.5" fill="#A7F3D0"/>
+            <path d="M-8 -18 H8 V-6 L22 24 C24 28 21 31 16 31 H-16 C-21 31 -24 28 -22 24 L-8 -6 Z" fill="#E0F2FE" fill-opacity="0.22" stroke="#FFFFFF" stroke-width="2"/>
+            <path d="M-15 10 H15 L20 23 C21 26 19 28 15 28 H-15 C-19 28 -21 26 -20 23 Z" fill="#10B981"/>
+            <circle cx="-5" cy="19" r="3" fill="#A7F3D0"/><circle cx="6" cy="22" r="2.2" fill="#A7F3D0"/>
+          </g>
+          <!-- Blasting Rocket Ship (center) -->
+          <g transform="translate(160, 54) rotate(14)">
+            <path d="M-8 22 L0 44 L8 22 Z" fill="#F97316"/>
+            <path d="M-4 22 L0 36 L4 22 Z" fill="#FDE047"/>
+            <path d="M-14 8 L-26 24 L-12 21 Z" fill="#EF4444"/>
+            <path d="M14 8 L26 24 L12 21 Z" fill="#EF4444"/>
+            <path d="M0 -34 C14 -20 18 -2 14 22 H-14 C-18 -2 -14 -20 0 -34 Z" fill="#FFFFFF"/>
+            <path d="M0 -34 C7 -27 11 -18 13 -12 H-13 C-11 -18 -7 -27 0 -34 Z" fill="#EF4444"/>
+            <circle cx="0" cy="-2" r="8" fill="#38BDF8" stroke="#1E3A8A" stroke-width="2.5"/>
+            <circle cx="-2" cy="-4" r="2.2" fill="#FFFFFF" opacity="0.8"/>
+          </g>
+          <!-- Orbiting Atom & Colorful Gears (right) -->
+          <g transform="translate(254, 56)">
+            <ellipse rx="32" ry="12" fill="none" stroke="#FDE047" stroke-width="2" transform="rotate(28)"/>
+            <ellipse rx="32" ry="12" fill="none" stroke="#F472B6" stroke-width="2" transform="rotate(-28)"/>
+            <ellipse rx="32" ry="12" fill="none" stroke="#38BDF8" stroke-width="2" transform="rotate(90)"/>
+            <circle r="7" fill="#FFFFFF"/>
+            <circle cx="24" cy="14" r="3.5" fill="#FDE047"/>
+            <circle cx="-24" cy="12" r="3.5" fill="#F472B6"/>
+            <circle cx="0" cy="-31" r="3.5" fill="#38BDF8"/>
+          </g>
+        </svg>
+      `,
+      'notre-dame': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Notre-Dame Basilica starry blue ceiling and twin Gothic towers">
+          <defs>
+            <linearGradient id="sky-nd" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0F172A"/>
+              <stop offset="55%" stop-color="#1E3A8A"/>
+              <stop offset="100%" stop-color="#3B82F6"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#sky-nd)"/>
+          <!-- Starry midnight-blue vault inspired by the interior ceiling -->
+          <g fill="#FDE047">
+            <circle cx="28" cy="20" r="2.2"/><circle cx="62" cy="36" r="1.5"/><circle cx="94" cy="16" r="2.5"/>
+            <circle cx="160" cy="14" r="2.8"/><circle cx="228" cy="18" r="2.4"/><circle cx="262" cy="34" r="1.6"/>
+            <circle cx="294" cy="22" r="2.2"/><circle cx="44" cy="60" r="1.4"/><circle cx="278" cy="58" r="1.4"/>
+          </g>
+          <!-- Glowing Golden Vaulted Arch Glow -->
+          <path d="M72 112 Q160 -4 248 112" fill="none" stroke="#FDE047" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.5"/>
+          <!-- Twin Gothic Towers -->
+          <g transform="translate(160, 112)">
+            <!-- Left & Right Towers -->
+            <rect x="-56" y="-82" width="32" height="82" fill="#CBD5E1" stroke="#475569" stroke-width="1.3"/>
+            <rect x="24" y="-82" width="32" height="82" fill="#CBD5E1" stroke="#475569" stroke-width="1.3"/>
+            <!-- Tower Pinnacles -->
+            <polygon points="-56,-82 -48,-96 -40,-82" fill="#E2E8F0"/>
+            <polygon points="-40,-82 -32,-96 -24,-82" fill="#E2E8F0"/>
+            <polygon points="24,-82 32,-96 40,-82" fill="#E2E8F0"/>
+            <polygon points="40,-82 48,-96 56,-82" fill="#E2E8F0"/>
+            <!-- Center Facade -->
+            <rect x="-24" y="-64" width="48" height="64" fill="#E2E8F0" stroke="#475569" stroke-width="1.2"/>
+            <!-- Glowing Stained-Glass Rose Window -->
+            <circle cx="0" cy="-42" r="13" fill="#1E1B4B" stroke="#FDE047" stroke-width="2"/>
+            <circle cx="0" cy="-42" r="8" fill="#60A5FA" stroke="#F472B6" stroke-width="2" stroke-dasharray="3 2"/>
+            <circle cx="0" cy="-42" r="3.2" fill="#FDE047"/>
+            <!-- Tower Lancets -->
+            <path d="M-45 -50 V-66 Q-40 -73 -35 -66 V-50 Z" fill="#3B82F6"/>
+            <path d="M35 -50 V-66 Q40 -73 45 -66 V-50 Z" fill="#3B82F6"/>
+            <!-- Three Grand Gothic Entry Arches -->
+            <path d="M-47 0 V-22 Q-40 -31 -33 -22 V0 Z" fill="#1E3A8A"/>
+            <path d="M-11 0 V-24 Q0 -34 11 -24 V0 Z" fill="#F59E0B" stroke="#78350F" stroke-width="1.2"/>
+            <path d="M33 0 V-22 Q40 -31 47 -22 V0 Z" fill="#1E3A8A"/>
+          </g>
+        </svg>
+      `,
+      'olive-gourmando': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Olive et Gourmando croissant, warm panini, and hot cocoa">
+          <defs>
+            <linearGradient id="bg-og" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FEF3C7"/>
+              <stop offset="100%" stop-color="#FDBA74"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#bg-og)"/>
+          <!-- Striped Bakery Awning -->
+          <g>
+            <rect x="0" y="0" width="32" height="22" fill="#DC2626"/><rect x="32" y="0" width="32" height="22" fill="#FFFBEB"/>
+            <rect x="64" y="0" width="32" height="22" fill="#DC2626"/><rect x="96" y="0" width="32" height="22" fill="#FFFBEB"/>
+            <rect x="128" y="0" width="32" height="22" fill="#DC2626"/><rect x="160" y="0" width="32" height="22" fill="#FFFBEB"/>
+            <rect x="192" y="0" width="32" height="22" fill="#DC2626"/><rect x="224" y="0" width="32" height="22" fill="#FFFBEB"/>
+            <rect x="256" y="0" width="32" height="22" fill="#DC2626"/><rect x="288" y="0" width="32" height="22" fill="#FFFBEB"/>
+          </g>
+          <!-- Flaky Golden Croissant (left) -->
+          <g transform="translate(82, 72) rotate(-8)">
+            <ellipse cx="0" cy="14" rx="40" ry="9" fill="#92400E" opacity="0.18"/>
+            <path d="M-38 8 C-34 -14 -16 -22 0 -22 C16 -22 34 -14 38 8 C40 16 30 20 22 15 C14 10 8 8 0 8 C-8 8 -14 10 -22 15 C-30 20 -40 16 -38 8 Z" fill="#F59E0B" stroke="#92400E" stroke-width="2"/>
+            <path d="M-16 -18 L-12 9 M16 -18 L12 9 M0 -21 V8" stroke="#B45309" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M-8 -13 Q0 -16 8 -13" fill="none" stroke="#FEF3C7" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <!-- Warm Pressed Panini (center) -->
+          <g transform="translate(182, 74)">
+            <rect x="-38" y="4" width="76" height="12" rx="5" fill="#D97706" stroke="#78350F" stroke-width="1.6"/>
+            <path d="M-36 4 L-26 9 L-14 4 L0 10 L14 4 L26 9 L36 4 Z" fill="#FDE047"/>
+            <rect x="-34" y="-2" width="68" height="7" rx="3" fill="#22C55E"/>
+            <rect x="-38" y="-14" width="76" height="13" rx="6" fill="#F59E0B" stroke="#78350F" stroke-width="1.6"/>
+            <path d="M-24 -13 L-18 -2 M-4 -13 L2 -2 M16 -13 L22 -2" stroke="#78350F" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+          <!-- Chocolate Chip Cookie & Hot Cocoa (right) -->
+          <g transform="translate(268, 72)">
+            <circle cx="0" cy="4" r="22" fill="#B45309" stroke="#78350F" stroke-width="2"/>
+            <circle cx="-8" cy="-3" r="3" fill="#451A03"/><circle cx="7" cy="-6" r="3.2" fill="#451A03"/>
+            <circle cx="10" cy="7" r="2.8" fill="#451A03"/><circle cx="-6" cy="10" r="3.2" fill="#451A03"/>
+            <circle cx="1" cy="2" r="2.5" fill="#451A03"/>
+          </g>
+        </svg>
+      `,
+      'pointe-a-calliere': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Pointe-a-Calliere underground archaeological ruins and explorer lantern">
+          <defs>
+            <linearGradient id="bg-pac" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1E293B"/>
+              <stop offset="100%" stop-color="#334155"/>
+            </linearGradient>
+            <radialGradient id="glow-pac" cx="50%" cy="55%" r="50%">
+              <stop offset="0%" stop-color="#FDE047" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#bg-pac)"/>
+          <!-- Underground Stone Vault Arches -->
+          <path d="M24 112 V54 C24 22 64 16 100 16 C136 16 176 22 176 54 V112" fill="none" stroke="#64748B" stroke-width="10"/>
+          <path d="M144 112 V54 C144 22 184 16 220 16 C256 16 296 22 296 54 V112" fill="none" stroke="#64748B" stroke-width="10"/>
+          <!-- Warm Lantern Light Glow -->
+          <circle cx="160" cy="60" r="56" fill="url(#glow-pac)"/>
+          <!-- Hanging Explorer Lantern -->
+          <g transform="translate(160, 48)">
+            <line x1="0" y1="-48" x2="0" y2="-16" stroke="#CBD5E1" stroke-width="2"/>
+            <rect x="-10" y="-16" width="20" height="5" rx="2" fill="#94A3B8"/>
+            <rect x="-8" y="-11" width="16" height="22" rx="3" fill="#FEF08A" stroke="#D97706" stroke-width="2"/>
+            <circle cx="0" cy="0" r="4.5" fill="#FFFFFF"/>
+            <rect x="-11" y="11" width="22" height="5" rx="2" fill="#94A3B8"/>
+          </g>
+          <!-- Archaeological Treasure Chest & Compass -->
+          <g transform="translate(92, 86)">
+            <rect x="-20" y="-8" width="40" height="22" rx="3" fill="#92400E" stroke="#FDE68A" stroke-width="1.6"/>
+            <path d="M-20 -8 C-20 -18 20 -18 20 -8 Z" fill="#B45309" stroke="#FDE68A" stroke-width="1.6"/>
+            <rect x="-4" y="-9" width="8" height="9" rx="1.5" fill="#FDE047"/>
+          </g>
+          <g transform="translate(230, 82)">
+            <circle r="16" fill="#0F172A" stroke="#FDE047" stroke-width="2.2"/>
+            <polygon points="0,-11 3,0 0,11 -3,0" fill="#EF4444"/>
+            <polygon points="-11,0 0,-3 11,0 0,3" fill="#FDE047"/>
+            <circle r="2.5" fill="#FFFFFF"/>
+          </g>
+          <!-- Cobblestone floor -->
+          <rect x="0" y="98" width="320" height="14" fill="#475569"/>
+        </svg>
+      `,
+      'museum-illusions': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Museum of Illusions vortex tunnel and impossible cube">
+          <defs>
+            <linearGradient id="bg-mi" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4C1D95"/>
+              <stop offset="50%" stop-color="#7C3AED"/>
+              <stop offset="100%" stop-color="#EC4899"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#bg-mi)"/>
+          <!-- Optical Vortex Tunnel Rings -->
+          <g transform="translate(160, 56)" fill="none">
+            <circle r="72" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="14 14" opacity="0.28"/>
+            <circle r="54" stroke="#38BDF8" stroke-width="5" stroke-dasharray="12 10" opacity="0.55"/>
+            <circle r="38" stroke="#FDE047" stroke-width="4.5" stroke-dasharray="9 8" opacity="0.8"/>
+            <circle r="24" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="6 6" opacity="0.9"/>
+            <circle r="12" fill="#0F172A" stroke="#F472B6" stroke-width="3"/>
+          </g>
+          <!-- Playful Floating 3D Cube (left) -->
+          <g transform="translate(64, 58)">
+            <polygon points="0,-24 22,-12 0,0 -22,-12" fill="#38BDF8" stroke="#FFFFFF" stroke-width="1.5"/>
+            <polygon points="-22,-12 0,0 0,24 -22,12" fill="#FDE047" stroke="#FFFFFF" stroke-width="1.5"/>
+            <polygon points="22,-12 0,0 0,24 22,12" fill="#F472B6" stroke="#FFFFFF" stroke-width="1.5"/>
+          </g>
+          <!-- Optical Tilted Checkerboard & Sparkles (right) -->
+          <g transform="translate(256, 58) rotate(14)">
+            <rect x="-22" y="-22" width="44" height="44" rx="6" fill="#FFFFFF"/>
+            <rect x="-22" y="-22" width="22" height="22" fill="#1E1B4B"/>
+            <rect x="0" y="0" width="22" height="22" fill="#1E1B4B"/>
+          </g>
+          <text x="160" y="62" text-anchor="middle" font-size="14" font-weight="900" fill="#FDE047">?</text>
+        </svg>
+      `,
+      'clock-tower': `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="Illustration of Montreal Old Port Clock Tower and sailboat on the river">
+          <defs>
+            <linearGradient id="sky-ct" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0EA5E9"/>
+              <stop offset="72%" stop-color="#BAE6FD"/>
+              <stop offset="100%" stop-color="#FEF3C7"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#sky-ct)"/>
+          <!-- Sun & Soaring Seagulls -->
+          <circle cx="268" cy="28" r="14" fill="#FDE047"/>
+          <path d="M54 26 Q60 20 66 26 Q72 20 78 26 M202 32 Q207 27 212 32 Q217 27 222 32" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+          <!-- Iconic 1922 Sailors' Memorial Clock Tower -->
+          <g transform="translate(154, 86)">
+            <rect x="-20" y="-6" width="40" height="8" rx="1" fill="#CBD5E1"/>
+            <rect x="-14" y="-64" width="28" height="58" rx="1.5" fill="#FFFFFF" stroke="#64748B" stroke-width="1.3"/>
+            <!-- Green copper cap -->
+            <polygon points="-15,-64 0,-78 15,-64" fill="#10B981" stroke="#065F46" stroke-width="1.2"/>
+            <line x1="0" y1="-78" x2="0" y2="-84" stroke="#065F46" stroke-width="2"/>
+            <!-- Clock face -->
+            <circle cx="0" cy="-46" r="10" fill="#FEF3C7" stroke="#0F172A" stroke-width="1.6"/>
+            <path d="M0 -46 V-52 M0 -46 L5 -44" stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"/>
+            <!-- Arched windows -->
+            <rect x="-5" y="-28" width="10" height="12" rx="5" fill="#38BDF8"/>
+            <rect x="-6" y="-12" width="12" height="10" rx="2" fill="#475569"/>
+          </g>
+          <!-- Cute Sailboat on sparkling water -->
+          <g transform="translate(76, 86)">
+            <path d="M-20 0 H20 L14 10 H-14 Z" fill="#EF4444"/>
+            <line x1="0" y1="0" x2="0" y2="-26" stroke="#1E293B" stroke-width="2"/>
+            <polygon points="2,-24 18,-2 2,-2" fill="#FFFFFF"/>
+            <polygon points="-2,-19 -14,-2 -2,-2" fill="#FDE047"/>
+          </g>
+          <!-- St. Lawrence Waves -->
+          <rect x="0" y="88" width="320" height="24" fill="#0284C7"/>
+          <path d="M0 95 Q18 90 36 95 T72 95 T108 95 T144 95 T180 95 T216 95 T252 95 T288 95 T320 95" fill="none" stroke="#E0F2FE" stroke-width="2" opacity="0.85"/>
+        </svg>
+      `
+    };
+
+    function iconSvgHtml(spotId, size = 20) {
+      return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" class="shrink-0 block" aria-hidden="true">${ATTRACTION_ICONS[spotId] || ''}</svg>`;
+    }
+
+    // =========================================================================
+    // Rendering: Interactive SVG Map (Route + Illustrated Kid-Friendly Pins)
+    // =========================================================================
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    function svgEl(tag, attrs = {}) {
+      const el = document.createElementNS(SVG_NS, tag);
+      for (const [k, v] of Object.entries(attrs)) {
+        el.setAttribute(k, String(v));
+      }
+      return el;
+    }
+
+    function renderMap(schedule) {
+      const routeLayer = document.getElementById('routeLayer');
+      const pinsLayer = document.getElementById('pinsLayer');
+      routeLayer.innerHTML = '';
+      pinsLayer.innerHTML = '';
+
+      // 1. Draw walking route segments between consecutive active stops
+      for (let i = 0; i < schedule.items.length - 1; i++) {
+        const from = schedule.items[i].spot;
+        const to = schedule.items[i + 1].spot;
+        const walk = schedule.items[i + 1].walkFromPrev;
+
+        // Subtle curved path so overlapping legs stay readable
+        const mx = (from.x + to.x) / 2;
+        const my = (from.y + to.y) / 2;
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const curveOffset = Math.min(22, dist * 0.12) * (i % 2 === 0 ? -1 : 1);
+        const cx = mx + (-dy / dist) * curveOffset;
+        const cy = my + (dx / dist) * curveOffset;
+        const d = `M ${from.x} ${from.y} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${to.x} ${to.y}`;
+
+        // Outer halo
+        routeLayer.appendChild(svgEl('path', {
+          d,
+          fill: 'none',
+          stroke: 'var(--background)',
+          'stroke-width': 7,
+          'stroke-linecap': 'round',
+          opacity: 0.78
+        }));
+
+        // Animated primary dashed route
+        routeLayer.appendChild(svgEl('path', {
+          d,
+          fill: 'none',
+          stroke: 'var(--primary)',
+          'stroke-width': 3.4,
+          'stroke-linecap': 'round',
+          class: 'route-animated'
+        }));
+
+        // Midpoint walking-time pill
+        const lx = 0.25 * from.x + 0.5 * cx + 0.25 * to.x;
+        const ly = 0.25 * from.y + 0.5 * cy + 0.25 * to.y;
+        const pillG = svgEl('g', { transform: `translate(${lx.toFixed(1)}, ${ly.toFixed(1)})` });
+        pillG.appendChild(svgEl('rect', {
+          x: -22, y: -9, width: 44, height: 18, rx: 9,
+          fill: 'var(--card)',
+          stroke: 'var(--primary)',
+          'stroke-width': 1.1,
+          opacity: 0.96
+        }));
+        const label = svgEl('text', {
+          x: 0, y: 3.5,
+          'text-anchor': 'middle',
+          'font-size': 9.5,
+          'font-weight': 700,
+          fill: 'var(--foreground)'
+        });
+        label.textContent = `${walk.mins}m`;
+        pillG.appendChild(label);
+        routeLayer.appendChild(pillG);
+      }
+
+      // 2. Draw illustrated attraction pins (optional first, then active, then selected on top)
+      const orderMap = Object.fromEntries(schedule.items.map(it => [it.spot.id, it]));
+      const sortedSpots = [...ATTRACTIONS].sort((a, b) => {
+        if (a.id === state.selectedId) return 1;
+        if (b.id === state.selectedId) return -1;
+        const aIn = Boolean(orderMap[a.id]);
+        const bIn = Boolean(orderMap[b.id]);
+        return Number(aIn) - Number(bIn);
+      });
+
+      sortedSpots.forEach(spot => {
+        const schedItem = orderMap[spot.id];
+        const isInPlan = Boolean(schedItem);
+        const isSelected = spot.id === state.selectedId;
+        const isVisited = state.visitedIds.has(spot.id);
+        const visible = matchesFilter(spot);
+
+        const g = svgEl('g', {
+          class: 'pin-group',
+          transform: `translate(${spot.x}, ${spot.y})`,
+          opacity: visible ? 1 : 0.22,
+          tabindex: 0,
+          role: 'button',
+          'aria-label': `${spot.name} (${spot.sundayHoursText})`
+        });
+
+        // Pulse ring on selected attraction (non-interactive, outside scaled dot)
+        if (isSelected) {
+          g.appendChild(svgEl('circle', {
+            cx: 0, cy: 0, r: 21,
+            fill: 'none',
+            stroke: `var(${spot.colorVar})`,
+            'stroke-width': 3,
+            class: 'pin-pulse'
+          }));
+          g.appendChild(svgEl('circle', {
+            cx: 0, cy: 0, r: 25,
+            fill: `var(${spot.colorVar})`,
+            opacity: 0.16,
+            'pointer-events': 'none'
+          }));
+        }
+
+        // Inner group for hover scaling around local (0, 0) without clobbering parent translate
+        const dotG = svgEl('g', { class: 'pin-dot' });
+
+        // Main circular illustrated badge
+        const radius = isInPlan ? (isSelected ? 19.5 : 17.5) : (isSelected ? 16.5 : 14.5);
+        dotG.appendChild(svgEl('circle', {
+          cx: 0, cy: 0, r: radius,
+          fill: isInPlan ? `var(${spot.colorVar})` : 'var(--card)',
+          stroke: isSelected ? 'var(--foreground)' : (isInPlan ? 'var(--background)' : `var(${spot.colorVar})`),
+          'stroke-width': isSelected ? 3 : 2.2,
+          'stroke-dasharray': isInPlan ? 'none' : '3 2',
+          filter: 'url(#pinShadow)'
+        }));
+
+        // Subtle inner backdrop for optional pins so white icon elements stay crisp
+        if (!isInPlan) {
+          dotG.appendChild(svgEl('circle', {
+            cx: 0, cy: 0, r: radius - 3,
+            fill: `var(${spot.colorVar})`,
+            opacity: 0.72
+          }));
+        }
+
+        // Custom playful landmark pictogram inside pin
+        const iconSize = isInPlan ? 22 : 18;
+        const iconWrap = svgEl('g', {
+          transform: `translate(${-iconSize / 2}, ${-iconSize / 2}) scale(${(iconSize / 24).toFixed(3)})`,
+          'pointer-events': 'none'
+        });
+        iconWrap.innerHTML = ATTRACTION_ICONS[spot.id] || '';
+        dotG.appendChild(iconWrap);
+
+        // Corner stop-order number badge (or "+" for optional swaps)
+        const bx = -radius * 0.72;
+        const by = -radius * 0.72;
+        dotG.appendChild(svgEl('circle', {
+          cx: bx, cy: by, r: 7.5,
+          fill: isVisited ? 'var(--success)' : (isInPlan ? 'var(--foreground)' : 'var(--card)'),
+          stroke: 'var(--background)',
+          'stroke-width': 1.6
+        }));
+        const numText = svgEl('text', {
+          x: bx,
+          y: by + 3.4,
+          'text-anchor': 'middle',
+          'font-size': 9.5,
+          'font-weight': 900,
+          fill: isInPlan ? 'var(--background)' : `var(${spot.colorVar})`
+        });
+        numText.textContent = isInPlan ? (isVisited ? '✓' : String(schedItem.index)) : '+';
+        dotG.appendChild(numText);
+
+        // Warning dot if Sunday hours conflict
+        if (schedItem && (schedItem.hoursStatus === 'early' || schedItem.hoursStatus === 'closed')) {
+          dotG.appendChild(svgEl('circle', {
+            cx: radius * 0.74, cy: -radius * 0.74, r: 6.5,
+            fill: 'var(--warning)',
+            stroke: 'var(--background)',
+            'stroke-width': 1.5
+          }));
+          const bang = svgEl('text', {
+            x: radius * 0.74, y: -radius * 0.74 + 3.2,
+            'text-anchor': 'middle',
+            'font-size': 9,
+            'font-weight': 900,
+            fill: 'var(--background)'
+          });
+          bang.textContent = '!';
+          dotG.appendChild(bang);
+        }
+
+        g.appendChild(dotG);
+
+        // Compact readable label pill beneath or above pin
+        const labelAbove = ['notre-dame', 'museum-illusions', 'marche-bonsecours', 'beavertails-pjc'].includes(spot.id);
+        const ly = labelAbove ? -(radius + 14) : (radius + 15);
+        const shortTitle = spot.id === 'marche-bonsecours' ? 'Marché Bonsecours'
+          : spot.id === 'beavertails-pjc' ? 'BeaverTails & PJC'
+          : spot.id === 'notre-dame' ? 'Notre-Dame Basilica'
+          : spot.id === 'science-centre' ? 'Science Centre'
+          : spot.id === 'grande-roue' ? 'La Grande Roue'
+          : spot.id === 'pointe-a-calliere' ? 'Pointe-à-Callière'
+          : spot.id === 'museum-illusions' ? 'Museum of Illusions'
+          : spot.id === 'olive-gourmando' ? 'Olive & Gourmando'
+          : 'Clock Tower';
+
+        const pillW = shortTitle.length * 6.4 + 14;
+        g.appendChild(svgEl('rect', {
+          x: -pillW / 2,
+          y: ly - 10,
+          width: pillW,
+          height: 18,
+          rx: 5,
+          class: 'pin-label-pill',
+          fill: 'var(--card)',
+          'fill-opacity': isSelected ? 1 : 0.92,
+          stroke: isSelected ? `var(${spot.colorVar})` : 'var(--border)',
+          'stroke-width': isSelected ? 1.5 : 1
+        }));
+        const lbl = svgEl('text', {
+          x: 0,
+          y: ly + 2.5,
+          'text-anchor': 'middle',
+          'font-size': 10.5,
+          'font-weight': isSelected ? 700 : 600,
+          fill: 'var(--foreground)'
+        });
+        lbl.textContent = shortTitle;
+        g.appendChild(lbl);
+
+        // Interaction handlers
+        g.addEventListener('click', e => {
+          e.stopPropagation();
+          selectAttraction(spot.id);
+        });
+        g.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectAttraction(spot.id);
+          }
+        });
+        g.addEventListener('mouseenter', e => showTooltip(spot, schedItem, e));
+        g.addEventListener('mousemove', e => moveTooltip(e));
+        g.addEventListener('mouseleave', hideTooltip);
+
+        pinsLayer.appendChild(g);
+      });
+
+      applyMapTransform();
+    }
+
+    // =========================================================================
+    // Rendering: Selected Attraction Inspector Card (with Illustrated Banner)
+    // =========================================================================
+    function renderInspector(schedule) {
+      const spot = byId[state.selectedId];
+      const schedItem = schedule.items.find(it => it.spot.id === spot.id);
+      const isInPlan = Boolean(schedItem);
+      const idx = state.planIds.indexOf(spot.id);
+      const stay = state.durations[spot.id];
+      const isVisited = state.visitedIds.has(spot.id);
+
+      let statusPillHtml = '';
+      if (schedItem) {
+        if (schedItem.hoursStatus === 'open') {
+          statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold" style="background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success);">● Open at ${formatClock(schedItem.arrive)}</span>`;
+        } else {
+          statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold" style="background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning);">⚠ ${schedItem.hoursNote}</span>`;
+        }
+      } else {
+        statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">Optional Swap</span>`;
+      }
+
+      const card = document.getElementById('inspectorCard');
+      card.innerHTML = `
+        <!-- Illustrated Kid-Friendly Hero Scene -->
+        <div class="relative -mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl border-b border-[var(--card-border)] aspect-[320/106] max-h-[148px]">
+          ${ATTRACTION_SCENES[spot.id] || ''}
+          <div class="absolute top-2.5 left-3 flex items-center gap-1.5">
+            ${isInPlan ? `<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-extrabold shadow-sm" style="background: var(${spot.colorVar}); color: var(--background);">Stop #${schedItem.index}</span>` : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold shadow-sm bg-[var(--card)]/95 text-[var(--foreground)] border border-[var(--border)]">Optional Swap</span>`}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold shadow-sm bg-[var(--card)]/90 text-[var(--foreground)] border border-[var(--border)]">${spot.indoor ? 'Indoor / Warm' : 'Outdoor'}</span>
+          </div>
+          <a href="${spot.mapsUrl}" target="_blank" rel="noopener noreferrer"
+             class="absolute top-2.5 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold shadow-sm border border-[var(--border)] bg-[var(--card)]/95 hover:bg-[var(--secondary)] text-[var(--link)] transition-colors">
+            Maps ↗
+          </a>
+        </div>
+
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
+              <span class="text-xs font-semibold uppercase tracking-wide" style="color: var(${spot.colorVar});">${spot.categoryLabel}</span>
+              ${statusPillHtml}
+            </div>
+            <h2 class="text-base font-bold text-[var(--foreground)] leading-snug">${spot.name}</h2>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">${spot.address}</p>
+          </div>
+        </div>
+
+        <!-- Key Facts Grid -->
+        <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
+          <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg px-2.5 py-2">
+            <div class="text-[var(--muted-foreground)]">Sunday Hours</div>
+            <div class="font-semibold text-[var(--foreground)] mt-0.5">${spot.sundayHoursText}</div>
+          </div>
+          <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg px-2.5 py-2">
+            <div class="text-[var(--muted-foreground)]">Kids & Cost</div>
+            <div class="font-semibold text-[var(--foreground)] mt-0.5">${spot.ages}</div>
+            <div class="text-[var(--muted-foreground)] truncate" title="${spot.cost}">${spot.cost}</div>
+          </div>
+        </div>
+
+        <!-- Why Kids Love It + Parent Tip -->
+        <div class="mt-3 space-y-2 text-xs leading-relaxed">
+          <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg p-2.5">
+            <span class="font-bold text-[var(--foreground)]">Why kids love it:</span>
+            <span class="text-[var(--foreground)]"> ${spot.kidsLove}</span>
+          </div>
+          <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg p-2.5">
+            <span class="font-bold text-[var(--foreground)]">Parent & Stroller tip:</span>
+            <span class="text-[var(--muted-foreground)]"> ${spot.parentTip} (${spot.stroller}.)</span>
+          </div>
+        </div>
+
+        <!-- Interactive Controls: Toggle in Plan, Duration Stepper, Reorder, Mark Visited -->
+        <div class="mt-3 pt-3 border-t border-[var(--card-border)] flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5">
+            <button id="togglePlanBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors"
+              style="${isInPlan
+                ? 'background: var(--background); color: var(--error); border-color: color-mix(in srgb, var(--error) 40%, var(--border));'
+                : 'background: var(--primary); color: var(--primary-foreground); border-color: var(--primary);'}">
+              ${isInPlan ? 'Remove from Plan' : '+ Add to My Plan'}
+            </button>
+            ${isInPlan ? `
+              <button id="markVisitedBtn" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors"
+                style="${isVisited
+                  ? 'background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); border-color: color-mix(in srgb, var(--success) 40%, transparent);'
+                  : 'background: var(--background); color: var(--foreground); border-color: var(--border);'}">
+                ${isVisited ? '✓ Visited' : 'Mark Done'}
+              </button>
+            ` : ''}
+          </div>
+
+          ${isInPlan ? `
+            <div class="flex items-center gap-2">
+              <div class="inline-flex items-center border border-[var(--border)] rounded-lg bg-[var(--background)] overflow-hidden text-xs">
+                <button id="durMinusBtn" class="px-2 py-1 hover:bg-[var(--secondary)] font-bold" title="15 min less">−</button>
+                <span class="px-2 py-1 font-semibold tabular-nums">${stay}m</span>
+                <button id="durPlusBtn" class="px-2 py-1 hover:bg-[var(--secondary)] font-bold" title="15 min more">+</button>
+              </div>
+              <div class="inline-flex items-center border border-[var(--border)] rounded-lg bg-[var(--background)] overflow-hidden text-xs">
+                <button id="moveUpBtn" ${idx === 0 ? 'disabled' : ''} class="px-2 py-1 hover:bg-[var(--secondary)] disabled:opacity-35" title="Move earlier">↑</button>
+                <button id="moveDownBtn" ${idx === state.planIds.length - 1 ? 'disabled' : ''} class="px-2 py-1 hover:bg-[var(--secondary)] disabled:opacity-35 border-l border-[var(--border)]" title="Move later">↓</button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      // Bind inspector buttons
+      document.getElementById('togglePlanBtn').addEventListener('click', () => toggleStopInPlan(spot.id));
+      if (isInPlan) {
+        document.getElementById('markVisitedBtn').addEventListener('click', () => {
+          if (state.visitedIds.has(spot.id)) state.visitedIds.delete(spot.id);
+          else state.visitedIds.add(spot.id);
+          renderAll();
+        });
+        document.getElementById('durMinusBtn').addEventListener('click', () => {
+          state.durations[spot.id] = Math.max(15, state.durations[spot.id] - 15);
+          state.activePreset = null;
+          renderAll();
+        });
+        document.getElementById('durPlusBtn').addEventListener('click', () => {
+          state.durations[spot.id] = Math.min(150, state.durations[spot.id] + 15);
+          state.activePreset = null;
+          renderAll();
+        });
+        document.getElementById('moveUpBtn').addEventListener('click', () => moveStop(spot.id, -1));
+        document.getElementById('moveDownBtn').addEventListener('click', () => moveStop(spot.id, 1));
+      }
+    }
+
+    // =========================================================================
+    // Rendering: Chronological Timeline List (with Mini Illustrated Badges)
+    // =========================================================================
+    function renderTimeline(schedule) {
+      const list = document.getElementById('timelineList');
+      const countPill = document.getElementById('stopCountPill');
+      const toggleOptBtn = document.getElementById('toggleOptionalBtn');
+
+      const optionalSpots = ATTRACTIONS.filter(a => !state.planIds.includes(a.id));
+      countPill.textContent = `${schedule.items.length} stops`;
+      toggleOptBtn.textContent = state.showOptionalInList
+        ? `Hide optional (${optionalSpots.length})`
+        : `Show optional swaps (${optionalSpots.length})`;
+
+      let html = '';
+
+      if (schedule.items.length === 0) {
+        html += `<div class="p-4 text-xs text-[var(--muted-foreground)] text-center">No stops selected yet — click any pin on the map or pick a route preset above.</div>`;
+      }
+
+      schedule.items.forEach(item => {
+        const { spot, index, arrive, depart, stay, walkFromPrev, hoursStatus } = item;
+        const isSelected = spot.id === state.selectedId;
+        const isVisited = state.visitedIds.has(spot.id);
+
+        if (walkFromPrev) {
+          html += `
+            <div class="px-4 py-1.5 bg-[var(--background)]/60 flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
+              <span class="w-8 text-center font-mono">↓</span>
+              <span>Walk <strong>${walkFromPrev.mins} min</strong> (${walkFromPrev.meters} m)</span>
+            </div>
+          `;
+        }
+
+        html += `
+          <button data-stop-id="${spot.id}"
+            class="timeline-row w-full text-left px-4 py-2.5 flex items-center justify-between gap-2 transition-colors hover:bg-[var(--secondary)]/50 ${isSelected ? 'bg-[var(--secondary)]/80' : ''}">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="relative shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm"
+                style="background: var(${spot.colorVar}); opacity: ${isVisited ? 0.6 : 1};">
+                ${iconSvgHtml(spot.id, 19)}
+                <span class="absolute -top-1 -left-1 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-extrabold border border-[var(--card)]"
+                  style="background: ${isVisited ? 'var(--success)' : 'var(--foreground)'}; color: var(--background);">
+                  ${isVisited ? '✓' : index}
+                </span>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-[var(--foreground)] truncate ${isVisited ? 'line-through opacity-65' : ''}">${spot.name}</span>
+                  ${hoursStatus !== 'open' ? `<span class="text-xs font-bold" style="color: var(--warning);">⚠</span>` : ''}
+                </div>
+                <div class="text-xs text-[var(--muted-foreground)] tabular-nums">
+                  ${formatClock(arrive)} – ${formatClock(depart)} · ${stay} min · ${spot.indoor ? 'Indoor' : 'Outdoor'}
+                </div>
+              </div>
+            </div>
+            <span class="shrink-0 text-xs text-[var(--muted-foreground)]">›</span>
+          </button>
+        `;
+      });
+
+      if (state.showOptionalInList && optionalSpots.length > 0) {
+        html += `
+          <div class="px-4 py-1.5 bg-[var(--background)] text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+            Optional Swaps & Add-Ons
+          </div>
+        `;
+        optionalSpots.forEach(spot => {
+          const isSelected = spot.id === state.selectedId;
+          html += `
+            <button data-stop-id="${spot.id}"
+              class="timeline-row w-full text-left px-4 py-2.5 flex items-center justify-between gap-2 transition-colors hover:bg-[var(--secondary)]/50 ${isSelected ? 'bg-[var(--secondary)]/80' : ''}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="relative shrink-0 w-8 h-8 rounded-full flex items-center justify-center border-2 border-dashed"
+                  style="background: color-mix(in srgb, var(${spot.colorVar}) 75%, transparent); border-color: var(${spot.colorVar});">
+                  ${iconSvgHtml(spot.id, 17)}
+                  <span class="absolute -top-1 -left-1 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-extrabold bg-[var(--card)] border border-[var(--border)]"
+                    style="color: var(${spot.colorVar});">+</span>
+                </div>
+                <div class="min-w-0">
+                  <div class="text-xs font-semibold text-[var(--foreground)] truncate">${spot.name}</div>
+                  <div class="text-xs text-[var(--muted-foreground)]">${spot.sundayHoursText} · ${spot.ages}</div>
+                </div>
+              </div>
+              <span class="shrink-0 text-xs font-medium text-[var(--link)]">Inspect</span>
+            </button>
+          `;
+        });
+      }
+
+      list.innerHTML = html;
+
+      list.querySelectorAll('.timeline-row').forEach(btn => {
+        btn.addEventListener('click', () => selectAttraction(btn.dataset.stopId));
+      });
+    }
+
+    // =========================================================================
+    // User Actions
+    // =========================================================================
+    function selectAttraction(id) {
+      state.selectedId = id;
+      renderAll();
+    }
+
+    function toggleStopInPlan(id) {
+      const idx = state.planIds.indexOf(id);
+      if (idx >= 0) {
+        state.planIds.splice(idx, 1);
+      } else {
+        state.planIds.push(id);
+      }
+      state.activePreset = null;
+      renderAll();
+    }
+
+    function moveStop(id, delta) {
+      const idx = state.planIds.indexOf(id);
+      const next = idx + delta;
+      if (idx < 0 || next < 0 || next >= state.planIds.length) return;
+      const [removed] = state.planIds.splice(idx, 1);
+      state.planIds.splice(next, 0, removed);
+      state.activePreset = null;
+      renderAll();
+    }
+
+    function applyPreset(key) {
+      const preset = PRESETS[key];
+      if (!preset) return;
+      state.activePreset = key;
+      state.startTime = preset.startTime;
+      state.planIds = [...preset.ids];
+      state.selectedId = preset.ids[0];
+      ATTRACTIONS.forEach(a => { state.durations[a.id] = a.defaultDuration; });
+      renderAll();
+    }
+
+    // =========================================================================
+    // Tooltip + Map Pan & Zoom
+    // =========================================================================
+    const tooltipEl = document.getElementById('mapTooltip');
+    const mapContainer = document.getElementById('mapContainer');
+    const viewportGroup = document.getElementById('viewportGroup');
+
+    function showTooltip(spot, schedItem, evt) {
+      tooltipEl.innerHTML = `
+        <div class="flex items-center gap-2">
+          <div class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background: var(${spot.colorVar});">
+            ${iconSvgHtml(spot.id, 17)}
+          </div>
+          <div class="min-w-0">
+            <div class="font-bold text-[var(--foreground)] leading-tight">${spot.name}</div>
+            <div class="text-[var(--muted-foreground)] mt-0.5">${spot.sundayHoursText}</div>
+          </div>
+        </div>
+        <div class="mt-1 font-medium" style="color: var(${spot.colorVar});">
+          ${schedItem ? `Stop #${schedItem.index} · ${formatClock(schedItem.arrive)}` : 'Optional — click to inspect or add'}
+        </div>
+      `;
+      tooltipEl.classList.remove('hidden');
+      moveTooltip(evt);
+    }
+
+    function moveTooltip(evt) {
+      const rect = mapContainer.getBoundingClientRect();
+      let left = evt.clientX - rect.left + 14;
+      let top = evt.clientY - rect.top - 10;
+      if (left + 220 > rect.width) left = evt.clientX - rect.left - 224;
+      if (top + 74 > rect.height) top = rect.height - 80;
+      if (top < 6) top = 6;
+      tooltipEl.style.left = `${left}px`;
+      tooltipEl.style.top = `${top}px`;
+    }
+
+    function hideTooltip() {
+      tooltipEl.classList.add('hidden');
+    }
+
+    function applyMapTransform() {
+      // Scale around map center (420, 260)
+      const cx = 420;
+      const cy = 260;
+      const tx = state.panX + cx * (1 - state.zoom);
+      const ty = state.panY + cy * (1 - state.zoom);
+      viewportGroup.setAttribute('transform', `translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) scale(${state.zoom.toFixed(3)})`);
+    }
+
+    function clampPan() {
+      const maxX = 280 * state.zoom;
+      const maxY = 180 * state.zoom;
+      state.panX = Math.max(-maxX, Math.min(maxX, state.panX));
+      state.panY = Math.max(-maxY, Math.min(maxY, state.panY));
+    }
+
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let panOriginX = 0;
+    let panOriginY = 0;
+
+    mapContainer.addEventListener('pointerdown', e => {
+      if (e.target.closest('.pin-group')) return;
+      dragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      panOriginX = state.panX;
+      panOriginY = state.panY;
+      mapContainer.setPointerCapture(e.pointerId);
+    });
+
+    mapContainer.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const rect = mapContainer.getBoundingClientRect();
+      const scaleX = 840 / rect.width;
+      const scaleY = 520 / rect.height;
+      state.panX = panOriginX + (e.clientX - dragStartX) * scaleX;
+      state.panY = panOriginY + (e.clientY - dragStartY) * scaleY;
+      clampPan();
+      applyMapTransform();
+    });
+
+    mapContainer.addEventListener('pointerup', e => {
+      dragging = false;
+      try { mapContainer.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+
+    mapContainer.addEventListener('wheel', e => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.14 : 0.88;
+      state.zoom = Math.max(0.85, Math.min(2.4, state.zoom * factor));
+      clampPan();
+      applyMapTransform();
+    }, { passive: false });
+
+    // =========================================================================
+    // Wire Static Controls & Initial Render
+    // =========================================================================
+    document.getElementById('startTimeSelect').addEventListener('change', e => {
+      state.startTime = Number(e.target.value);
+      renderAll();
+    });
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.filter = btn.dataset.filter;
+        renderAll();
+      });
+    });
+
+    document.getElementById('toggleOptionalBtn').addEventListener('click', () => {
+      state.showOptionalInList = !state.showOptionalInList;
+      renderAll();
+    });
+
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+      state.zoom = Math.min(2.4, state.zoom * 1.2);
+      clampPan();
+      applyMapTransform();
+    });
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+      state.zoom = Math.max(0.85, state.zoom / 1.2);
+      clampPan();
+      applyMapTransform();
+    });
+    document.getElementById('zoomResetBtn').addEventListener('click', () => {
+      state.zoom = 1;
+      state.panX = 0;
+      state.panY = 0;
+      applyMapTransform();
+    });
+
+    // Persist progress on mobile so refreshing or locking screen keeps checkoffs
+    const STORAGE_KEY = 'old_montreal_sunday_walk_v1';
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          activePreset: state.activePreset,
+          startTime: state.startTime,
+          planIds: state.planIds,
+          durations: state.durations,
+          visitedIds: [...state.visitedIds],
+          selectedId: state.selectedId
+        }));
+      } catch (_) {}
+    }
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        if (Array.isArray(saved.planIds)) state.planIds = saved.planIds.filter(id => byId[id]);
+        if (typeof saved.startTime === 'number') state.startTime = saved.startTime;
+        if (saved.durations) Object.assign(state.durations, saved.durations);
+        if (Array.isArray(saved.visitedIds)) state.visitedIds = new Set(saved.visitedIds.filter(id => byId[id]));
+        if (saved.selectedId && byId[saved.selectedId]) state.selectedId = saved.selectedId;
+        state.activePreset = saved.activePreset ?? null;
+      } catch (_) {}
+    }
+
+    function renderAll() {
+      const schedule = computeSchedule();
+      renderHeader(schedule);
+      renderMap(schedule);
+      renderInspector(schedule);
+      renderTimeline(schedule);
+      saveState();
+    }
+
+    loadState();
+    renderAll();
+  </script>
+</body>
+</html>
