@@ -1,13 +1,13 @@
 {
-  "activePreset": "classic",
-  "startTime": 600,
+  "activePreset": null,
+  "startTime": 630,
   "planIds": [
-    "grande-roue",
-    "marche-bonsecours",
     "beavertails-pjc",
-    "science-centre",
+    "marche-bonsecours",
+    "grande-roue",
+    "pointe-a-calliere",
     "notre-dame",
-    "olive-gourmando"
+    "museum-illusions"
   ],
   "durations": {
     "grande-roue": 30,
