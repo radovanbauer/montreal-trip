@@ -281,6 +281,195 @@
     .thin-scroll::-webkit-scrollbar-track {
       background: transparent;
     }
+
+    /* Cloud Sync Controls & Token Modal */
+    .sync-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    .sync-save-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      height: 30px;
+      padding: 0 0.7rem;
+      border-radius: 0.5rem;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background-color: var(--background);
+      color: var(--foreground);
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+    .sync-save-btn:hover:not(:disabled) {
+      background-color: var(--secondary);
+    }
+    .sync-save-btn.is-dirty {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+    .sync-save-btn.is-dirty:hover:not(:disabled) {
+      opacity: 0.92;
+      background-color: var(--primary);
+    }
+    .sync-save-btn.is-saved {
+      background-color: color-mix(in srgb, var(--success) 16%, transparent);
+      color: var(--success);
+      border-color: color-mix(in srgb, var(--success) 40%, transparent);
+    }
+    .sync-save-btn.is-error {
+      background-color: color-mix(in srgb, var(--error) 14%, transparent);
+      color: var(--error);
+      border-color: color-mix(in srgb, var(--error) 40%, transparent);
+    }
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 9999px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .sync-icon-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      background-color: var(--background);
+      color: var(--muted-foreground);
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .sync-icon-btn:hover:not(:disabled) {
+      background-color: var(--secondary);
+      color: var(--foreground);
+    }
+    .sync-token-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      background-color: var(--success);
+    }
+    .sync-status-note {
+      font-size: 11px;
+      color: var(--muted-foreground);
+      white-space: nowrap;
+    }
+    .sync-status-note.is-error {
+      color: var(--error);
+      font-weight: 500;
+    }
+    .sync-status-note.is-warning {
+      color: var(--warning);
+      font-weight: 500;
+    }
+    .sync-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background-color: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(2px);
+    }
+    .sync-modal-backdrop.hidden {
+      display: none;
+    }
+    .sync-modal {
+      width: 100%;
+      max-width: 440px;
+      background-color: var(--card);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.125rem;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.28);
+    }
+    .sync-steps {
+      margin: 0.625rem 0 0.875rem 0;
+      padding-left: 1.15rem;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted-foreground);
+    }
+    .sync-steps li + li {
+      margin-top: 0.3rem;
+    }
+    .sync-input-wrap {
+      display: flex;
+      gap: 0.375rem;
+      margin-top: 0.375rem;
+    }
+    .sync-input {
+      flex: 1;
+      min-width: 0;
+      height: 36px;
+      padding: 0 0.65rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+    .sync-input:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: -1px;
+    }
+    .sync-modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
+    }
+    .sync-btn-primary {
+      height: 34px;
+      padding: 0 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+    .sync-btn-primary:hover {
+      opacity: 0.92;
+    }
+    .sync-btn-secondary {
+      height: 34px;
+      padding: 0 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background-color: var(--background);
+      color: var(--foreground);
+    }
+    .sync-btn-secondary:hover {
+      background-color: var(--secondary);
+    }
+    .sync-btn-danger {
+      height: 34px;
+      padding: 0 0.7rem;
+      border-radius: 0.5rem;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--error);
+    }
+    .sync-btn-danger:hover {
+      background-color: color-mix(in srgb, var(--error) 12%, transparent);
+    }
   </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
@@ -327,6 +516,29 @@
             <span class="text-[var(--muted-foreground)]">Walk:</span>
             <span id="metricWalk" class="font-bold tabular-nums ml-1">1.9 km · 30 min</span>
           </div>
+
+          <!-- GitHub Cloud Sync Controls -->
+          <div class="sync-controls">
+            <button id="syncSaveBtn" type="button" class="sync-save-btn" title="Save schedule to GitHub (Ctrl/Cmd+S)">
+              <span id="syncSaveDot" class="sync-dot hidden"></span>
+              <span id="syncSaveLabel">Save</span>
+            </button>
+            <button id="syncReloadBtn" type="button" class="sync-icon-btn" title="Reload latest saved schedule from GitHub" aria-label="Reload from GitHub">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+                <polyline points="21 3 21 9 15 9" />
+              </svg>
+            </button>
+            <button id="syncSettingsBtn" type="button" class="sync-icon-btn" title="GitHub Sync Token" aria-label="GitHub Sync Token">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="7.5" cy="15.5" r="4.5" />
+                <path d="m21 2-9.6 9.6" />
+                <path d="m15.5 7.5 3 3L22 7l-3-3" />
+              </svg>
+              <span id="syncTokenBadge" class="sync-token-badge hidden" title="GitHub token saved on this device"></span>
+            </button>
+          </div>
+          <span id="syncStatusNote" class="sync-status-note hidden"></span>
         </div>
       </div>
 
@@ -599,6 +811,39 @@
         </div>
       </div>
     </footer>
+  </div>
+
+  <!-- GitHub Sync Token Setup Modal -->
+  <div id="syncModalBackdrop" class="sync-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+    <div class="sync-modal">
+      <div class="flex items-center justify-between gap-2">
+        <h2 id="syncModalTitle" class="text-base font-bold text-[var(--foreground)]">Save Changes to GitHub</h2>
+        <button id="syncModalCloseBtn" type="button" class="sync-icon-btn" aria-label="Close">✕</button>
+      </div>
+      <p class="text-xs text-[var(--muted-foreground)] mt-1 leading-relaxed">
+        Schedule changes are saved to <code class="font-mono">plan.json</code> in <strong class="text-[var(--foreground)]">radovanbauer/montreal-trip</strong> so every device loads the latest plan automatically. Your token is stored only in this browser.
+      </p>
+      <ol class="sync-steps">
+        <li>
+          Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer" class="text-[var(--link)] hover:underline font-medium">GitHub → Fine-grained tokens ↗</a>
+        </li>
+        <li>Under <strong>Repository access</strong>, pick <strong>Only select repositories</strong> → <code class="font-mono">montreal-trip</code>.</li>
+        <li>Under <strong>Permissions → Contents</strong>, choose <strong>Read and write</strong>, generate, and paste below.</li>
+      </ol>
+      <label for="syncTokenInput" class="block text-xs font-semibold text-[var(--foreground)]">GitHub Personal Access Token</label>
+      <div class="sync-input-wrap">
+        <input id="syncTokenInput" type="password" class="sync-input" placeholder="github_pat_..." autocomplete="off" spellcheck="false" />
+        <button id="syncTokenRevealBtn" type="button" class="sync-btn-secondary">Show</button>
+      </div>
+      <p id="syncModalError" class="hidden text-xs mt-1" style="color: var(--error); font-weight: 500;"></p>
+      <div class="sync-modal-actions">
+        <button id="syncModalClearBtn" type="button" class="sync-btn-danger hidden">Remove Token</button>
+        <div class="flex items-center gap-2" style="margin-left: auto;">
+          <button id="syncModalCancelBtn" type="button" class="sync-btn-secondary">Cancel</button>
+          <button id="syncModalSaveBtn" type="button" class="sync-btn-primary">Save Token</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -2191,33 +2436,455 @@
       applyMapTransform();
     });
 
-    // Persist progress on mobile so refreshing or locking screen keeps checkoffs
+    // =========================================================================
+    // Local + GitHub Server-Side Persistence (plan.json in radovanbauer/montreal-trip)
+    // =========================================================================
     const STORAGE_KEY = 'old_montreal_sunday_walk_v1';
+    const SYNCED_SNAPSHOT_KEY = 'old_montreal_synced_snapshot_v1';
+    const GH_TOKEN_KEY = 'old_montreal_gh_token_v1';
+    const GH_OWNER = 'radovanbauer';
+    const GH_REPO = 'montreal-trip';
+    const GH_BRANCH = 'main';
+    const GH_FILE_PATH = 'plan.json';
+    const GH_CONTENTS_URL = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE_PATH}`;
+
+    const syncState = {
+      remoteSha: null,
+      lastSyncedJson: null,
+      hadLocalStorage: false,
+      saving: false,
+      loading: false,
+      justSaved: false,
+      justSavedTimer: null,
+      statusNote: '',
+      statusTone: '', // '', 'warning', 'error'
+      pendingSaveAfterToken: false
+    };
+
+    function getGitHubToken() {
+      try {
+        return (localStorage.getItem(GH_TOKEN_KEY) || '').trim();
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function setGitHubToken(token) {
+      try {
+        const clean = (token || '').trim();
+        if (clean) localStorage.setItem(GH_TOKEN_KEY, clean);
+        else localStorage.removeItem(GH_TOKEN_KEY);
+      } catch (_) {}
+    }
+
+    function getSchedulePayload(source = state) {
+      const durations = {};
+      ATTRACTIONS.forEach(a => {
+        const rawVal = source.durations ? Number(source.durations[a.id]) : NaN;
+        durations[a.id] = Number.isFinite(rawVal) && rawVal > 0 ? rawVal : a.defaultDuration;
+      });
+      const planIds = Array.isArray(source.planIds)
+        ? source.planIds.filter(id => byId[id])
+        : [...PRESETS.classic.ids];
+      const visitedList = source.visitedIds instanceof Set
+        ? [...source.visitedIds]
+        : (Array.isArray(source.visitedIds) ? source.visitedIds : []);
+      const visitedIds = [...new Set(visitedList.filter(id => byId[id]))].sort();
+      const startTime = typeof source.startTime === 'number' && Number.isFinite(source.startTime)
+        ? source.startTime
+        : 600;
+      return {
+        activePreset: source.activePreset ?? null,
+        startTime,
+        planIds,
+        durations,
+        visitedIds
+      };
+    }
+
+    function canonicalScheduleJson(payload = getSchedulePayload()) {
+      return JSON.stringify(payload);
+    }
+
+    function applySchedulePayload(saved) {
+      if (!saved || typeof saved !== 'object') return;
+      const normalized = getSchedulePayload(saved);
+      state.planIds = normalized.planIds;
+      state.startTime = normalized.startTime;
+      Object.assign(state.durations, normalized.durations);
+      state.visitedIds = new Set(normalized.visitedIds);
+      state.activePreset = normalized.activePreset;
+      if (saved.selectedId && byId[saved.selectedId]) {
+        state.selectedId = saved.selectedId;
+      } else if (state.planIds.length && !byId[state.selectedId]) {
+        state.selectedId = state.planIds[0];
+      }
+    }
+
+    function base64ToUtf8(b64) {
+      const clean = (b64 || '').replace(/\s+/g, '');
+      const binary = atob(clean);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function utf8ToBase64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      return btoa(binary);
+    }
+
+    function isScheduleDirty() {
+      if (syncState.lastSyncedJson === null) return false;
+      return canonicalScheduleJson() !== syncState.lastSyncedJson;
+    }
+
+    function setSyncStatus(note = '', tone = '') {
+      syncState.statusNote = note;
+      syncState.statusTone = tone;
+      updateSyncUI();
+    }
+
+    function flashSavedConfirmation(note = '') {
+      if (syncState.justSavedTimer) clearTimeout(syncState.justSavedTimer);
+      syncState.justSaved = true;
+      syncState.statusNote = note;
+      syncState.statusTone = '';
+      updateSyncUI();
+      syncState.justSavedTimer = setTimeout(() => {
+        syncState.justSaved = false;
+        if (syncState.statusNote === note) syncState.statusNote = '';
+        updateSyncUI();
+      }, 3000);
+    }
+
+    function updateSyncUI() {
+      const saveBtn = document.getElementById('syncSaveBtn');
+      const saveDot = document.getElementById('syncSaveDot');
+      const saveLabel = document.getElementById('syncSaveLabel');
+      const reloadBtn = document.getElementById('syncReloadBtn');
+      const tokenBadge = document.getElementById('syncTokenBadge');
+      const statusEl = document.getElementById('syncStatusNote');
+      if (!saveBtn) return;
+
+      const dirty = isScheduleDirty();
+      const hasToken = Boolean(getGitHubToken());
+
+      tokenBadge.classList.toggle('hidden', !hasToken);
+      saveBtn.classList.remove('is-dirty', 'is-saved', 'is-error');
+      saveBtn.disabled = syncState.saving;
+      reloadBtn.disabled = syncState.loading || syncState.saving;
+
+      if (syncState.saving) {
+        saveDot.classList.add('hidden');
+        saveLabel.textContent = 'Saving…';
+      } else if (syncState.statusTone === 'error') {
+        saveBtn.classList.add('is-error');
+        saveDot.classList.add('hidden');
+        saveLabel.textContent = 'Retry Save';
+      } else if (dirty) {
+        saveBtn.classList.add('is-dirty');
+        saveDot.classList.remove('hidden');
+        saveDot.style.backgroundColor = '#fde047';
+        saveLabel.textContent = 'Save';
+      } else if (syncState.justSaved) {
+        saveBtn.classList.add('is-saved');
+        saveDot.classList.add('hidden');
+        saveLabel.textContent = 'Saved ✓';
+      } else {
+        saveDot.classList.add('hidden');
+        saveLabel.textContent = 'Saved';
+      }
+
+      if (syncState.statusNote) {
+        statusEl.textContent = syncState.statusNote;
+        statusEl.classList.remove('hidden', 'is-error', 'is-warning');
+        if (syncState.statusTone === 'error') statusEl.classList.add('is-error');
+        else if (syncState.statusTone === 'warning') statusEl.classList.add('is-warning');
+      } else {
+        statusEl.textContent = '';
+        statusEl.classList.add('hidden');
+        statusEl.classList.remove('is-error', 'is-warning');
+      }
+    }
+
     function saveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          activePreset: state.activePreset,
-          startTime: state.startTime,
-          planIds: state.planIds,
-          durations: state.durations,
-          visitedIds: [...state.visitedIds],
+          ...getSchedulePayload(),
           selectedId: state.selectedId
         }));
       } catch (_) {}
+      updateSyncUI();
     }
+
     function loadState() {
       try {
+        const syncedRaw = localStorage.getItem(SYNCED_SNAPSHOT_KEY);
+        if (syncedRaw) syncState.lastSyncedJson = syncedRaw;
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
-        const saved = JSON.parse(raw);
-        if (Array.isArray(saved.planIds)) state.planIds = saved.planIds.filter(id => byId[id]);
-        if (typeof saved.startTime === 'number') state.startTime = saved.startTime;
-        if (saved.durations) Object.assign(state.durations, saved.durations);
-        if (Array.isArray(saved.visitedIds)) state.visitedIds = new Set(saved.visitedIds.filter(id => byId[id]));
-        if (saved.selectedId && byId[saved.selectedId]) state.selectedId = saved.selectedId;
-        state.activePreset = saved.activePreset ?? null;
+        syncState.hadLocalStorage = true;
+        applySchedulePayload(JSON.parse(raw));
       } catch (_) {}
     }
+
+    function buildGitHubHeaders(includeAuth = true) {
+      const headers = {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      };
+      const token = includeAuth ? getGitHubToken() : '';
+      if (token) headers.Authorization = `Bearer ${token}`;
+      return headers;
+    }
+
+    async function fetchRemoteFileFromApi() {
+      const res = await fetch(`${GH_CONTENTS_URL}?ref=${encodeURIComponent(GH_BRANCH)}`, {
+        headers: buildGitHubHeaders(true),
+        cache: 'no-store'
+      });
+      if (res.status === 404) return { missing: true, sha: null, data: null };
+      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+      const json = await res.json();
+      const decoded = JSON.parse(base64ToUtf8(json.content));
+      return { missing: false, sha: json.sha || null, data: decoded };
+    }
+
+    async function fetchRemoteFileFallback() {
+      const res = await fetch(`./${GH_FILE_PATH}?t=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Static fetch ${res.status}`);
+      const decoded = await res.json();
+      return { missing: false, sha: null, data: decoded };
+    }
+
+    async function loadRemotePlan({ force = false } = {}) {
+      if (syncState.loading) return;
+      syncState.loading = true;
+      if (force) setSyncStatus('Loading…', '');
+      else updateSyncUI();
+
+      try {
+        let remote;
+        try {
+          remote = await fetchRemoteFileFromApi();
+        } catch (_) {
+          remote = await fetchRemoteFileFallback();
+        }
+
+        if (remote.missing || !remote.data) {
+          syncState.remoteSha = null;
+          if (syncState.lastSyncedJson === null) {
+            syncState.lastSyncedJson = canonicalScheduleJson();
+          }
+          if (force) setSyncStatus('No saved plan on GitHub yet', 'warning');
+          return;
+        }
+
+        syncState.remoteSha = remote.sha;
+        const remotePayload = getSchedulePayload(remote.data);
+        const remoteCanonical = canonicalScheduleJson(remotePayload);
+        const localCanonical = canonicalScheduleJson();
+        const hadUnsavedLocal = syncState.hadLocalStorage && (
+          syncState.lastSyncedJson !== null
+            ? localCanonical !== syncState.lastSyncedJson
+            : localCanonical !== remoteCanonical
+        );
+
+        if (force || !hadUnsavedLocal) {
+          applySchedulePayload(remotePayload);
+          syncState.lastSyncedJson = remoteCanonical;
+          try { localStorage.setItem(SYNCED_SNAPSHOT_KEY, remoteCanonical); } catch (_) {}
+          renderAll();
+          if (force) flashSavedConfirmation('Loaded latest');
+          else setSyncStatus('', '');
+        } else {
+          // Preserve user's unsaved local edits while updating the baseline to remote
+          syncState.lastSyncedJson = remoteCanonical;
+          try { localStorage.setItem(SYNCED_SNAPSHOT_KEY, remoteCanonical); } catch (_) {}
+          if (localCanonical !== remoteCanonical) {
+            setSyncStatus('Unsaved local changes', 'warning');
+          } else {
+            setSyncStatus('', '');
+          }
+        }
+      } catch (err) {
+        if (force) setSyncStatus('Could not reach GitHub', 'error');
+      } finally {
+        syncState.loading = false;
+        updateSyncUI();
+      }
+    }
+
+    async function putPlanToGitHub(prettyJson, sha, token) {
+      const body = {
+        message: 'Update Old Montreal walk schedule',
+        content: utf8ToBase64(prettyJson),
+        branch: GH_BRANCH
+      };
+      if (sha) body.sha = sha;
+
+      return fetch(GH_CONTENTS_URL, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+    }
+
+    async function saveRemotePlan() {
+      if (syncState.saving) return;
+      const token = getGitHubToken();
+      if (!token) {
+        syncState.pendingSaveAfterToken = true;
+        openSyncModal();
+        return;
+      }
+
+      const payload = getSchedulePayload();
+      const canonical = canonicalScheduleJson(payload);
+      if (syncState.lastSyncedJson === canonical && syncState.remoteSha) {
+        flashSavedConfirmation();
+        return;
+      }
+
+      syncState.saving = true;
+      setSyncStatus('', '');
+
+      try {
+        let sha = syncState.remoteSha;
+        if (!sha) {
+          try {
+            const meta = await fetchRemoteFileFromApi();
+            sha = meta.sha;
+          } catch (_) {
+            sha = null;
+          }
+        }
+
+        const prettyJson = JSON.stringify(payload, null, 2) + '\n';
+        let res = await putPlanToGitHub(prettyJson, sha, token);
+
+        // Retry once if another device updated plan.json in between (stale sha)
+        if (res.status === 409 || res.status === 422) {
+          const freshMeta = await fetchRemoteFileFromApi();
+          sha = freshMeta.sha;
+          res = await putPlanToGitHub(prettyJson, sha, token);
+        }
+
+        if (res.status === 401 || res.status === 403) {
+          syncState.saving = false;
+          setSyncStatus('Token rejected', 'error');
+          syncState.pendingSaveAfterToken = true;
+          openSyncModal('Token was rejected (401/403). Make sure it has Contents: Read & Write permission for radovanbauer/montreal-trip.');
+          return;
+        }
+
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(errBody.message || `HTTP ${res.status}`);
+        }
+
+        const result = await res.json();
+        syncState.remoteSha = result.content && result.content.sha ? result.content.sha : sha;
+        syncState.lastSyncedJson = canonical;
+        try { localStorage.setItem(SYNCED_SNAPSHOT_KEY, canonical); } catch (_) {}
+        syncState.saving = false;
+        flashSavedConfirmation();
+      } catch (err) {
+        syncState.saving = false;
+        setSyncStatus(`Save failed: ${err.message}`, 'error');
+      }
+    }
+
+    // Token Setup Modal Controls
+    const syncModalBackdrop = document.getElementById('syncModalBackdrop');
+    const syncTokenInput = document.getElementById('syncTokenInput');
+    const syncTokenRevealBtn = document.getElementById('syncTokenRevealBtn');
+    const syncModalError = document.getElementById('syncModalError');
+    const syncModalClearBtn = document.getElementById('syncModalClearBtn');
+    const syncModalSaveBtn = document.getElementById('syncModalSaveBtn');
+
+    function openSyncModal(errorMsg = '') {
+      const existing = getGitHubToken();
+      syncTokenInput.value = existing;
+      syncTokenInput.type = 'password';
+      syncTokenRevealBtn.textContent = 'Show';
+      syncModalClearBtn.classList.toggle('hidden', !existing);
+      syncModalSaveBtn.textContent = syncState.pendingSaveAfterToken ? 'Save Token & Sync' : 'Save Token';
+      if (errorMsg) {
+        syncModalError.textContent = errorMsg;
+        syncModalError.classList.remove('hidden');
+      } else {
+        syncModalError.textContent = '';
+        syncModalError.classList.add('hidden');
+      }
+      syncModalBackdrop.classList.remove('hidden');
+      setTimeout(() => syncTokenInput.focus(), 20);
+    }
+
+    function closeSyncModal() {
+      syncState.pendingSaveAfterToken = false;
+      syncModalBackdrop.classList.add('hidden');
+    }
+
+    function submitSyncToken() {
+      const token = syncTokenInput.value.trim();
+      if (!token) {
+        syncModalError.textContent = 'Please paste a GitHub Personal Access Token first.';
+        syncModalError.classList.remove('hidden');
+        syncTokenInput.focus();
+        return;
+      }
+      setGitHubToken(token);
+      const shouldSave = syncState.pendingSaveAfterToken;
+      closeSyncModal();
+      updateSyncUI();
+      if (shouldSave) saveRemotePlan();
+    }
+
+    document.getElementById('syncSaveBtn').addEventListener('click', () => saveRemotePlan());
+    document.getElementById('syncReloadBtn').addEventListener('click', () => loadRemotePlan({ force: true }));
+    document.getElementById('syncSettingsBtn').addEventListener('click', () => {
+      syncState.pendingSaveAfterToken = false;
+      openSyncModal();
+    });
+    document.getElementById('syncModalCloseBtn').addEventListener('click', closeSyncModal);
+    document.getElementById('syncModalCancelBtn').addEventListener('click', closeSyncModal);
+    syncModalSaveBtn.addEventListener('click', submitSyncToken);
+    syncModalClearBtn.addEventListener('click', () => {
+      setGitHubToken('');
+      closeSyncModal();
+      setSyncStatus('Token removed', '');
+    });
+    syncTokenRevealBtn.addEventListener('click', () => {
+      const isHidden = syncTokenInput.type === 'password';
+      syncTokenInput.type = isHidden ? 'text' : 'password';
+      syncTokenRevealBtn.textContent = isHidden ? 'Hide' : 'Show';
+    });
+    syncTokenInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitSyncToken();
+      }
+    });
+    syncModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === syncModalBackdrop) closeSyncModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !syncModalBackdrop.classList.contains('hidden')) {
+        closeSyncModal();
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveRemotePlan();
+      }
+    });
 
     function renderAll() {
       const schedule = computeSchedule();
@@ -2230,6 +2897,7 @@
 
     loadState();
     renderAll();
+    loadRemotePlan({ force: false });
   </script>
 </body>
 </html>

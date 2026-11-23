@@ -1,0 +1,24 @@
+{
+  "activePreset": "classic",
+  "startTime": 600,
+  "planIds": [
+    "grande-roue",
+    "marche-bonsecours",
+    "beavertails-pjc",
+    "science-centre",
+    "notre-dame",
+    "olive-gourmando"
+  ],
+  "durations": {
+    "grande-roue": 30,
+    "marche-bonsecours": 20,
+    "beavertails-pjc": 20,
+    "science-centre": 70,
+    "notre-dame": 30,
+    "olive-gourmando": 30,
+    "pointe-a-calliere": 70,
+    "museum-illusions": 45,
+    "clock-tower": 20
+  },
+  "visitedIds": []
+}
