@@ -744,6 +744,44 @@
         font-size: 13.5px;
       }
     }
+
+    /* Place Overview & Interesting Facts */
+    .place-overview {
+      margin-top: 0.6rem;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--foreground);
+    }
+    .facts-card {
+      margin-top: 0.65rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 0.5rem;
+      background-color: var(--background);
+      border: 1px solid var(--card-border);
+      border-left-width: 3px;
+    }
+    .facts-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .fact-list {
+      margin: 0;
+      padding-left: 1rem;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--foreground);
+    }
+    .fact-list li + li {
+      margin-top: 0.3rem;
+    }
+    @media (max-width: 767px) {
+      .place-overview { font-size: 14px; }
+      .facts-title { font-size: 12px; }
+      .fact-list { font-size: 13.5px; }
+    }
   </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
@@ -4067,6 +4105,305 @@
     }
 
     // =========================================================================
+    // Place Overviews & Interesting Facts (Pocket Guide for All 36 Stops)
+    // =========================================================================
+    const PLACE_GUIDES = {
+      // --- Day 1: Old Montréal ---
+      'grande-roue': {
+        overview: 'Rising right beside the Bonsecours Basin in the Old Port, La Grande Roue de Montréal is Canada’s tallest observation wheel. Built for Montréal’s 375th anniversary in 2017, its enclosed, climate-controlled glass gondolas offer smooth 360-degree views across Old Montréal, Mount Royal, and the St. Lawrence River.',
+        facts: [
+          'At 60 meters (nearly 20 stories) tall, on a clear day you can see up to 28 km across the St. Lawrence toward the Montérégie hills.',
+          'Each of its 42 gondolas is heated in winter and air-conditioned in summer—engineered specifically for Montréal’s four-season climate.',
+          'Its steel structure was manufactured in the Netherlands by Dutch Wheels, one of the world’s premier Ferris wheel builders.'
+        ]
+      },
+      'marche-bonsecours': {
+        overview: 'Crowned by an unmistakable shimmering silver dome, Marché Bonsecours is one of Canada’s finest examples of neoclassical architecture. Opened in 1847 as Montréal’s central public market, today its airy, sun-lit halls house Québécois artisan boutiques, galleries, and cafés.',
+        facts: [
+          'In 1849, after rioters burned Montréal’s Parliament building, Marché Bonsecours briefly served as the Parliament of the Province of Canada.',
+          'From 1852 to 1878, the building doubled as Montréal’s City Hall and even hosted grand banquets and concert halls upstairs.',
+          'The portico’s six cast-iron Doric columns were imported from England, and the dome’s original tin roof inspired its gleaming modern silver sheen.'
+        ]
+      },
+      'beavertails-pjc': {
+        overview: 'Place Jacques-Cartier is Old Montréal’s liveliest sloping cobblestone plaza, linking City Hall down to the Old Port waterfront. At its lively corner sits BeaverTails (Queues de Castor), serving Canada’s iconic hand-stretched fried dough pastries hot off the griddle.',
+        facts: [
+          'Place Jacques-Cartier began in 1804 as a bustling public produce and livestock market after the historic Château de Vaudreuil burned down.',
+          'At the top of the square stands Nelson’s Column (1809)—one of the oldest monuments in Montréal, predating London’s Trafalgar Square column by over 30 years.',
+          'BeaverTails started in 1978 in Killaloe, Ontario from a family recipe, and became so famous that Barack Obama famously stopped for one during a 2009 Ottawa visit.'
+        ]
+      },
+      'science-centre': {
+        overview: 'Occupying the sprawling King Edward Pier right over the St. Lawrence River, the Montréal Science Centre is a hands-on discovery complex dedicated to physics, engineering, human biology, and technology—alongside a towering seven-story IMAX theatre.',
+        facts: [
+          'The centre sits on a former 1900s shipping shed pier that once handled grain and cargo arriving from the Atlantic Ocean.',
+          'Its permanent galleries like Explore and Fabrik encourage kids to build real flying contraptions, roller coasters, and water circuits rather than just reading plaques.',
+          'The IMAX TELUS screen uses dual laser projection and stands roughly seven stories high, wrapping almost your entire field of vision.'
+        ]
+      },
+      'notre-dame': {
+        overview: 'Facing Place d’Armes, Notre-Dame Basilica is a masterpiece of Gothic Revival architecture whose quiet gray limestone facade conceals one of the most dazzling interiors in North America: a deep celestial blue vault studded with 24-karat gold stars and intricately carved wood.',
+        facts: [
+          'Designed by Irish-American architect James O’Donnell (1824–1829), he loved the basilica so much he converted to Catholicism so he could be buried in its crypt.',
+          'Its legendary Casavant Frères pipe organ, built in 1891, has 7,000 individual pipes—some as tall as a three-story building and others smaller than a pencil.',
+          'Unlike traditional stained glass depicting only biblical scenes, Notre-Dame’s windows illustrate Montréal’s own founding and religious history.'
+        ]
+      },
+      'olive-gourmando': {
+        overview: 'A beloved Old Montréal institution on historic Rue Saint-Paul, Olive et Gourmando is a bustling artisan bakery and café famous across Canada for its crusty sourdough loaves, towering brioche pastries, and decadent pressed paninis.',
+        facts: [
+          'Opened in 1998 in a restored 19th-century stone warehouse, it helped spark Old Montréal’s modern culinary renaissance.',
+          'Its signature “Cubain” panini and giant chocolate-chunk brioche (“Poached Egg” & “World Peace” cookies) regularly draw queues down the block.',
+          'Every pastry and bread loaf is baked fresh on-site daily using Québec butter, flour, and seasonal local ingredients.'
+        ]
+      },
+      'pointe-a-calliere': {
+        overview: 'Built directly over the exact triangle of land where Montréal was founded in 1642, Pointe-à-Callière is an acclaimed archaeology and history museum where visitors literally descend underground to walk among 380 years of real excavated stone foundations.',
+        facts: [
+          'You can walk inside the actual 1832 William Collector Sewer—an illuminated underground stone vault beneath Place d’Youville where the Little St. Pierre River once flowed.',
+          'Archaeologists unearthed Montréal’s very first Catholic cemetery, Fort Ville-Marie’s foundations, and Indigenous artifacts dating back more than 1,000 years right beneath the museum floor.',
+          'The triangular headland is named after Louis-Hector de Callière, a 17th-century governor of Montréal who negotiated the historic Great Peace of 1701 with 39 First Nations.'
+        ]
+      },
+      'museum-illusions': {
+        overview: 'Tucked along Rue Saint-Antoine right beside Place-d’Armes, the Museum of Illusions is a playful indoor gallery of visual tricks, perspective rooms, holograms, and brain-teasing installations designed to show how easily our eyes and brains can be fooled.',
+        facts: [
+          'The Ames Room uses carefully skewed trapezoidal walls and floors so two people standing side by side look like a giant and a miniature person in photos.',
+          'The Vortex Tunnel’s walkway stays completely flat and stationary—the rotating cylinder of lights around you simply tricks your inner ear’s sense of balance.',
+          'Part of an international network founded in Zagreb in 2015, the Montréal location was Canada’s second outpost.'
+        ]
+      },
+      'clock-tower': {
+        overview: 'Standing proudly at the eastern tip of the Old Port on Quai de l’Horloge, the gleaming white Art Deco Clock Tower looks out over the St. Lawrence River, Île Sainte-Hélène, and the sweep of the Jacques-Cartier Bridge.',
+        facts: [
+          'Completed in 1922 as the Sailors’ Memorial Tower, it honors Canadian merchant mariners lost during World War I.',
+          'Its precision clock mechanism was crafted by Gillett & Johnston in England—the same renowned firm that built the carillon for Ottawa’s Peace Tower—and mirrors Big Ben’s design.',
+          'The tower stands 45 meters tall with 192 interior steps leading up to the observation deck (open during summer months).'
+        ]
+      },
+
+      // --- Day 2: Mon Nov 23 (Île Sainte-Hélène & Gare Centrale) ---
+      'biosphere-ext': {
+        overview: 'An unmistakable symbol of Montréal’s skyline, the Biosphère is the monumental steel geodesic dome designed by visionary architect Buckminster Fuller as the United States Pavilion for Expo 67. Today it houses North America’s only museum dedicated to the environment, surrounded by scenic island walkways.',
+        facts: [
+          'The dome spans 76 meters (250 ft) in diameter and rises 62 meters (200 ft) high—built from thousands of interconnected steel triangles that distribute weight without any interior columns.',
+          'In 1976, a fire melted away the dome’s original transparent acrylic outer skin in just 20 minutes, leaving behind the iconic open steel lattice you see today.',
+          'During Expo 67, an elevated mini-rail train actually glided right through the middle of the sphere past Apollo space capsules and giant pop-art murals.'
+        ]
+      },
+      'calder-sculpture': {
+        overview: 'Rising from the open esplanade of Espace 67, Alexander Calder’s monumental stainless-steel sculpture “Trois Disques” (also known as “Man” or “L’Homme”) is one of the grandest public artworks left behind from Expo 67, framing sweeping views of downtown Montréal across the river.',
+        facts: [
+          'Standing 21.3 meters (67 feet) tall and weighing over 46 metric tons, it is one of the largest “stabile” sculptures Alexander Calder ever created.',
+          'Commissioned by the International Nickel Company of Canada for Expo 67, it was fabricated in France using nickel-alloy stainless steel so it would resist Montréal’s harsh winters.',
+          'The sculpture’s title echoed Expo 67’s official theme, “Man and His World” (Terre des Hommes), inspired by Antoine de Saint-Exupéry’s 1939 memoir.'
+        ]
+      },
+      'tour-de-levis': {
+        overview: 'Set atop Mount Boullé—the quiet wooded hill at the heart of Île Sainte-Hélène—Tour de Lévis is a handsome gray limestone tower surrounded by tranquil forest paths and wildlife viewing spots, offering a peaceful nature escape just minutes from downtown.',
+        facts: [
+          'Built in 1937 during a Great Depression public-works project, the medieval-looking tower was cleverly designed to disguise a 500,000-gallon municipal water tank inside!',
+          'It is named after François-Gaston de Lévis, the French general who led the last French military victory in New France at the Battle of Sainte-Foy in 1760.',
+          'Parc Jean-Drapeau maintains birdfeeders along the surrounding wooded trails, making black-capped chickadees and white-breasted nuthatches surprisingly bold and easy to spot.'
+        ]
+      },
+      'fort-ste-helene': {
+        overview: 'Built on the northern bluff of Île Sainte-Hélène, the Old Fort (Fort de l’Île Sainte-Hélène) is a real 19th-century British stone citadel overlooking the St. Lawrence shipping channel, paired with one of the best free panoramic lookouts of Old Montréal’s skyline.',
+        facts: [
+          'Constructed between 1820 and 1824 by the British military after the War of 1812, it was designed as an arsenal and defense post to guard Montréal’s port from river attacks.',
+          'During World War II, the fortress briefly served as an internment camp for Italian and German prisoners of war before becoming a historic park.',
+          'The island itself was named by Samuel de Champlain in 1611 in honor of his wife, Hélène Boullé.'
+        ]
+      },
+      'espace67-river': {
+        overview: 'Stretching along the western edge of Île Sainte-Hélène, Promenade du Fleuve and the Espace 67 amphitheatre put you right at river level facing Old Montréal and the famous stacked concrete cubes of Habitat 67 across the shipping channel.',
+        facts: [
+          'Habitat 67—visible directly across the water—was designed by architect Moshe Safdie as his 23-year-old McGill University master’s thesis for Expo 67, using 354 prefabricated concrete modules.',
+          'The St. Lawrence River rushing past here forms the powerful Sainte-Marie Current, which historically forced early explorers to stop and unload ships at Montréal.',
+          'Much of the western shoreline was reshaped using millions of tons of excavated rock dug out while building the Montréal Metro in the 1960s.'
+        ]
+      },
+      'cosmos-bridge': {
+        overview: 'Pont du Cosmos is a graceful pedestrian footbridge spanning the Le Moyne Channel between Île Sainte-Hélène and man-made Île Notre-Dame, connecting park walkers to Expo 67’s surviving pavilions and the Formula 1 Circuit Gilles-Villeneuve.',
+        facts: [
+          'Île Notre-Dame didn’t exist before 1965—it was built completely from scratch in just 10 months using 15 million tons of rock excavated from the Montréal Metro tunnels!',
+          'The dramatic glass-and-lattice Casino de Montréal visible across the channel originally opened as the French and Québec Pavilions for Expo 67.',
+          'The Olympic Basin on Île Notre-Dame was purpose-built for the 1976 Montréal Summer Olympics rowing events and still hosts international regattas.'
+        ]
+      },
+      'marche-artisans': {
+        overview: 'Tucked on the ground floor of the iconic Fairmont The Queen Elizabeth hotel directly above Gare Centrale, Marché Artisans is a gourmet European-style urban food market showcasing Montréal bakers, cheesemakers, pizza ovens, and hot lunch counters.',
+        facts: [
+          'The Fairmont Queen Elizabeth hotel directly upstairs is famous for hosting John Lennon and Yoko Ono’s 1969 “Bed-In for Peace” in Suite 1742, where they recorded “Give Peace a Chance.”',
+          'Because the hotel was built straight over the railway tracks in 1958, you can take an indoor elevator directly from Marché Artisans into Gare Centrale’s train concourse.',
+          'Its open kitchens produce fresh artisanal sourdough, house-made gelato, wood-style pizza, and Québec maple pastries every day.'
+        ]
+      },
+      'cathcart-pvm': {
+        overview: 'Located beneath the sunlit glass pavilion of Place Ville Marie, Le Cathcart is a lively downtown Montréal food hall featuring curated stalls from local chefs, seamlessly connected to Gare Centrale via the city’s famous underground pedestrian network.',
+        facts: [
+          'Place Ville Marie’s iconic 1962 cruciform skyscraper—designed by I.M. Pei and Henry Cobb—launched Montréal’s RESO Underground City, now over 32 km of indoor walkways.',
+          'From the rooftop of Place Ville Marie, a rotating four-beam beacon sweeps across Montréal’s night sky every evening and can be seen up to 50 km away.',
+          'The food hall is named after nearby Rue Cathcart, itself named after Earl Cathcart, Governor General of British North America in 1846.'
+        ]
+      },
+      'gare-centrale': {
+        overview: 'Montréal’s grand Central Station (Gare Centrale) is a bustling Art Deco railway landmark linking downtown directly to VIA Rail’s Québec City–Windsor Corridor. Its soaring main concourse sits right above the subterranean rail platforms.',
+        facts: [
+          'Opened in 1943 by Canadian National Railway, its main hall features massive carved limestone Art Deco bas-reliefs by Canadian artist Charles Comfort celebrating Canadian life, industry, and travel.',
+          'Gare Centrale is one of the busiest passenger rail hubs in Canada and sits at the very center of Montréal’s indoor Underground City (RESO).',
+          'Your VIA Rail journey to Québec City follows the St. Lawrence Lowlands for ~250 km and rolls straight into Québec’s historic château-style Gare du Palais in about 3h 15m.'
+        ]
+      },
+
+      // --- Days 3–6: Québec City ---
+      'chateau-dufferin': {
+        overview: 'Perched high atop Cap Diamant, Fairmont Le Château Frontenac and the wide wooden Terrasse Dufferin boardwalk form the unmistakable heart of Old Québec—combining fairytale château turrets with sweeping views over the St. Lawrence River and Lower Town below.',
+        facts: [
+          'Opened in 1893 by the Canadian Pacific Railway to encourage luxury rail tourism, Château Frontenac is widely cited as the most photographed hotel in the world.',
+          'During World War II, Winston Churchill and Franklin D. Roosevelt met inside the Château for the historic 1943 and 1944 Québec Conferences to plan D-Day and Allied strategy.',
+          'Beneath Terrasse Dufferin’s wooden planks lie the excavated archaeological ruins of Fort Saint-Louis—the official residence of New France’s governors from 1620 to 1834.'
+        ]
+      },
+      'funiculaire-qc': {
+        overview: 'Operating continuously since 1879, the Funiculaire du Vieux-Québec is North America’s only surviving cliffside funicular of its kind, whisking passengers smoothly up and down the steep 59-meter Cap Diamant cliff between Terrasse Dufferin and Quartier Petit-Champlain.',
+        facts: [
+          'The twin glass-walled cabins climb a dramatic 45-degree incline along a 64-meter track in less than a minute.',
+          'When it first opened in 1879, it was originally powered by a steam-and-water ballast system before converting to electricity in 1907.',
+          'Its lower station is housed inside the historic 1683 Maison Louis-Jolliet—the former home of the Québec-born explorer who mapped the Mississippi River!'
+        ]
+      },
+      'petit-champlain': {
+        overview: 'Nestled at the foot of Cap Diamant in Lower Town, Quartier Petit-Champlain is one of North America’s oldest and most enchanting pedestrian shopping districts—a narrow cobblestone lane lined with 17th- and 18th-century stone houses, artisan shops, and glowing seasonal lights.',
+        facts: [
+          'Dating back to the 1600s, Rue du Petit-Champlain started as a bustling riverside trade street for fur trappers, sailors, and craftsmen landing at the port.',
+          'Look up near the northern end for “Escalier Casse-Cou” (Breakneck Stairs), Québec City’s oldest stairway (built in 1635) connecting Lower Town up to the cliff.',
+          'Its famous Petit-Champlain Fresco mural (at 102 Rue du Petit-Champlain) depicts dramatic moments of working-class life along the waterfront, including rockslides and winter ice jams.'
+        ]
+      },
+      'place-royale-qc': {
+        overview: 'Ringed by steep-roofed Norman-style stone buildings and the charming Notre-Dame-des-Victoires Church, Place Royale is the historic square where Samuel de Champlain founded Québec City in 1608—marking the birthplace of French civilization in North America.',
+        facts: [
+          'Notre-Dame-des-Victoires (begun in 1688) is the oldest standing stone church in North America, built right over the stone foundations of Champlain’s original “Habitation.”',
+          'Just steps away, the massive 420-square-meter Fresque des Québécois mural (1999) uses trompe-l’œil optical illusions to weave 400 years of Québec history and 15+ famous figures across four seasons.',
+          'The square was named “Place Royale” in 1686 when a bust of France’s Sun King, Louis XIV, was installed in its center.'
+        ]
+      },
+      'cochon-dingue': {
+        overview: 'A cherished Québec City dining tradition since 1979, Le Cochon Dingue (“The Crazy Pig”) brings cheerful Parisian-style bistro warmth together with classic Québécois comfort food right in the heart of Quartier Petit-Champlain.',
+        facts: [
+          'Founded in 1979 on Boulevard Champlain, its playful name and whimsical pig-themed artwork have made it a multi-generational favorite for visiting families.',
+          'It is famous locally for its slow-braised ribs, crispy frites, and traditional Québécois “tarte au sucre” (warm maple-brown-sugar pie).',
+          'The restaurant occupies a historic 19th-century Lower Town stone rowhouse overlooking the former docks of the St. Lawrence.'
+        ]
+      },
+      'musee-civilisation': {
+        overview: 'Designed by renowned architect Moshe Safdie (the same visionary behind Montréal’s Habitat 67!), Musée de la civilisation is Québec City’s flagship museum—celebrated worldwide for its playful, interactive, and deeply human approach to culture, science, and Québec history.',
+        facts: [
+          'Opened in 1988, the building seamlessly weaves two historic 18th-century Lower Town structures—including the 1752 Maison Estèbe—right into its modern glass-and-limestone atrium.',
+          'Its award-winning exhibitions are built around curiosity and storytelling, often featuring touchable installations, costumes, and kid-focused discovery rooms.',
+          'It regularly ranks as one of the most visited museums in Canada and is uniquely dedicated to how people live, invent, and celebrate across cultures.'
+        ]
+      },
+      'citadelle-qc': {
+        overview: 'Crowning the highest point of Cap Diamant, La Citadelle de Québec is North America’s largest British-built star-shaped fortress and an active Canadian Armed Forces base—still home to the historic Royal 22e Régiment (the “Van Doos”).',
+        facts: [
+          'Built between 1820 and 1850 to guard against a possible American invasion, its clever star-shaped ramparts eliminated blind spots for defending cannons—yet it was never attacked in battle!',
+          'The Royal 22e Régiment’s famous official mascot is a pure-white royal goat named Batisse, descended from a gift from Queen Elizabeth II.',
+          'Inside the walls sits the Governor General of Canada’s second official residence, as well as the 1750 Redoubt—the oldest surviving military building in Québec City.'
+        ]
+      },
+      'plains-abraham': {
+        overview: 'Stretching dramatically along the clifftops overlooking the St. Lawrence River, the Plains of Abraham (Battlefields Park) is one of the world’s great urban historic parks—famous as the site of the pivotal 1759 battle that shaped the destiny of Canada.',
+        facts: [
+          'On September 13, 1759, British forces under General Wolfe and French forces under Marquis de Montcalm fought the decisive Battle of the Plains of Abraham here—lasting less than 30 minutes!',
+          'The park is named after Abraham Martin, a 17th-century St. Lawrence river pilot and farmer who grazed his cattle on these heights in the 1630s.',
+          'Keep an eye out for the round limestone Martello Towers built between 1808 and 1812—ingeniously designed with extra-thick walls facing the enemy side and thinner walls facing the city so defenders could destroy them if captured.'
+        ]
+      },
+      'observatoire-qc': {
+        overview: 'Perched on the 31st floor of the Édifice Marie-Guyart—Québec City’s tallest skyscraper—the Observatoire de la Capitale offers warm, floor-to-ceiling 360-degree panoramic views over the walled city, the St. Lawrence River, Île d’Orléans, and the Laurentian Mountains.',
+        facts: [
+          'At 221 meters (725 feet) above sea level, it is the highest public viewpoint in the entire Québec City region.',
+          'From the east windows you can clearly see the star-shaped outline of La Citadelle, Château Frontenac’s green roofs, and the mist rising off Montmorency Falls in the distance.',
+          'Interactive “Horizons” displays around the perimeter help kids and adults match historic moments of Québec City to the exact landmarks below.'
+        ]
+      },
+      'paillard-st-jean': {
+        overview: 'Set right on lively Rue Saint-Jean inside the historic city walls, Boulangerie Paillard is Old Québec’s premier artisanal bakery, café, and gelateria—filling the street with the irresistible aroma of fresh butter croissants and crusty French baguettes.',
+        facts: [
+          'Rue Saint-Jean is one of Québec City’s oldest commercial arteries, originally following a 17th-century footpath leading west out of the fortified town.',
+          'Paillard’s bakers hand-shape hundreds of traditional baguettes, sourdough boules, and flaky viennoiseries every morning using slow-fermentation French techniques.',
+          'Even in crisp November weather, locals line up here for both steaming bowls of soup and house-churned artisanal gelato.'
+        ]
+      },
+      'place-dyouville': {
+        overview: 'Straddling the historic stone Porte Saint-Jean gateway, Place D’Youville is the lively cultural crossroads connecting Old Québec’s fortified walls with the modern city—famous for its grand Palais Montcalm theatre and seasonal outdoor ice rink.',
+        facts: [
+          'Québec City is the only remaining fortified city in North America north of Mexico, with 4.6 km of historic stone walls and four monumental gates—recognized as a UNESCO World Heritage Site in 1985.',
+          'Porte Saint-Jean (the current stone arch dates from 1939) sits right where fortified gates have stood since 1694 to control travelers entering Upper Town.',
+          'The refrigerated Place D’Youville ice rink is one of the most picturesque outdoor skating spots in Canada, backed directly by illuminated ramparts.'
+        ]
+      },
+      'christmas-market': {
+        overview: 'Every late November through December, the Marché de Noël allemand de Québec transforms five historic squares inside Old Québec into a twinkling European holiday village—filled with over 100 wooden chalets, festive lights, choral music, and Bavarian & Québécois treats.',
+        facts: [
+          'Founded in 2008 by Québec’s German community for the city’s 400th anniversary, it is inspired by classic German Christkindlmärkte dating back to the Middle Ages.',
+          'Spread across Place de l’Hôtel-de-Ville, Place d’Armes, Rue Sainte-Anne, Holy Trinity Cathedral courtyard, and Place D’Youville, admission to all sites is 100% free.',
+          'Families can explore the enchanting Kinderdorf (Kids’ Village) with free puppet shows, crafts, and visits with Santa—plus warm pretzels, gingerbread, and hot cocoa.'
+        ]
+      },
+      'montmorency-falls': {
+        overview: 'Just 15 minutes east of Old Québec where the Montmorency River plunges off the Canadian Shield into the St. Lawrence, Parc de la Chute-Montmorency showcases one of eastern North America’s most dramatic waterfalls, complete with a thrilling suspension bridge across the crest.',
+        facts: [
+          'At 83 meters (272 feet) high, Montmorency Falls is a full 30 meters (99 feet) taller than Niagara Falls!',
+          'In the depths of winter, freezing mist at the base builds up into a colossal cone of solid ice known locally as the “Pain de Sucre” (Sugarloaf).',
+          'French explorer Samuel de Champlain named the falls in 1603 in honor of Henri II, Duke of Montmorency, who served as Viceroy of New France.'
+        ]
+      },
+      'aquarium-qc': {
+        overview: 'Overlooking the dramatic St. Lawrence bridges just 15 minutes west of Old Québec, the Aquarium du Québec is a sprawling indoor-and-outdoor marine park home to roughly 10,000 animals across Arctic, Pacific, and St. Lawrence River habitats.',
+        facts: [
+          'Its star residents include polar bears, Atlantic walruses, harbour and harp seals, and snowy Arctic foxes—many of which love crisp late-November temperatures!',
+          'Inside the Awesome Ocean pavilion, you walk right through a glowing underwater tunnel surrounded by 350,000 liters of salt water, schools of fish, and graceful stingrays.',
+          'Founded in 1959 as a biological research station for the St. Lawrence estuary, it remains one of Québec’s favorite year-round family destinations.'
+        ]
+      },
+      'grand-marche': {
+        overview: 'Housed in a bright, spacious timber-and-glass pavilion in Limoilou, Le Grand Marché de Québec is the region’s premier year-round public food market—bringing together over 250 Québec farmers, cheesemakers, bakeries, and holiday craft stalls under one warm roof.',
+        facts: [
+          'Inspired by Europe’s great covered market halls, it opened in 2019 inside the thoughtfully transformed 1923 Pavillon du Commerce at ExpoCité.',
+          'From late November through Christmas Eve, the market hosts its own festive indoor Christmas Market—open 7 days a week, even when the outdoor German Market is closed Tue–Wed.',
+          'It’s one of the best places in the city to sample authentic squeaky Québec cheese curds, maple butter, ice cider, and local pastries.'
+        ]
+      },
+      'rue-st-paul': {
+        overview: 'Winding along the flat edge of Québec’s historic Old Port, Rue Saint-Paul is a charming, locally loved street of antique dealers, art galleries, indie cafés, and 19th-century merchant warehouses—with a far more relaxed pace than the tourist hill above.',
+        facts: [
+          'In the 19th century, this waterfront district was one of the busiest shipbuilding and timber-export ports in the entire British Empire.',
+          'Today Rue Saint-Paul is famous as Québec City’s “Antique Row,” packed with vintage Québécois furniture, historic maps, and quirky curiosities.',
+          'Because it sits completely flat at river level, it makes an effortless stroll between Old Port, Musée de la civilisation, and Gare du Palais.'
+        ]
+      },
+      'levis-ferry': {
+        overview: 'Gliding across the narrowest choke point of the St. Lawrence River between Old Québec and the south-shore city of Lévis, the Québec–Lévis Ferry is both a daily commuter boat and the city’s best-kept sightseeing secret.',
+        facts: [
+          'The crossing takes just ~12 minutes each way across a 1 km stretch of river—the exact narrows that gave Québec its name from the Algonquin word “Kébec” (“where the river narrows”).',
+          'From the upper deck or heated cabin windows, you get the single best panoramic postcard view of Château Frontenac, La Citadelle, and Cap Diamant rising sheer out of the water.',
+          'Ferries have connected Québec and Lévis year-round since the 1800s—in winter, the icebreaker-reinforced vessels crunch straight through floating St. Lawrence river ice!'
+        ]
+      },
+      'gare-du-palais': {
+        overview: 'Set right at the edge of Old Québec’s Lower Town, Gare du Palais is one of Canada’s loveliest historic railway stations—built in the same fairytale Châteauesque style as Château Frontenac, complete with copper-roofed turrets and a soaring vaulted waiting hall.',
+        facts: [
+          'Opened in 1915 by the Canadian Pacific Railway and designed by architect Harry Edward Prindle, its grand windows feature stained-glass coats of arms of historic Québec figures.',
+          'Its name honors the 17th-century “Palais de l’Intendant” (the royal administrator’s palace of New France), whose archaeological site sits just a block away.',
+          'The station serves as the eastern terminus of VIA Rail’s Québec City–Montréal–Toronto corridor, putting travelers within a 10-minute walk of Old Québec’s historic streets.'
+        ]
+      }
+    };
+
+    // =========================================================================
     // Rendering: Selected Attraction Inspector Card (with Illustrated Banner)
     // =========================================================================
     function renderInspector(schedule) {
@@ -4084,6 +4421,7 @@
       const stay = ds.durations[spot.id] ?? spot.defaultDuration;
       const isVisited = ds.visitedIds.has(spot.id);
       const dayHrs = getSpotHoursForDay(spot, day);
+      const guide = PLACE_GUIDES[spot.id] || null;
 
       // Update mobile / fullscreen quick-jump stop pill on the map
       const mobileStopName = document.getElementById('mobileStopName');
@@ -4107,6 +4445,17 @@
       } else {
         statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">Optional Swap</span>`;
       }
+
+      const factsHtml = guide && guide.facts && guide.facts.length
+        ? `
+          <div class="facts-card" style="border-left-color: var(${spot.colorVar});">
+            <div class="facts-title" style="color: var(${spot.colorVar});">Did You Know? · Interesting Facts</div>
+            <ul class="fact-list">
+              ${guide.facts.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+          </div>
+        `
+        : '';
 
       const card = document.getElementById('inspectorCard');
       card.innerHTML = `
@@ -4134,6 +4483,8 @@
           </div>
         </div>
 
+        ${guide && guide.overview ? `<p class="place-overview">${guide.overview}</p>` : ''}
+
         <!-- Key Facts Grid -->
         <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
           <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg px-2.5 py-2">
@@ -4146,6 +4497,8 @@
             <div class="text-[var(--muted-foreground)] truncate" title="${spot.cost}">${spot.cost}</div>
           </div>
         </div>
+
+        ${factsHtml}
 
         <!-- Why Kids Love It + Parent Tip -->
         <div class="mt-3 space-y-2 text-xs leading-relaxed">
