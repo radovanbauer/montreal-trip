@@ -539,10 +539,215 @@
       background-color: rgba(255, 255, 255, 0.22);
       color: #ffffff;
     }
+
+    /* Map Corner Overlays & Fullscreen Map Mode */
+    .map-compass-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 15;
+      pointer-events: none;
+    }
+    .map-scale-overlay {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      z-index: 15;
+      pointer-events: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background-color: color-mix(in srgb, var(--card) 92%, transparent);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      backdrop-filter: blur(4px);
+    }
+    .map-scale-bar {
+      width: 42px;
+      height: 6px;
+      border-bottom: 2px solid var(--foreground);
+      border-left: 1.5px solid var(--foreground);
+      border-right: 1.5px solid var(--foreground);
+    }
+    .mobile-stop-pill {
+      display: none;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 16;
+      max-width: calc(100% - 148px);
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 9999px;
+      background-color: color-mix(in srgb, var(--card) 95%, transparent);
+      border: 1.5px solid var(--primary);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--foreground);
+      backdrop-filter: blur(6px);
+    }
+    .map-section.is-fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      border-radius: 0;
+      border: 0;
+      height: 100dvh;
+      height: 100vh;
+    }
+    .map-section.is-fullscreen #mapContainer {
+      flex: 1 1 auto;
+      aspect-ratio: auto;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+    }
+    .map-section.is-fullscreen .mobile-stop-pill {
+      display: inline-flex;
+    }
+    body.map-fs-open {
+      overflow: hidden;
+    }
+
+    /* Mobile Optimization (< 768px): larger text, larger map, 40px+ tap targets */
+    @media (max-width: 767px) {
+      html { font-size: 15px; }
+      .page-shell {
+        padding: 0.5rem 0.5rem 1.25rem 0.5rem;
+      }
+      header {
+        padding: 0.8rem !important;
+      }
+      .text-xs { font-size: 13.5px; line-height: 1.45; }
+      .text-sm { font-size: 15px; line-height: 1.45; }
+      .text-base { font-size: 17.5px; line-height: 1.35; }
+      .text-lg { font-size: 20px; line-height: 1.25; }
+
+      /* Prevent iOS Safari auto-zoom on form controls */
+      select, .sync-input { font-size: 16px !important; }
+
+      /* Bigger, swipeable day tabs */
+      .day-tabs-wrap {
+        gap: 0.45rem;
+        scroll-snap-type: x proximity;
+        padding-bottom: 0.65rem;
+        margin-bottom: 0.65rem;
+      }
+      .day-tab {
+        scroll-snap-align: start;
+        padding: 0.52rem 0.85rem;
+        min-height: 52px;
+      }
+      .day-tab-top { font-size: 13px; }
+      .day-tab-sub { font-size: 12px; }
+      .day-tab-count { font-size: 11px; padding: 0.1rem 0.42rem; }
+
+      /* Larger sync & header buttons */
+      .sync-save-btn {
+        height: 38px;
+        padding: 0 0.9rem;
+        font-size: 13.5px;
+      }
+      .sync-icon-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      /* Single-row swipeable presets & filters so the map stays prominent */
+      #presetButtons,
+      #filterBar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+        width: 100%;
+      }
+      #presetButtons > *,
+      #filterBar > * {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+      .preset-btn,
+      .filter-btn {
+        min-height: 36px;
+        padding: 0.4rem 0.78rem !important;
+        font-size: 13px !important;
+      }
+
+      /* Bigger map zoom toolbar buttons */
+      .map-zoom-controls {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .map-zoom-btn {
+        min-width: 38px;
+        height: 38px !important;
+        padding: 0 0.65rem !important;
+        font-size: 14px !important;
+      }
+
+      /* Much taller, immersive map viewport on phones */
+      #mapContainer {
+        aspect-ratio: auto;
+        height: 58vh;
+        min-height: 390px;
+        max-height: 560px;
+      }
+      .mobile-stop-pill {
+        display: inline-flex;
+      }
+
+      /* Larger inspector controls & natural full-page timeline scrolling */
+      #inspectorCard {
+        padding: 1rem;
+      }
+      #inspectorCard .max-h-\[148px\] {
+        max-height: 165px;
+      }
+      #togglePlanBtn,
+      #markVisitedBtn {
+        min-height: 40px;
+        padding: 0.45rem 0.9rem !important;
+        font-size: 13.5px !important;
+      }
+      #durMinusBtn,
+      #durPlusBtn,
+      #moveUpBtn,
+      #moveDownBtn {
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 16px !important;
+        padding: 0.35rem 0.6rem !important;
+      }
+      #timelineList {
+        max-height: none;
+        overflow-y: visible;
+      }
+      .timeline-row {
+        min-height: 58px;
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+      }
+      .sync-modal {
+        padding: 1.25rem;
+      }
+      .sync-btn-primary,
+      .sync-btn-secondary,
+      .sync-btn-danger {
+        height: 40px;
+        font-size: 13.5px;
+      }
+    }
   </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
-  <div class="max-w-[1380px] mx-auto px-3 sm:px-5 py-4 space-y-3">
+  <div class="page-shell max-w-[1380px] mx-auto px-3 sm:px-5 py-4 space-y-3">
 
     <!-- Top Header & Live Trip Metrics -->
     <header class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
@@ -632,20 +837,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
 
       <!-- Left Column (7 cols): Interactive Vector Map -->
-      <section class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm flex flex-col">
+      <section id="mapSection" class="map-section lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm flex flex-col">
         <!-- Map Toolbar -->
         <div class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 border-b border-[var(--card-border)]">
-          <div class="flex flex-wrap items-center gap-1.5" id="filterBar">
+          <div class="flex flex-wrap items-center gap-1.5 thin-scroll" id="filterBar">
             <button data-filter="all" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">All Spots</button>
             <button data-filter="active" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">In My Plan</button>
             <button data-filter="indoor" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Indoor / Warm</button>
-            <button data-filter="food" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Food & Treats</button>
+            <button data-filter="food" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Food &amp; Treats</button>
             <button data-filter="free" class="filter-btn px-2.5 py-1 rounded-md text-xs font-medium border transition-colors">Free</button>
           </div>
-          <div class="flex items-center gap-1">
-            <button id="zoomOutBtn" title="Zoom out" class="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-sm font-bold flex items-center justify-center">−</button>
-            <button id="zoomResetBtn" title="Reset view" class="px-2 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-medium">Reset</button>
-            <button id="zoomInBtn" title="Zoom in" class="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-sm font-bold flex items-center justify-center">+</button>
+          <div class="map-zoom-controls flex items-center gap-1">
+            <button id="zoomOutBtn" title="Zoom out" class="map-zoom-btn w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-sm font-bold flex items-center justify-center">−</button>
+            <button id="zoomResetBtn" title="Fit map" class="map-zoom-btn px-2 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-medium">Fit</button>
+            <button id="zoomInBtn" title="Zoom in" class="map-zoom-btn w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-sm font-bold flex items-center justify-center">+</button>
+            <button id="mapExpandBtn" title="Expand map fullscreen" aria-label="Expand map" class="map-zoom-btn px-2 h-7 rounded-md border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)] text-xs font-semibold flex items-center justify-center">⤢</button>
           </div>
         </div>
 
@@ -966,28 +1172,34 @@
               <!-- Dynamic Pins Layer (populated by JS) -->
               <g id="pinsLayer"></g>
             </g>
+          </svg>
 
-            <!-- Fixed Compass Rose & Scale Bar (top-left & bottom-left overlay inside SVG) -->
-            <g transform="translate(42, 44)">
+          <!-- Fixed Corner Compass Rose Overlay -->
+          <div class="map-compass-overlay" aria-hidden="true">
+            <svg width="38" height="38" viewBox="-22 -24 44 46">
               <circle cx="0" cy="0" r="18" fill="var(--card)" fill-opacity="0.92" stroke="var(--border)" stroke-width="1.2" />
               <g id="compassNeedle" transform="rotate(-22)">
                 <polygon points="0,-12 3.5,0 0,-2.5 -3.5,0" fill="var(--primary)" />
                 <polygon points="0,12 3.5,0 0,2.5 -3.5,0" fill="var(--muted-foreground)" opacity="0.5" />
-                <text x="0" y="-13" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--foreground)"></text>
               </g>
-              <text x="-6" y="-21" font-size="9" font-weight="700" fill="var(--muted-foreground)">N</text>
-            </g>
+              <text x="0" y="-19.5" text-anchor="middle" font-size="8.5" font-weight="800" fill="var(--muted-foreground)">N</text>
+            </svg>
+          </div>
 
-            <g transform="translate(22, 496)">
-              <rect x="-6" y="-14" width="136" height="20" rx="5" fill="var(--card)" fill-opacity="0.9" stroke="var(--border)" stroke-width="1" />
-              <line x1="2" y1="-2" x2="56" y2="-2" stroke="var(--foreground)" stroke-width="2" />
-              <line x1="2" y1="-5" x2="2" y2="1" stroke="var(--foreground)" stroke-width="1.5" />
-              <line x1="56" y1="-5" x2="56" y2="1" stroke="var(--foreground)" stroke-width="1.5" />
-              <text id="mapScaleLabel" x="64" y="1" font-size="10" font-weight="600" fill="var(--muted-foreground)">~100 m</text>
-            </g>
-          </svg>
+          <!-- Fixed Corner Scale Bar Overlay -->
+          <div class="map-scale-overlay" aria-hidden="true">
+            <span class="map-scale-bar"></span>
+            <span id="mapScaleLabel">~100 m</span>
+          </div>
 
-          <!-- Floating Hover Tooltip -->
+          <!-- Mobile / Fullscreen Selected Stop Quick Jump Pill -->
+          <button id="mobileStopPill" type="button" class="mobile-stop-pill">
+            <span id="mobileStopDot" class="w-2.5 h-2.5 rounded-full shrink-0" style="background: var(--primary);"></span>
+            <span id="mobileStopName" class="truncate">Inspect Stop</span>
+            <span class="shrink-0 text-[var(--link)]">Details ↓</span>
+          </button>
+
+          <!-- Floating Hover Tooltip (Desktop) -->
           <div id="mapTooltip" class="pointer-events-none hidden absolute z-20 px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] shadow-md text-xs max-w-[230px]"></div>
         </div>
 
@@ -1000,7 +1212,7 @@
             <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-4);"></span>Food &amp; Treats</span>
             <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border-2 border-dashed inline-block border-[var(--muted-foreground)]"></span>Optional Swap</span>
           </div>
-          <span class="text-xs">Drag to pan · Scroll or +/− to zoom</span>
+          <span class="text-xs">Pinch or scroll to zoom · Drag to pan</span>
         </div>
       </section>
 
@@ -3607,6 +3819,7 @@
       const ds = getDayState();
       const daySpots = getDayAttractions();
       const mapCfg = MAP_CONFIGS[day.mapId] || MAP_CONFIGS['old-montreal'];
+      const isMobile = isMobileViewport();
 
       // Toggle active SVG base map layer
       Object.values(MAP_CONFIGS).forEach(cfg => {
@@ -3617,7 +3830,9 @@
       if (compassNeedle) compassNeedle.setAttribute('transform', `rotate(${mapCfg.compassAngle})`);
       const scaleLabel = document.getElementById('mapScaleLabel');
       if (scaleLabel) scaleLabel.textContent = mapCfg.scaleLabel;
-      document.getElementById('mapSvg').setAttribute('aria-label', mapCfg.ariaLabel);
+      const svgRoot = document.getElementById('mapSvg');
+      svgRoot.setAttribute('aria-label', mapCfg.ariaLabel);
+      svgRoot.setAttribute('preserveAspectRatio', isMobile ? 'xMidYMid slice' : 'xMidYMid meet');
 
       const routeLayer = document.getElementById('routeLayer');
       const pinsLayer = document.getElementById('pinsLayer');
@@ -3646,7 +3861,7 @@
           d,
           fill: 'none',
           stroke: 'var(--background)',
-          'stroke-width': 7,
+          'stroke-width': isMobile ? 8.5 : 7,
           'stroke-linecap': 'round',
           opacity: 0.78
         }));
@@ -3656,7 +3871,7 @@
           d,
           fill: 'none',
           stroke: isTransit ? 'var(--chart-3)' : 'var(--primary)',
-          'stroke-width': isTransit ? 3.2 : 3.4,
+          'stroke-width': isMobile ? 4 : (isTransit ? 3.2 : 3.4),
           'stroke-linecap': 'round',
           class: 'route-animated'
         }));
@@ -3664,19 +3879,20 @@
         // Midpoint travel-time pill
         const lx = 0.25 * from.x + 0.5 * cx + 0.25 * to.x;
         const ly = 0.25 * from.y + 0.5 * cy + 0.25 * to.y;
-        const pillW = isTransit ? 58 : 44;
+        const pillW = isTransit ? (isMobile ? 66 : 58) : (isMobile ? 50 : 44);
+        const pillH = isMobile ? 21 : 18;
         const pillG = svgEl('g', { transform: `translate(${lx.toFixed(1)}, ${ly.toFixed(1)})` });
         pillG.appendChild(svgEl('rect', {
-          x: -pillW / 2, y: -9, width: pillW, height: 18, rx: 9,
+          x: -pillW / 2, y: -pillH / 2, width: pillW, height: pillH, rx: pillH / 2,
           fill: 'var(--card)',
           stroke: isTransit ? 'var(--chart-3)' : 'var(--primary)',
           'stroke-width': 1.2,
           opacity: 0.96
         }));
         const label = svgEl('text', {
-          x: 0, y: 3.5,
+          x: 0, y: isMobile ? 4 : 3.5,
           'text-anchor': 'middle',
-          'font-size': 9.5,
+          'font-size': isMobile ? 11 : 9.5,
           'font-weight': 700,
           fill: 'var(--foreground)'
         });
@@ -3712,17 +3928,20 @@
           'aria-label': `${spot.name} (${dayHrs.text})`
         });
 
+        const mobileBoost = isMobile ? 3 : 0;
+        const radius = (isInPlan ? (isSelected ? 19.5 : 17.5) : (isSelected ? 16.5 : 14.5)) + mobileBoost;
+
         // Pulse ring on selected attraction
         if (isSelected) {
           g.appendChild(svgEl('circle', {
-            cx: 0, cy: 0, r: 21,
+            cx: 0, cy: 0, r: radius + 2,
             fill: 'none',
             stroke: `var(${spot.colorVar})`,
             'stroke-width': 3,
             class: 'pin-pulse'
           }));
           g.appendChild(svgEl('circle', {
-            cx: 0, cy: 0, r: 25,
+            cx: 0, cy: 0, r: radius + 6,
             fill: `var(${spot.colorVar})`,
             opacity: 0.16,
             'pointer-events': 'none'
@@ -3730,7 +3949,6 @@
         }
 
         const dotG = svgEl('g', { class: 'pin-dot' });
-        const radius = isInPlan ? (isSelected ? 19.5 : 17.5) : (isSelected ? 16.5 : 14.5);
         dotG.appendChild(svgEl('circle', {
           cx: 0, cy: 0, r: radius,
           fill: isInPlan ? `var(${spot.colorVar})` : 'var(--card)',
@@ -3748,7 +3966,7 @@
           }));
         }
 
-        const iconSize = isInPlan ? 22 : 18;
+        const iconSize = (isInPlan ? 22 : 18) + (isMobile ? 3 : 0);
         const iconWrap = svgEl('g', {
           transform: `translate(${-iconSize / 2}, ${-iconSize / 2}) scale(${(iconSize / 24).toFixed(3)})`,
           'pointer-events': 'none'
@@ -3759,17 +3977,18 @@
         // Corner stop-order number badge
         const bx = -radius * 0.72;
         const by = -radius * 0.72;
+        const badgeR = isMobile ? 8.8 : 7.5;
         dotG.appendChild(svgEl('circle', {
-          cx: bx, cy: by, r: 7.5,
+          cx: bx, cy: by, r: badgeR,
           fill: isVisited ? 'var(--success)' : (isInPlan ? 'var(--foreground)' : 'var(--card)'),
           stroke: 'var(--background)',
           'stroke-width': 1.6
         }));
         const numText = svgEl('text', {
           x: bx,
-          y: by + 3.4,
+          y: by + (isMobile ? 3.8 : 3.4),
           'text-anchor': 'middle',
-          'font-size': 9.5,
+          'font-size': isMobile ? 10.5 : 9.5,
           'font-weight': 900,
           fill: isInPlan ? 'var(--background)' : `var(${spot.colorVar})`
         });
@@ -3779,15 +3998,15 @@
         // Warning dot if hours conflict or closed on this day
         if ((schedItem && (schedItem.hoursStatus === 'early' || schedItem.hoursStatus === 'closed')) || (!isInPlan && dayHrs.closed)) {
           dotG.appendChild(svgEl('circle', {
-            cx: radius * 0.74, cy: -radius * 0.74, r: 6.5,
+            cx: radius * 0.74, cy: -radius * 0.74, r: isMobile ? 7.5 : 6.5,
             fill: 'var(--warning)',
             stroke: 'var(--background)',
             'stroke-width': 1.5
           }));
           const bang = svgEl('text', {
-            x: radius * 0.74, y: -radius * 0.74 + 3.2,
+            x: radius * 0.74, y: -radius * 0.74 + 3.4,
             'text-anchor': 'middle',
-            'font-size': 9,
+            'font-size': isMobile ? 10 : 9,
             'font-weight': 900,
             fill: 'var(--background)'
           });
@@ -3798,26 +4017,28 @@
         g.appendChild(dotG);
 
         // Compact readable label pill beneath or above pin
-        const ly = spot.labelAbove ? -(radius + 14) : (radius + 15);
+        const labelFontSize = isMobile ? 11.8 : 10.2;
+        const pillH = isMobile ? 21 : 18;
+        const ly = spot.labelAbove ? -(radius + (isMobile ? 15 : 14)) : (radius + (isMobile ? 17 : 15));
         const shortTitle = spot.shortTitle || spot.name;
-        const pillW = Math.min(156, shortTitle.length * 6.2 + 14);
+        const pillW = Math.min(isMobile ? 176 : 156, shortTitle.length * (isMobile ? 7.0 : 6.2) + 16);
         g.appendChild(svgEl('rect', {
           x: -pillW / 2,
-          y: ly - 10,
+          y: ly - pillH / 2 - 1,
           width: pillW,
-          height: 18,
-          rx: 5,
+          height: pillH,
+          rx: 5.5,
           class: 'pin-label-pill',
           fill: 'var(--card)',
-          'fill-opacity': isSelected ? 1 : 0.92,
+          'fill-opacity': isSelected ? 1 : 0.94,
           stroke: isSelected ? `var(${spot.colorVar})` : 'var(--border)',
-          'stroke-width': isSelected ? 1.5 : 1
+          'stroke-width': isSelected ? 1.6 : 1
         }));
         const lbl = svgEl('text', {
           x: 0,
-          y: ly + 2.5,
+          y: ly + (isMobile ? 3.2 : 2.5),
           'text-anchor': 'middle',
-          'font-size': 10.2,
+          'font-size': labelFontSize,
           'font-weight': isSelected ? 700 : 600,
           fill: 'var(--foreground)'
         });
@@ -3826,6 +4047,7 @@
 
         g.addEventListener('click', e => {
           e.stopPropagation();
+          if (suppressPinClick) return;
           selectAttraction(spot.id);
         });
         g.addEventListener('keydown', e => {
@@ -3862,6 +4084,16 @@
       const stay = ds.durations[spot.id] ?? spot.defaultDuration;
       const isVisited = ds.visitedIds.has(spot.id);
       const dayHrs = getSpotHoursForDay(spot, day);
+
+      // Update mobile / fullscreen quick-jump stop pill on the map
+      const mobileStopName = document.getElementById('mobileStopName');
+      const mobileStopDot = document.getElementById('mobileStopDot');
+      if (mobileStopName) {
+        mobileStopName.textContent = isInPlan ? `#${schedItem.index} ${spot.shortTitle}` : spot.shortTitle;
+      }
+      if (mobileStopDot) {
+        mobileStopDot.style.background = `var(${spot.colorVar})`;
+      }
 
       let statusPillHtml = '';
       if (schedItem) {
@@ -4093,13 +4325,37 @@
     // =========================================================================
     // User Actions
     // =========================================================================
+    function isMobileViewport() {
+      return window.innerWidth < 768;
+    }
+
+    function getZoomBounds() {
+      return isMobileViewport() ? { min: 0.52, max: 3.8 } : { min: 0.85, max: 3.2 };
+    }
+
+    function resetMapView() {
+      if (isMobileViewport()) {
+        const ds = getDayState();
+        const activeSpots = ds.planIds.map(id => byId[id]).filter(Boolean);
+        const spots = activeSpots.length ? activeSpots : getDayAttractions();
+        const avgX = spots.reduce((s, a) => s + a.x, 0) / (spots.length || 1);
+        const avgY = spots.reduce((s, a) => s + a.y, 0) / (spots.length || 1);
+        state.zoom = 0.92;
+        state.panX = (420 - avgX) * state.zoom;
+        state.panY = (260 - avgY) * state.zoom;
+        clampPan();
+      } else {
+        state.zoom = 1;
+        state.panX = 0;
+        state.panY = 0;
+      }
+      applyMapTransform();
+    }
+
     function selectDay(dayId) {
       if (!DAY_BY_ID[dayId]) return;
       state.activeDayId = dayId;
       state.filter = 'all';
-      state.zoom = 1;
-      state.panX = 0;
-      state.panY = 0;
       hideTooltip();
       try {
         localStorage.setItem(ACTIVE_DAY_KEY, dayId);
@@ -4108,6 +4364,7 @@
         }
       } catch (_) {}
       renderAll();
+      resetMapView();
     }
 
     function selectAttraction(id) {
@@ -4153,13 +4410,21 @@
     }
 
     // =========================================================================
-    // Tooltip + Map Pan & Zoom
+    // Tooltip + Multi-Touch Pinch-to-Zoom, Pan, Double-Tap & Fullscreen Map
     // =========================================================================
     const tooltipEl = document.getElementById('mapTooltip');
+    const mapSection = document.getElementById('mapSection');
     const mapContainer = document.getElementById('mapContainer');
+    const mapSvgEl = document.getElementById('mapSvg');
     const viewportGroup = document.getElementById('viewportGroup');
+    const mapExpandBtn = document.getElementById('mapExpandBtn');
+
+    function isTouchOnlyDevice() {
+      return window.matchMedia && window.matchMedia('(hover: none)').matches;
+    }
 
     function showTooltip(spot, schedItem, dayHrs, evt) {
+      if (isTouchOnlyDevice()) return;
       tooltipEl.innerHTML = `
         <div class="flex items-center gap-2">
           <div class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background: var(${spot.colorVar});">
@@ -4179,6 +4444,7 @@
     }
 
     function moveTooltip(evt) {
+      if (isTouchOnlyDevice()) return;
       const rect = mapContainer.getBoundingClientRect();
       let left = evt.clientX - rect.left + 14;
       let top = evt.clientY - rect.top - 10;
@@ -4193,6 +4459,21 @@
       tooltipEl.classList.add('hidden');
     }
 
+    function clientToSvgPoint(clientX, clientY) {
+      try {
+        const pt = mapSvgEl.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const ctm = mapSvgEl.getScreenCTM();
+        if (ctm) return pt.matrixTransform(ctm.inverse());
+      } catch (_) {}
+      const rect = mapContainer.getBoundingClientRect();
+      return {
+        x: ((clientX - rect.left) / (rect.width || 1)) * 840,
+        y: ((clientY - rect.top) / (rect.height || 1)) * 520
+      };
+    }
+
     function applyMapTransform() {
       const cx = 420;
       const cy = 260;
@@ -4202,51 +4483,206 @@
     }
 
     function clampPan() {
-      const maxX = 280 * state.zoom;
-      const maxY = 180 * state.zoom;
+      const maxX = Math.max(360, 420 * state.zoom);
+      const maxY = Math.max(240, 260 * state.zoom);
       state.panX = Math.max(-maxX, Math.min(maxX, state.panX));
       state.panY = Math.max(-maxY, Math.min(maxY, state.panY));
     }
 
-    let dragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
+    function zoomAroundSvgPoint(targetZoom, anchorSvg) {
+      const bounds = getZoomBounds();
+      const newZoom = Math.max(bounds.min, Math.min(bounds.max, targetZoom));
+      const oldZoom = state.zoom;
+      const oldTx = state.panX + 420 * (1 - oldZoom);
+      const oldTy = state.panY + 260 * (1 - oldZoom);
+      const worldX = (anchorSvg.x - oldTx) / oldZoom;
+      const worldY = (anchorSvg.y - oldTy) / oldZoom;
+      const newTx = anchorSvg.x - worldX * newZoom;
+      const newTy = anchorSvg.y - worldY * newZoom;
+      state.zoom = newZoom;
+      state.panX = newTx - 420 * (1 - newZoom);
+      state.panY = newTy - 260 * (1 - newZoom);
+      clampPan();
+      applyMapTransform();
+    }
+
+    // Multi-touch Pointer Events state (supports 1-finger pan + 2-finger pinch-to-zoom + double-tap)
+    const activePointers = new Map();
+    let suppressPinClick = false;
+    let panStartClient = null;
+    let panStartSvg = null;
     let panOriginX = 0;
     let panOriginY = 0;
+    let dragMoved = false;
+    let wasPinch = false;
+    let pinchStartDist = 1;
+    let pinchStartMidSvg = { x: 420, y: 260 };
+    let pinchStartZoom = 1;
+    let pinchStartPanX = 0;
+    let pinchStartPanY = 0;
+    let lastBgTapTime = 0;
+    let lastBgTapPos = null;
 
-    mapContainer.addEventListener('pointerdown', e => {
-      if (e.target.closest('.pin-group')) return;
-      dragging = true;
-      dragStartX = e.clientX;
-      dragStartY = e.clientY;
+    function initSingleFingerPan(pointer) {
+      panStartClient = { x: pointer.x, y: pointer.y };
+      panStartSvg = clientToSvgPoint(pointer.x, pointer.y);
       panOriginX = state.panX;
       panOriginY = state.panY;
-      mapContainer.setPointerCapture(e.pointerId);
+      dragMoved = false;
+    }
+
+    function initTwoFingerPinch() {
+      const pts = [...activePointers.values()];
+      const p1 = pts[0];
+      const p2 = pts[1];
+      pinchStartDist = Math.max(10, Math.hypot(p2.x - p1.x, p2.y - p1.y));
+      pinchStartMidSvg = clientToSvgPoint((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+      pinchStartZoom = state.zoom;
+      pinchStartPanX = state.panX;
+      pinchStartPanY = state.panY;
+      wasPinch = true;
+      dragMoved = true;
+      suppressPinClick = true;
+    }
+
+    mapContainer.addEventListener('pointerdown', e => {
+      if (e.target.closest('.mobile-stop-pill')) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (activePointers.size === 1) {
+        wasPinch = false;
+        initSingleFingerPan({ x: e.clientX, y: e.clientY });
+      } else if (activePointers.size === 2) {
+        initTwoFingerPinch();
+        for (const pid of activePointers.keys()) {
+          try { mapContainer.setPointerCapture(pid); } catch (_) {}
+        }
+      }
     });
 
     mapContainer.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const rect = mapContainer.getBoundingClientRect();
-      const scaleX = 840 / rect.width;
-      const scaleY = 520 / rect.height;
-      state.panX = panOriginX + (e.clientX - dragStartX) * scaleX;
-      state.panY = panOriginY + (e.clientY - dragStartY) * scaleY;
-      clampPan();
-      applyMapTransform();
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (activePointers.size >= 2) {
+        const pts = [...activePointers.values()];
+        const p1 = pts[0];
+        const p2 = pts[1];
+        const dist = Math.max(10, Math.hypot(p2.x - p1.x, p2.y - p1.y));
+        const midSvg = clientToSvgPoint((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+        const bounds = getZoomBounds();
+        const newZoom = Math.max(bounds.min, Math.min(bounds.max, pinchStartZoom * (dist / pinchStartDist)));
+
+        const startTx = pinchStartPanX + 420 * (1 - pinchStartZoom);
+        const startTy = pinchStartPanY + 260 * (1 - pinchStartZoom);
+        const worldX = (pinchStartMidSvg.x - startTx) / pinchStartZoom;
+        const worldY = (pinchStartMidSvg.y - startTy) / pinchStartZoom;
+        const newTx = midSvg.x - worldX * newZoom;
+        const newTy = midSvg.y - worldY * newZoom;
+
+        state.zoom = newZoom;
+        state.panX = newTx - 420 * (1 - newZoom);
+        state.panY = newTy - 260 * (1 - newZoom);
+        clampPan();
+        applyMapTransform();
+      } else if (activePointers.size === 1 && panStartClient && panStartSvg) {
+        const movePx = Math.hypot(e.clientX - panStartClient.x, e.clientY - panStartClient.y);
+        if (!dragMoved && movePx > 7) {
+          dragMoved = true;
+          suppressPinClick = true;
+          try { mapContainer.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        if (dragMoved) {
+          const curSvg = clientToSvgPoint(e.clientX, e.clientY);
+          state.panX = panOriginX + (curSvg.x - panStartSvg.x);
+          state.panY = panOriginY + (curSvg.y - panStartSvg.y);
+          clampPan();
+          applyMapTransform();
+        }
+      }
     });
 
-    mapContainer.addEventListener('pointerup', e => {
-      dragging = false;
+    function handlePointerRelease(e) {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.delete(e.pointerId);
       try { mapContainer.releasePointerCapture(e.pointerId); } catch (_) {}
-    });
+
+      if (activePointers.size === 1) {
+        // Seamlessly continue 1-finger pan with the remaining finger
+        const remaining = [...activePointers.values()][0];
+        initSingleFingerPan(remaining);
+        dragMoved = true;
+      } else if (activePointers.size === 0) {
+        // Double-tap on map background to zoom in or reset
+        if (!dragMoved && !wasPinch && !e.target.closest('.pin-group') && !e.target.closest('.mobile-stop-pill')) {
+          const now = Date.now();
+          if (lastBgTapPos && (now - lastBgTapTime) < 320 && Math.hypot(e.clientX - lastBgTapPos.x, e.clientY - lastBgTapPos.y) < 34) {
+            lastBgTapTime = 0;
+            lastBgTapPos = null;
+            if (state.zoom > 1.45) {
+              resetMapView();
+            } else {
+              zoomAroundSvgPoint(Math.max(1.85, state.zoom * 1.65), clientToSvgPoint(e.clientX, e.clientY));
+            }
+          } else {
+            lastBgTapTime = now;
+            lastBgTapPos = { x: e.clientX, y: e.clientY };
+          }
+        }
+        panStartClient = null;
+        panStartSvg = null;
+        setTimeout(() => {
+          suppressPinClick = false;
+          wasPinch = false;
+          dragMoved = false;
+        }, 45);
+      }
+    }
+
+    mapContainer.addEventListener('pointerup', handlePointerRelease);
+    mapContainer.addEventListener('pointercancel', handlePointerRelease);
+
+    // Prevent iOS Safari native pinch-zoom hijacking over the map
+    mapContainer.addEventListener('touchmove', e => {
+      if (e.touches.length >= 2) e.preventDefault();
+    }, { passive: false });
+    mapContainer.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
+    mapContainer.addEventListener('gesturechange', e => e.preventDefault(), { passive: false });
 
     mapContainer.addEventListener('wheel', e => {
       e.preventDefault();
-      const factor = e.deltaY < 0 ? 1.14 : 0.88;
-      state.zoom = Math.max(0.85, Math.min(2.4, state.zoom * factor));
-      clampPan();
-      applyMapTransform();
+      const factor = e.deltaY < 0 ? 1.15 : 0.87;
+      zoomAroundSvgPoint(state.zoom * factor, clientToSvgPoint(e.clientX, e.clientY));
     }, { passive: false });
+
+    function setMapFullscreen(enable) {
+      mapSection.classList.toggle('is-fullscreen', enable);
+      document.body.classList.toggle('map-fs-open', enable);
+      mapExpandBtn.textContent = enable ? '✕' : '⤢';
+      mapExpandBtn.title = enable ? 'Exit fullscreen map' : 'Expand map fullscreen';
+      renderMap(computeSchedule());
+    }
+
+    mapExpandBtn.addEventListener('click', () => {
+      setMapFullscreen(!mapSection.classList.contains('is-fullscreen'));
+    });
+
+    document.getElementById('mobileStopPill').addEventListener('click', () => {
+      if (mapSection.classList.contains('is-fullscreen')) {
+        setMapFullscreen(false);
+      }
+      const card = document.getElementById('inspectorCard');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        renderMap(computeSchedule());
+      }, 150);
+    });
 
     // =========================================================================
     // Wire Static Controls
@@ -4271,20 +4707,13 @@
     });
 
     document.getElementById('zoomInBtn').addEventListener('click', () => {
-      state.zoom = Math.min(2.4, state.zoom * 1.2);
-      clampPan();
-      applyMapTransform();
+      zoomAroundSvgPoint(state.zoom * 1.25, { x: 420, y: 260 });
     });
     document.getElementById('zoomOutBtn').addEventListener('click', () => {
-      state.zoom = Math.max(0.85, state.zoom / 1.2);
-      clampPan();
-      applyMapTransform();
+      zoomAroundSvgPoint(state.zoom / 1.25, { x: 420, y: 260 });
     });
     document.getElementById('zoomResetBtn').addEventListener('click', () => {
-      state.zoom = 1;
-      state.panX = 0;
-      state.panY = 0;
-      applyMapTransform();
+      resetMapView();
     });
 
     // =========================================================================
@@ -4794,6 +5223,8 @@
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !syncModalBackdrop.classList.contains('hidden')) {
         closeSyncModal();
+      } else if (e.key === 'Escape' && mapSection.classList.contains('is-fullscreen')) {
+        setMapFullscreen(false);
       } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
         saveRemotePlan();
@@ -4811,6 +5242,7 @@
 
     loadState();
     renderAll();
+    resetMapView();
     loadRemotePlan({ force: false });
   </script>
 </body>
