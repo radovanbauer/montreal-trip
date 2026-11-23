@@ -115,13 +115,13 @@
       "visitedIds": []
     },
     "thu-qc": {
-      "activePreset": "falls-market",
-      "startTime": 600,
+      "activePreset": "relaxed-falls",
+      "startTime": 630,
       "planIds": [
         "montmorency-falls",
-        "aquarium-qc",
         "paillard-st-jean",
-        "christmas-market"
+        "christmas-market",
+        "chateau-dufferin"
       ],
       "durations": {
         "chateau-dufferin": 35,
