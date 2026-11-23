@@ -1,24 +1,180 @@
 {
-  "activePreset": null,
-  "startTime": 630,
-  "planIds": [
-    "beavertails-pjc",
-    "marche-bonsecours",
-    "grande-roue",
-    "pointe-a-calliere",
-    "notre-dame",
-    "museum-illusions"
-  ],
-  "durations": {
-    "grande-roue": 30,
-    "marche-bonsecours": 20,
-    "beavertails-pjc": 20,
-    "science-centre": 70,
-    "notre-dame": 30,
-    "olive-gourmando": 30,
-    "pointe-a-calliere": 70,
-    "museum-illusions": 45,
-    "clock-tower": 20
-  },
-  "visitedIds": []
+  "version": 2,
+  "days": {
+    "sun-mtl": {
+      "activePreset": null,
+      "startTime": 630,
+      "planIds": [
+        "beavertails-pjc",
+        "marche-bonsecours",
+        "grande-roue",
+        "pointe-a-calliere",
+        "notre-dame",
+        "museum-illusions"
+      ],
+      "durations": {
+        "grande-roue": 30,
+        "marche-bonsecours": 20,
+        "beavertails-pjc": 20,
+        "science-centre": 70,
+        "notre-dame": 30,
+        "olive-gourmando": 30,
+        "pointe-a-calliere": 70,
+        "museum-illusions": 45,
+        "clock-tower": 20
+      },
+      "visitedIds": []
+    },
+    "mon-mtl": {
+      "activePreset": "classic",
+      "startTime": 570,
+      "planIds": [
+        "biosphere-ext",
+        "calder-sculpture",
+        "tour-de-levis",
+        "fort-ste-helene",
+        "marche-artisans",
+        "gare-centrale"
+      ],
+      "durations": {
+        "biosphere-ext": 25,
+        "calder-sculpture": 15,
+        "tour-de-levis": 35,
+        "fort-ste-helene": 25,
+        "espace67-river": 20,
+        "cosmos-bridge": 25,
+        "marche-artisans": 45,
+        "cathcart-pvm": 40,
+        "gare-centrale": 45
+      },
+      "visitedIds": []
+    },
+    "tue-qc": {
+      "activePreset": "classic",
+      "startTime": 600,
+      "planIds": [
+        "chateau-dufferin",
+        "funiculaire-qc",
+        "petit-champlain",
+        "place-royale-qc",
+        "cochon-dingue",
+        "musee-civilisation"
+      ],
+      "durations": {
+        "chateau-dufferin": 35,
+        "funiculaire-qc": 15,
+        "petit-champlain": 45,
+        "place-royale-qc": 25,
+        "cochon-dingue": 55,
+        "musee-civilisation": 90,
+        "citadelle-qc": 75,
+        "plains-abraham": 40,
+        "observatoire-qc": 45,
+        "paillard-st-jean": 40,
+        "place-dyouville": 30,
+        "christmas-market": 75,
+        "montmorency-falls": 75,
+        "aquarium-qc": 120,
+        "grand-marche": 45,
+        "rue-st-paul": 35,
+        "levis-ferry": 35,
+        "gare-du-palais": 40
+      },
+      "visitedIds": []
+    },
+    "wed-qc": {
+      "activePreset": "fortress",
+      "startTime": 600,
+      "planIds": [
+        "citadelle-qc",
+        "plains-abraham",
+        "observatoire-qc",
+        "paillard-st-jean",
+        "place-dyouville"
+      ],
+      "durations": {
+        "chateau-dufferin": 35,
+        "funiculaire-qc": 15,
+        "petit-champlain": 45,
+        "place-royale-qc": 25,
+        "cochon-dingue": 55,
+        "musee-civilisation": 90,
+        "citadelle-qc": 75,
+        "plains-abraham": 40,
+        "observatoire-qc": 45,
+        "paillard-st-jean": 40,
+        "place-dyouville": 30,
+        "christmas-market": 75,
+        "montmorency-falls": 75,
+        "aquarium-qc": 120,
+        "grand-marche": 45,
+        "rue-st-paul": 35,
+        "levis-ferry": 35,
+        "gare-du-palais": 40
+      },
+      "visitedIds": []
+    },
+    "thu-qc": {
+      "activePreset": "falls-market",
+      "startTime": 600,
+      "planIds": [
+        "montmorency-falls",
+        "aquarium-qc",
+        "paillard-st-jean",
+        "christmas-market"
+      ],
+      "durations": {
+        "chateau-dufferin": 35,
+        "funiculaire-qc": 15,
+        "petit-champlain": 45,
+        "place-royale-qc": 25,
+        "cochon-dingue": 55,
+        "musee-civilisation": 90,
+        "citadelle-qc": 75,
+        "plains-abraham": 40,
+        "observatoire-qc": 45,
+        "paillard-st-jean": 40,
+        "place-dyouville": 30,
+        "christmas-market": 75,
+        "montmorency-falls": 75,
+        "aquarium-qc": 120,
+        "grand-marche": 45,
+        "rue-st-paul": 35,
+        "levis-ferry": 35,
+        "gare-du-palais": 40
+      },
+      "visitedIds": []
+    },
+    "fri-qc": {
+      "activePreset": "departure",
+      "startTime": 570,
+      "planIds": [
+        "rue-st-paul",
+        "levis-ferry",
+        "christmas-market",
+        "gare-du-palais"
+      ],
+      "durations": {
+        "chateau-dufferin": 35,
+        "funiculaire-qc": 15,
+        "petit-champlain": 45,
+        "place-royale-qc": 25,
+        "cochon-dingue": 55,
+        "musee-civilisation": 90,
+        "citadelle-qc": 75,
+        "plains-abraham": 40,
+        "observatoire-qc": 45,
+        "paillard-st-jean": 40,
+        "place-dyouville": 30,
+        "christmas-market": 75,
+        "montmorency-falls": 75,
+        "aquarium-qc": 120,
+        "grand-marche": 45,
+        "rue-st-paul": 35,
+        "levis-ferry": 35,
+        "gare-du-palais": 40
+      },
+      "visitedIds": []
+    }
+  }
 }

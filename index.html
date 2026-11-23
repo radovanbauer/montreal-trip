@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Old Montréal Sunday Family Walk — Interactive Map & Half-Day Plan</title>
+  <title>Montréal & Québec City Family Trip — 6-Day Interactive Map & Planner</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#f8fafc" />
   <style>
@@ -470,27 +470,99 @@
     .sync-btn-danger:hover {
       background-color: color-mix(in srgb, var(--error) 12%, transparent);
     }
+
+    /* Multi-Day Trip Switcher */
+    .day-tabs-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--card-border);
+      -webkit-overflow-scrolling: touch;
+    }
+    .day-tab {
+      flex: 0 0 auto;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.1rem;
+      padding: 0.42rem 0.72rem;
+      border-radius: 0.625rem;
+      border: 1px solid var(--border);
+      background-color: var(--background);
+      color: var(--foreground);
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      text-align: left;
+    }
+    .day-tab:hover {
+      background-color: var(--secondary);
+    }
+    .day-tab.is-active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-foreground);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 28%, transparent);
+    }
+    .day-tab-top {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .day-tab-sub {
+      font-size: 11px;
+      opacity: 0.82;
+      white-space: nowrap;
+    }
+    .day-tab.is-active .day-tab-sub {
+      opacity: 0.94;
+    }
+    .day-city-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .day-tab-count {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 0.05rem 0.35rem;
+      border-radius: 9999px;
+      background-color: color-mix(in srgb, var(--foreground) 10%, transparent);
+    }
+    .day-tab.is-active .day-tab-count {
+      background-color: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
   </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
   <div class="max-w-[1380px] mx-auto px-3 sm:px-5 py-4 space-y-3">
 
-    <!-- Top Header & Live Half-Day Metrics -->
+    <!-- Top Header & Live Trip Metrics -->
     <header class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <!-- Multi-Day Switcher Strip -->
+      <nav id="dayTabs" class="day-tabs-wrap thin-scroll" aria-label="Trip Days"></nav>
+
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <div>
           <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-[var(--foreground)]">
+            <h1 id="dayTitle" class="text-lg sm:text-xl font-bold tracking-tight text-[var(--foreground)]">
               Old Montréal Sunday Family Walk
             </h1>
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+            <span id="dayMetaBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
               Sunday · Half-Day Plan
             </span>
             <span id="halfDayBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold">
             </span>
           </div>
-          <p class="text-xs text-[var(--muted-foreground)] mt-1">
-            Click any pin on the map or stop in the schedule to inspect Sunday hours, kid tips, tweak time spent, or customize your loop.
+          <p id="daySubtitle" class="text-xs text-[var(--muted-foreground)] mt-1">
+            Click any pin on the map or stop in the schedule to inspect hours, kid tips, tweak time spent, or customize your route.
           </p>
         </div>
 
@@ -499,12 +571,17 @@
           <label class="flex items-center gap-1.5 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-xs">
             <span class="text-[var(--muted-foreground)] font-medium">Start:</span>
             <select id="startTimeSelect" class="bg-transparent text-[var(--foreground)] font-semibold focus:outline-none cursor-pointer">
+              <option value="510">8:30 AM</option>
+              <option value="540">9:00 AM</option>
               <option value="570">9:30 AM</option>
               <option value="600" selected>10:00 AM</option>
               <option value="630">10:30 AM</option>
               <option value="660">11:00 AM</option>
+              <option value="690">11:30 AM</option>
+              <option value="720">12:00 PM</option>
               <option value="750">12:30 PM</option>
               <option value="780">1:00 PM</option>
+              <option value="840">2:00 PM</option>
             </select>
           </label>
           <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs">
@@ -513,17 +590,17 @@
             <span id="metricWindow" class="text-[var(--muted-foreground)] tabular-nums ml-1">(10:00–1:35)</span>
           </div>
           <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs">
-            <span class="text-[var(--muted-foreground)]">Walk:</span>
+            <span id="metricWalkLabel" class="text-[var(--muted-foreground)]">Walk:</span>
             <span id="metricWalk" class="font-bold tabular-nums ml-1">1.9 km · 30 min</span>
           </div>
 
           <!-- GitHub Cloud Sync Controls -->
           <div class="sync-controls">
-            <button id="syncSaveBtn" type="button" class="sync-save-btn" title="Save schedule to GitHub (Ctrl/Cmd+S)">
+            <button id="syncSaveBtn" type="button" class="sync-save-btn" title="Save all trip days to GitHub (Ctrl/Cmd+S)">
               <span id="syncSaveDot" class="sync-dot hidden"></span>
               <span id="syncSaveLabel">Save</span>
             </button>
-            <button id="syncReloadBtn" type="button" class="sync-icon-btn" title="Reload latest saved schedule from GitHub" aria-label="Reload from GitHub">
+            <button id="syncReloadBtn" type="button" class="sync-icon-btn" title="Reload latest saved trip from GitHub" aria-label="Reload from GitHub">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12a9 9 0 1 1-2.64-6.36" />
                 <polyline points="21 3 21 9 15 9" />
@@ -544,12 +621,8 @@
 
       <!-- Preset Selector Strip -->
       <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-[var(--card-border)]">
-        <div class="flex flex-wrap items-center gap-1.5">
+        <div id="presetButtons" class="flex flex-wrap items-center gap-1.5">
           <span class="text-xs font-medium text-[var(--muted-foreground)] mr-1">Route Presets:</span>
-          <button data-preset="classic" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
-          <button data-preset="little" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
-          <button data-preset="older" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
-          <button data-preset="budget" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors"></button>
         </div>
         <div id="scheduleWarningBanner" class="hidden items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg border"></div>
       </div>
@@ -598,8 +671,10 @@
               <!-- Base Land & Historic District Tint -->
               <rect x="-200" y="-200" width="1240" height="920" fill="var(--background)" />
 
-              <!-- Old Montreal Historic Quarter Highlight -->
-              <path d="M 65 135 L 725 135 L 725 365 L 65 365 Z" fill="var(--card)" fill-opacity="0.55" />
+              <!-- MAP 1: Old Montreal & Old Port -->
+              <g id="mapBase-old-montreal">
+                <!-- Old Montreal Historic Quarter Highlight -->
+                <path d="M 65 135 L 725 135 L 725 365 L 65 365 Z" fill="var(--card)" fill-opacity="0.55" />
 
               <!-- Green Parks (Champ-de-Mars, Place d'Armes, Place Royale, Old Port Promenade) -->
               <rect x="520" y="72" width="150" height="58" rx="8" fill="var(--chart-2)" fill-opacity="0.16" stroke="var(--chart-2)" stroke-opacity="0.3" stroke-width="1" />
@@ -716,6 +791,174 @@
                 <text x="-56" y="2.5" text-anchor="middle" font-size="10" font-weight="800" fill="var(--background)">M</text>
                 <text x="-42" y="3" font-size="10.5" font-weight="700" fill="var(--foreground)">Champ-de-Mars</text>
               </g>
+              </g>
+
+              <!-- MAP 2: Île Sainte-Hélène (Parc Jean-Drapeau) & Gare Centrale -->
+              <g id="mapBase-island-gare" class="hidden">
+                <!-- St. Lawrence River Water Canvas -->
+                <rect x="-200" y="-200" width="1240" height="920" fill="var(--chart-1)" fill-opacity="0.16" />
+                <rect x="-200" y="-200" width="1240" height="920" fill="url(#riverPattern)" />
+
+                <!-- Downtown Montreal West Shore / Gare Centrale Panel -->
+                <path d="M -200 -200 L 248 -200 L 266 56 L 254 220 L 268 410 L 242 720 L -200 720 Z" fill="var(--background)" stroke="var(--chart-1)" stroke-opacity="0.45" stroke-width="2" />
+                <rect x="26" y="42" width="214" height="426" rx="14" fill="var(--card)" fill-opacity="0.72" stroke="var(--border)" stroke-width="1.4" />
+                <text x="133" y="66" text-anchor="middle" font-size="11" font-weight="800" letter-spacing="1.2" fill="var(--muted-foreground)">DOWNTOWN MONTRÉAL</text>
+                <text x="133" y="81" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--chart-3)">Underground City (RESO) · Train</text>
+
+                <!-- Downtown street lines -->
+                <g stroke="var(--border)" stroke-linecap="round">
+                  <line x1="36" y1="168" x2="230" y2="168" stroke-width="5" />
+                  <line x1="36" y1="292" x2="230" y2="292" stroke-width="5" />
+                  <line x1="76" y1="92" x2="76" y2="444" stroke-width="4" />
+                  <line x1="188" y1="92" x2="188" y2="444" stroke-width="4" />
+                </g>
+                <text x="133" y="162" text-anchor="middle" font-size="9" font-weight="600" fill="var(--muted-foreground)">Boul. René-Lévesque O.</text>
+                <text x="133" y="286" text-anchor="middle" font-size="9" font-weight="600" fill="var(--muted-foreground)">Rue de la Gauchetière</text>
+
+                <!-- VIA Rail tracks leaving Gare Centrale -->
+                <g stroke="var(--muted-foreground)" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="6 4">
+                  <line x1="138" y1="395" x2="138" y2="520" />
+                  <line x1="146" y1="395" x2="146" y2="520" />
+                </g>
+                <text x="138" y="454" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--chart-3)">VIA Rail → Québec City (~3h 15m)</text>
+
+                <!-- Bridges & Metro Crossing over St. Lawrence River -->
+                <line x1="252" y1="74" x2="795" y2="48" stroke="var(--border)" stroke-width="7" stroke-linecap="round" />
+                <line x1="252" y1="74" x2="795" y2="48" stroke="var(--muted-foreground)" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="6 5" />
+                <text x="366" y="54" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--muted-foreground)" transform="rotate(-3 366 54)">Pont Jacques-Cartier</text>
+
+                <line x1="258" y1="312" x2="405" y2="338" stroke="var(--border)" stroke-width="5.5" stroke-linecap="round" />
+                <text x="315" y="346" text-anchor="middle" font-size="9" font-weight="600" fill="var(--muted-foreground)">Pont de la Concorde</text>
+
+                <!-- Yellow -> Orange Metro Transit Line Indicator -->
+                <path d="M 225 225 Q 320 202 440 226" fill="none" stroke="var(--warning)" stroke-width="3.5" stroke-dasharray="6 4" opacity="0.82" />
+                <rect x="270" y="191" width="108" height="22" rx="11" fill="var(--card)" stroke="var(--warning)" stroke-width="1.3" />
+                <text x="324" y="205.5" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--foreground)">🚇 Metro ~18m</text>
+
+                <!-- Île Sainte-Hélène (Parc Jean-Drapeau) -->
+                <path d="M 424 102 C 470 74, 650 72, 742 112 C 794 136, 804 228, 772 296 C 734 366, 610 426, 468 416 C 396 410, 368 354, 378 274 C 386 202, 386 126, 424 102 Z"
+                      fill="var(--card)" stroke="var(--chart-2)" stroke-opacity="0.55" stroke-width="2" />
+                <path d="M 432 112 C 476 86, 644 84, 730 120 C 778 142, 788 224, 758 288 C 724 354, 606 410, 472 402 C 408 396, 384 348, 392 276 C 400 208, 400 134, 432 112 Z"
+                      fill="var(--chart-2)" fill-opacity="0.13" />
+
+                <!-- Mount Boullé Wooded Forest Hill -->
+                <ellipse cx="645" cy="176" rx="92" ry="62" fill="var(--chart-2)" fill-opacity="0.18" stroke="var(--chart-2)" stroke-opacity="0.32" stroke-dasharray="4 3" />
+                <text x="645" y="198" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--chart-2)">Mount Boullé Forest Trails</text>
+
+                <!-- Espace 67 Central Promenade -->
+                <path d="M 438 258 L 635 276 L 630 296 L 434 278 Z" fill="url(#cobblePattern)" stroke="var(--chart-4)" stroke-opacity="0.35" />
+                <text x="546" y="252" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--muted-foreground)">Espace 67 Plaza</text>
+
+                <!-- Subtle Geodesic Dome Silhouette behind Biosphère -->
+                <circle cx="462" cy="268" r="34" fill="none" stroke="var(--chart-1)" stroke-opacity="0.28" stroke-width="1.3" stroke-dasharray="3 3" />
+
+                <!-- Île Notre-Dame tip (SE corner) -->
+                <path d="M 672 442 C 724 416, 818 424, 868 468 L 868 550 L 650 550 C 646 492, 650 454, 672 442 Z"
+                      fill="var(--card)" stroke="var(--chart-2)" stroke-opacity="0.45" stroke-width="1.6" />
+                <path d="M 678 448 C 726 424, 814 432, 862 472 L 862 544 L 658 544 C 654 494, 658 460, 678 448 Z"
+                      fill="var(--chart-2)" fill-opacity="0.1" />
+                <text x="762" y="476" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted-foreground)">Île Notre-Dame</text>
+                <text x="762" y="490" text-anchor="middle" font-size="8.5" fill="var(--muted-foreground)">F1 Track &amp; Expo Pavilions</text>
+
+                <!-- Pont du Cosmos footbridge -->
+                <line x1="686" y1="364" x2="722" y2="438" stroke="var(--border)" stroke-width="5" stroke-linecap="round" />
+
+                <!-- Jean-Drapeau Metro Marker (Yellow Line) -->
+                <g transform="translate(535, 224)">
+                  <rect x="-64" y="-12" width="128" height="22" rx="11" fill="var(--card)" stroke="var(--warning)" stroke-width="1.6" />
+                  <circle cx="-50" cy="-1" r="7.5" fill="var(--warning)" />
+                  <text x="-50" y="2.5" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--background)">M</text>
+                  <text x="-37" y="2.5" font-size="10" font-weight="700" fill="var(--foreground)">Jean-Drapeau</text>
+                </g>
+
+                <!-- Bonaventure Metro Marker (Orange Line) -->
+                <g transform="translate(138, 412)">
+                  <rect x="-56" y="-11" width="112" height="20" rx="10" fill="var(--card)" stroke="var(--chart-4)" stroke-width="1.4" />
+                  <circle cx="-43" cy="-1" r="6.5" fill="var(--chart-4)" />
+                  <text x="-43" y="2" text-anchor="middle" font-size="8.5" font-weight="800" fill="var(--background)">M</text>
+                  <text x="-32" y="2" font-size="9.5" font-weight="700" fill="var(--foreground)">Bonaventure</text>
+                </g>
+
+                <text x="495" y="498" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="3" fill="var(--chart-1)" opacity="0.72">
+                  ST. LAWRENCE RIVER · PARC JEAN-DRAPEAU
+                </text>
+              </g>
+
+              <!-- MAP 3: Québec City (Old Québec Upper/Lower Town + Day Trips) -->
+              <g id="mapBase-quebec-city" class="hidden">
+                <!-- Base Land -->
+                <rect x="-200" y="-200" width="1240" height="920" fill="var(--background)" />
+
+                <!-- St. Lawrence River (East & South) -->
+                <path d="M 738 -40 L 960 -40 L 960 620 L -100 620 L -100 470 L 535 470 C 655 466, 720 422, 738 340 Z"
+                      fill="var(--chart-1)" fill-opacity="0.17" />
+                <path d="M 738 -40 L 960 -40 L 960 620 L -100 620 L -100 470 L 535 470 C 655 466, 720 422, 738 340 Z"
+                      fill="url(#riverPattern)" />
+                <path d="M -100 470 L 535 470 C 655 466, 720 422, 738 340 L 738 -40"
+                      fill="none" stroke="var(--chart-1)" stroke-opacity="0.48" stroke-width="2" />
+
+                <!-- Day-Trip Regional Callout Boxes (Top Strip) -->
+                <g>
+                  <rect x="78" y="18" width="184" height="74" rx="10" fill="var(--card)" fill-opacity="0.88" stroke="var(--chart-1)" stroke-opacity="0.45" stroke-dasharray="4 3" />
+                  <text x="170" y="33" text-anchor="middle" font-size="9" font-weight="700" fill="var(--chart-1)">WEST · 15 MIN DRIVE / UBER</text>
+
+                  <rect x="356" y="18" width="188" height="74" rx="10" fill="var(--card)" fill-opacity="0.88" stroke="var(--chart-4)" stroke-opacity="0.45" stroke-dasharray="4 3" />
+                  <text x="450" y="33" text-anchor="middle" font-size="9" font-weight="700" fill="var(--chart-4)">NORTH · 10 MIN DRIVE / BUS</text>
+
+                  <rect x="624" y="18" width="192" height="74" rx="10" fill="var(--card)" fill-opacity="0.88" stroke="var(--chart-2)" stroke-opacity="0.45" stroke-dasharray="4 3" />
+                  <text x="720" y="33" text-anchor="middle" font-size="9" font-weight="700" fill="var(--chart-2)">EAST · 15 MIN DRIVE / BUS 800</text>
+                </g>
+
+                <!-- Plains of Abraham Green Park (SW) -->
+                <path d="M 46 312 C 110 294, 212 302, 246 346 L 238 438 C 165 446, 86 436, 44 402 Z"
+                      fill="var(--chart-2)" fill-opacity="0.16" stroke="var(--chart-2)" stroke-opacity="0.35" stroke-width="1.2" />
+                <text x="135" y="422" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--chart-2)">Battlefields Park</text>
+
+                <!-- Upper Town Historic Walled City (Haute-Ville) -->
+                <path d="M 218 134 L 478 138 L 522 212 L 494 378 L 258 398 L 210 286 Z"
+                      fill="var(--card)" fill-opacity="0.65" stroke="var(--chart-3)" stroke-opacity="0.52" stroke-width="3" stroke-dasharray="8 4" />
+                <text x="348" y="128" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="1" fill="var(--chart-3)">OLD QUÉBEC · UPPER TOWN (WALLED)</text>
+
+                <!-- Star-shaped Citadelle Fortress Silhouette -->
+                <polygon points="298,332 312,350 334,352 318,368 324,390 298,380 272,390 278,368 262,352 284,350"
+                         fill="var(--chart-2)" fill-opacity="0.16" stroke="var(--chart-2)" stroke-opacity="0.45" stroke-width="1.2" />
+
+                <!-- Cap Diamant Cliff Escarpment (separating Upper & Lower Town) -->
+                <path d="M 526 155 C 542 230, 534 316, 496 426" fill="none" stroke="var(--muted-foreground)" stroke-opacity="0.45" stroke-width="5" stroke-dasharray="3 5" />
+                <text x="506" y="264" text-anchor="middle" font-size="9" font-weight="700" fill="var(--muted-foreground)" transform="rotate(-80 506 264)">Cap Diamant Cliff</text>
+
+                <!-- Lower Town & Old Port District (Basse-Ville) -->
+                <path d="M 544 120 L 728 124 L 728 360 C 708 424, 650 456, 540 456 L 516 428 C 544 330, 550 232, 544 120 Z"
+                      fill="url(#cobblePattern)" stroke="var(--chart-4)" stroke-opacity="0.35" stroke-width="1.2" />
+                <text x="646" y="114" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="0.8" fill="var(--chart-4)">LOWER TOWN &amp; OLD PORT</text>
+
+                <!-- Major Streets -->
+                <g stroke="var(--border)" stroke-linecap="round">
+                  <!-- Rue Saint-Jean -->
+                  <line x1="175" y1="226" x2="495" y2="216" stroke-width="5.5" />
+                  <!-- Grande Allée / Rue Saint-Louis -->
+                  <line x1="74" y1="294" x2="482" y2="306" stroke-width="5.5" />
+                  <!-- Rue du Petit-Champlain -->
+                  <line x1="538" y1="442" x2="652" y2="352" stroke="var(--chart-4)" stroke-opacity="0.55" stroke-width="6.5" />
+                  <!-- Rue Saint-Paul / Old Port -->
+                  <line x1="572" y1="158" x2="718" y2="220" stroke-width="5" />
+                  <!-- Funiculaire track -->
+                  <line x1="472" y1="330" x2="554" y2="394" stroke="var(--primary)" stroke-opacity="0.55" stroke-width="3" stroke-dasharray="4 3" />
+                </g>
+
+                <g font-size="9.5" font-weight="600" fill="var(--muted-foreground)">
+                  <text x="275" y="250" text-anchor="middle">Rue Saint-Jean</text>
+                  <text x="210" y="286" text-anchor="middle">Grande Allée</text>
+                </g>
+
+                <!-- Lévis Ferry Crossing Dashed Lane -->
+                <line x1="734" y1="366" x2="835" y2="412" stroke="var(--chart-1)" stroke-width="2.5" stroke-dasharray="5 4" opacity="0.7" />
+                <text x="786" y="438" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--chart-1)">Ferry ↔ Lévis</text>
+
+                <text x="415" y="500" text-anchor="middle" font-size="12.5" font-weight="700" letter-spacing="3.2" fill="var(--chart-1)" opacity="0.75">
+                  ST. LAWRENCE RIVER · VIEUX-QUÉBEC
+                </text>
+              </g>
 
               <!-- Dynamic Route Layer (populated by JS) -->
               <g id="routeLayer"></g>
@@ -727,7 +970,7 @@
             <!-- Fixed Compass Rose & Scale Bar (top-left & bottom-left overlay inside SVG) -->
             <g transform="translate(42, 44)">
               <circle cx="0" cy="0" r="18" fill="var(--card)" fill-opacity="0.92" stroke="var(--border)" stroke-width="1.2" />
-              <g transform="rotate(-22)">
+              <g id="compassNeedle" transform="rotate(-22)">
                 <polygon points="0,-12 3.5,0 0,-2.5 -3.5,0" fill="var(--primary)" />
                 <polygon points="0,12 3.5,0 0,2.5 -3.5,0" fill="var(--muted-foreground)" opacity="0.5" />
                 <text x="0" y="-13" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--foreground)"></text>
@@ -736,11 +979,11 @@
             </g>
 
             <g transform="translate(22, 496)">
-              <rect x="-6" y="-14" width="124" height="20" rx="5" fill="var(--card)" fill-opacity="0.9" stroke="var(--border)" stroke-width="1" />
+              <rect x="-6" y="-14" width="136" height="20" rx="5" fill="var(--card)" fill-opacity="0.9" stroke="var(--border)" stroke-width="1" />
               <line x1="2" y1="-2" x2="56" y2="-2" stroke="var(--foreground)" stroke-width="2" />
               <line x1="2" y1="-5" x2="2" y2="1" stroke="var(--foreground)" stroke-width="1.5" />
               <line x1="56" y1="-5" x2="56" y2="1" stroke="var(--foreground)" stroke-width="1.5" />
-              <text x="64" y="1" font-size="10" font-weight="600" fill="var(--muted-foreground)">~100 m</text>
+              <text id="mapScaleLabel" x="64" y="1" font-size="10" font-weight="600" fill="var(--muted-foreground)">~100 m</text>
             </g>
           </svg>
 
@@ -753,8 +996,8 @@
           <div class="flex flex-wrap items-center gap-3">
             <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-1);"></span>Kid Attraction</span>
             <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-2);"></span>Landmark / Walk</span>
-            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-3);"></span>Museum</span>
-            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-4);"></span>Food & Treats</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-3);"></span>Museum / Transit</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background: var(--chart-4);"></span>Food &amp; Treats</span>
             <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border-2 border-dashed inline-block border-[var(--muted-foreground)]"></span>Optional Swap</span>
           </div>
           <span class="text-xs">Drag to pan · Scroll or +/− to zoom</span>
@@ -773,7 +1016,7 @@
         <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm overflow-hidden flex flex-col">
           <div class="flex items-center justify-between px-4 py-2.5 border-b border-[var(--card-border)]">
             <div class="flex items-center gap-2">
-              <h2 class="text-sm font-bold text-[var(--foreground)]">Your Walking Schedule</h2>
+              <h2 id="scheduleHeading" class="text-sm font-bold text-[var(--foreground)]">Your Schedule</h2>
               <span id="stopCountPill" class="px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]"></span>
             </div>
             <button id="toggleOptionalBtn" class="text-xs font-medium text-[var(--link)] hover:underline">
@@ -787,29 +1030,8 @@
       </aside>
     </div>
 
-    <!-- Sunday Practical Notes Footer -->
-    <footer class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 text-xs text-[var(--muted-foreground)] grid grid-cols-1 md:grid-cols-3 gap-3">
-      <div class="flex items-start gap-2">
-        <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs" style="background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning);">!</span>
-        <div>
-          <strong class="text-[var(--foreground)]">Sunday & Late-Nov Hours:</strong>
-          Notre-Dame Basilica sightseeing starts at <strong>12:30 PM</strong> (morning Masses). Seasonal summer attractions (<em>SOS Labyrinthe</em>, <em>Voiles en Voiles</em>) are closed in November.
-        </div>
-      </div>
-      <div class="flex items-start gap-2">
-        <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs" style="background: color-mix(in srgb, var(--chart-1) 18%, transparent); color: var(--chart-1);">i</span>
-        <div>
-          <strong class="text-[var(--foreground)]">Getting There & Strollers:</strong>
-          Start near <strong>Champ-de-Mars Metro</strong> (Orange Line) and finish by <strong>Place-d'Armes Metro</strong>. Rue Saint-Paul cobblestones are bumpy — larger stroller wheels or carriers help!
-        </div>
-      </div>
-      <div class="flex items-start gap-2">
-        <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs" style="background: color-mix(in srgb, var(--chart-2) 18%, transparent); color: var(--chart-2);">✓</span>
-        <div>
-          <strong class="text-[var(--foreground)]">Warm-Up Strategy:</strong>
-          The route alternates short 4–7 min outdoor walks with cozy indoor stops (heated Grande Roue cabins, Marché Bonsecours, Science Centre / museums, and warm pastries).
-        </div>
-      </div>
+    <!-- Practical Notes Footer (dynamically updated per day) -->
+    <footer id="practicalFooter" class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 text-xs text-[var(--muted-foreground)] grid grid-cols-1 md:grid-cols-3 gap-3">
     </footer>
   </div>
 
@@ -1088,39 +1310,1173 @@
       }
     ];
 
-    const PRESETS = {
-      classic: {
-        label: 'Classic Half-Day',
-        startTime: 600,
-        ids: ['grande-roue', 'marche-bonsecours', 'beavertails-pjc', 'science-centre', 'notre-dame', 'olive-gourmando']
+    // Tag original Old Montreal spots with mapId/zone/shortTitle
+    const OLD_MTL_SHORT = {
+      'marche-bonsecours': 'Marché Bonsecours',
+      'beavertails-pjc': 'BeaverTails & PJC',
+      'notre-dame': 'Notre-Dame Basilica',
+      'science-centre': 'Science Centre',
+      'grande-roue': 'La Grande Roue',
+      'pointe-a-calliere': 'Pointe-à-Callière',
+      'museum-illusions': 'Museum of Illusions',
+      'olive-gourmando': 'Olive & Gourmando',
+      'clock-tower': 'Clock Tower'
+    };
+    const OLD_MTL_ABOVE = new Set(['notre-dame', 'museum-illusions', 'marche-bonsecours', 'beavertails-pjc']);
+    ATTRACTIONS.forEach(a => {
+      a.mapId = 'old-montreal';
+      a.zone = 'old-mtl';
+      a.shortTitle = OLD_MTL_SHORT[a.id] || a.name;
+      a.labelAbove = OLD_MTL_ABOVE.has(a.id);
+    });
+
+    // =========================================================================
+    // Monday Nov 23: Île Sainte-Hélène (Parc Jean-Drapeau) → Gare Centrale Train
+    // =========================================================================
+    const ISLAND_GARE_ATTRACTIONS = [
+      {
+        id: 'biosphere-ext',
+        mapId: 'island-gare',
+        zone: 'island',
+        name: 'Biosphère (Exterior Dome Walk)',
+        shortTitle: 'Biosphère (Exterior)',
+        frenchName: 'Buckminster Fuller Geodesic Dome · Expo 67',
+        address: '160 Chemin du Tour-de-l’Isle, Île Sainte-Hélène',
+        lat: 45.5141,
+        lon: -73.5315,
+        x: 462,
+        y: 268,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Iconic Dome Walk',
+        colorVar: '--chart-1',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Exterior open 6 AM – 11 PM (Museum closed Mon)',
+        defaultDuration: 25,
+        ages: 'All ages',
+        cost: 'Free (exterior grounds)',
+        stroller: 'Wide, completely flat paved loop around the dome',
+        kidsLove: 'Standing right beneath the giant 20-story steel lattice sphere from Expo 67 — it looks like a colossal sci-fi spaceship dome!',
+        parentTip: 'Steps from Jean-Drapeau Metro. Because the indoor museum is closed Mondays in low season, walking the outer plaza & reflecting pools is quick, free, and super photogenic.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Biosphere+Ile+Sainte-Helene+Montreal'
       },
-      little: {
-        label: 'Little Kids (2–6)',
-        startTime: 600,
-        ids: ['grande-roue', 'marche-bonsecours', 'beavertails-pjc', 'science-centre']
+      {
+        id: 'calder-sculpture',
+        mapId: 'island-gare',
+        zone: 'island',
+        name: 'Calder’s “Trois Disques” & Espace 67',
+        shortTitle: 'Calder · Trois Disques',
+        frenchName: 'L’Homme (Man) · Monumental Sculpture',
+        address: 'Espace 67, Île Sainte-Hélène',
+        lat: 45.5126,
+        lon: -73.5335,
+        x: 622,
+        y: 282,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Public Art · Free',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Open daily 6:00 AM – 11:00 PM',
+        defaultDuration: 15,
+        ages: 'All ages',
+        cost: 'Free',
+        stroller: 'Wide open concrete esplanade (very stroller-friendly)',
+        kidsLove: 'Walking straight underneath Alexander Calder’s towering 67-foot stainless steel sculpture and peering up through its giant geometric arches.',
+        parentTip: 'Right along Espace 67 between the Biosphère and the wooded trails — great spot for a quick family photo with downtown Montréal behind you.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Trois+Disques+Alexander+Calder+Parc+Jean-Drapeau'
       },
-      older: {
-        label: 'Explorers (6+)',
-        startTime: 630,
-        ids: ['grande-roue', 'beavertails-pjc', 'pointe-a-calliere', 'notre-dame', 'museum-illusions']
+      {
+        id: 'tour-de-levis',
+        mapId: 'island-gare',
+        zone: 'island',
+        name: 'Tour de Lévis & Mount Boullé Forest Trail',
+        shortTitle: 'Tour de Lévis Trail',
+        frenchName: 'Stone Tower & Chickadee Woods',
+        address: 'Chemin de la Tour-de-Lévis, Île Sainte-Hélène',
+        lat: 45.5162,
+        lon: -73.5332,
+        x: 668,
+        y: 152,
+        labelAbove: true,
+        category: 'landmark',
+        categoryLabel: 'Forest Walk · Free',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Open daily (best in daylight)',
+        defaultDuration: 35,
+        ages: 'All ages',
+        cost: 'Free',
+        stroller: 'Paved park road up the gentle hill; forest shortcuts are gravel',
+        kidsLove: 'A peaceful mini-forest walk with birdfeeders (watch for friendly chickadees & woodpeckers!) leading to a fairytale 1937 stone castle-like tower.',
+        parentTip: 'The sheltered trees block river wind nicely in late November, making this the coziest part of the island walk.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Tour+de+Levis+Parc+Jean-Drapeau+Montreal'
       },
-      budget: {
-        label: 'Free / Budget Walk',
-        startTime: 630,
-        ids: ['clock-tower', 'marche-bonsecours', 'beavertails-pjc', 'olive-gourmando', 'notre-dame']
+      {
+        id: 'fort-ste-helene',
+        mapId: 'island-gare',
+        zone: 'island',
+        name: 'Old Fort & Downtown Skyline Belvedere',
+        shortTitle: 'Old Fort & Belvedere',
+        frenchName: 'Fort de l’Île Sainte-Hélène · River Overlook',
+        address: '20 Chemin du Tour-de-l’Isle, Île Sainte-Hélène',
+        lat: 45.5186,
+        lon: -73.5349,
+        x: 472,
+        y: 128,
+        labelAbove: true,
+        category: 'landmark',
+        categoryLabel: 'Historic Fort · Views',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Exterior walls & lookout open daily',
+        defaultDuration: 25,
+        ages: 'All ages',
+        cost: 'Free',
+        stroller: 'Paved exterior pathways around the ramparts',
+        kidsLove: 'Real 1820s stone fortress walls, old cannons, and sweeping postcard views right across the river to Old Montréal, the Clock Tower, and Jacques-Cartier Bridge.',
+        parentTip: 'The old Stewart Museum inside is permanently closed, so treat this as a 20–25 min exterior fortress & skyline lookout loop before heading back to the Metro.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Fort+de+l+Ile+Sainte-Helene+Montreal'
+      },
+      {
+        id: 'espace67-river',
+        mapId: 'island-gare',
+        zone: 'island',
+        name: 'Promenade du Fleuve & Habitat 67 View',
+        shortTitle: 'River Promenade',
+        frenchName: 'Waterfront Boardwalk · Expo Views',
+        address: 'Promenade du Fleuve, Île Sainte-Hélène',
+        lat: 45.5094,
+        lon: -73.5356,
+        x: 470,
+        y: 382,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Waterfront Walk',
+        colorVar: '--chart-1',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Open daily 6:00 AM – 11:00 PM',
+        defaultDuration: 20,
+        ages: 'All ages',
+        cost: 'Free',
+        stroller: 'Flat paved riverside path',
+        kidsLove: 'Spotting the LEGO-like stacked cubes of Habitat 67 right across the water and burning off energy on the wide amphitheatre steps before the train ride.',
+        parentTip: 'Can be breezy by the water in November — bundle up or skip if wind chill is high.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Espace+67+Parc+Jean-Drapeau+Montreal'
+      },
+      {
+        id: 'cosmos-bridge',
+        mapId: 'island-gare',
+        zone: 'island',
+        name: 'Pont du Cosmos & Île Notre-Dame Overlook',
+        shortTitle: 'Pont du Cosmos',
+        frenchName: 'Footbridge to F1 Track & Expo Pavilions',
+        address: 'Pont du Cosmos, Parc Jean-Drapeau',
+        lat: 45.5072,
+        lon: -73.5276,
+        x: 706,
+        y: 404,
+        labelAbove: false,
+        category: 'attraction',
+        categoryLabel: 'Island Crossing',
+        colorVar: '--chart-1',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Open daily 6:00 AM – 11:00 PM',
+        defaultDuration: 25,
+        ages: 'Best for ages 4+',
+        cost: 'Free',
+        stroller: 'Paved pedestrian bridge with gentle ramps',
+        kidsLove: 'Crossing the footbridge between the two islands to peek at the Olympic rowing basin, the futuristic Expo 67 France/Québec pavilions, and the Formula 1 track!',
+        parentTip: 'Adds ~1 km round-trip — great optional add-on if you have an afternoon train and crisp weather.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Pont+du+Cosmos+Parc+Jean-Drapeau+Montreal'
+      },
+      {
+        id: 'marche-artisans',
+        mapId: 'island-gare',
+        zone: 'downtown',
+        name: 'Marché Artisans (Lunch & Train Snacks)',
+        shortTitle: 'Marché Artisans',
+        frenchName: 'Fairmont Queen Elizabeth · Above Gare Centrale',
+        address: '900 Boul. René-Lévesque Ouest (directly above Gare Centrale)',
+        lat: 45.5003,
+        lon: -73.5681,
+        x: 138,
+        y: 235,
+        labelAbove: true,
+        category: 'food',
+        categoryLabel: 'Warm Lunch & Bakery',
+        colorVar: '--chart-4',
+        indoor: true,
+        free: false,
+        food: true,
+        sundayOpen: 450,   // 7:30 AM
+        sundayClose: 1110, // 6:30 PM
+        sundayHoursText: 'Mon 7:30 AM – 6:30 PM (Hot lunch 11–2:30)',
+        defaultDuration: 45,
+        ages: 'All ages',
+        cost: '~$14–22 mains / ~$5–8 pastries',
+        stroller: 'Elevator & indoor ramp direct from Gare Centrale!',
+        kidsLove: 'Fresh stone-oven pizzas, comforting ramen bowls (11 AM–2:30 PM), crêpes, gelato, and colorful French pastries to pack for the train ride.',
+        parentTip: 'Unbeatable logistics: it sits literally on top of Gare Centrale! You can take the indoor elevator straight down to the VIA Rail concourse without stepping outside.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Marche+Artisans+900+Boulevard+Rene-Levesque+Ouest+Montreal'
+      },
+      {
+        id: 'cathcart-pvm',
+        mapId: 'island-gare',
+        zone: 'downtown',
+        name: 'Le Cathcart (Place Ville Marie)',
+        shortTitle: 'Le Cathcart · PVM',
+        frenchName: 'Glass-Pavilion Underground Food Hall',
+        address: '1 Place Ville Marie (connected indoors to Gare Centrale)',
+        lat: 45.5016,
+        lon: -73.5690,
+        x: 112,
+        y: 122,
+        labelAbove: true,
+        category: 'food',
+        categoryLabel: 'Indoor Food Hall',
+        colorVar: '--chart-4',
+        indoor: true,
+        free: false,
+        food: true,
+        sundayOpen: 660,   // 11:00 AM
+        sundayClose: 1260, // 9:00 PM
+        sundayHoursText: 'Mon 11:00 AM – 9:00 PM',
+        defaultDuration: 40,
+        ages: 'All ages',
+        cost: '~$14–20 per meal',
+        stroller: 'Elevators & wide indoor RESO walkways',
+        kidsLove: 'Bright sunlit glass atrium right inside Montreal’s Underground City with burgers, tacos, pizza, and cozy booths.',
+        parentTip: '3-minute indoor walk from Gare Centrale via the RESO underground passage — great lunch alternative if Marché Artisans is busy.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Le+Cathcart+Place+Ville+Marie+Montreal'
+      },
+      {
+        id: 'gare-centrale',
+        mapId: 'island-gare',
+        zone: 'downtown',
+        name: 'Gare Centrale → VIA Rail to Québec City',
+        shortTitle: 'Gare Centrale · Train',
+        frenchName: 'Art Deco Concourse · Departure to Gare du Palais',
+        address: '895 Rue de la Gauchetière Ouest, Montréal',
+        lat: 45.4997,
+        lon: -73.5671,
+        x: 138,
+        y: 368,
+        labelAbove: false,
+        category: 'museum',
+        categoryLabel: 'Train Departure',
+        colorVar: '--chart-3',
+        indoor: true,
+        free: true,
+        food: false,
+        sundayOpen: 330,   // 5:30 AM
+        sundayClose: 1410, // 11:30 PM
+        sundayHoursText: 'Open daily 5:30 AM – 11:30 PM',
+        defaultDuration: 45,
+        ages: 'All ages',
+        cost: 'VIA Rail ticket (~3h 15m to Québec City)',
+        stroller: 'Elevators to platforms & stroller boarding assistance',
+        kidsLove: 'Huge historic Art Deco train hall with sculpted reliefs, big departure boards, and watching trains pull in before the scenic 3h 15m ride to Québec City!',
+        parentTip: 'Plan to arrive 35–45 min before departure for bags & boarding line (VIA Rail weighs carry-ons). Connected indoors to Bonaventure Metro & Marché Artisans.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Gare+Centrale+895+Rue+de+la+Gauchetiere+Ouest+Montreal'
+      }
+    ];
+
+    // =========================================================================
+    // Tuesday–Friday Nov 24–27: Québec City (Old Québec + Family Day Trips)
+    // =========================================================================
+    const QUEBEC_CITY_ATTRACTIONS = [
+      {
+        id: 'chateau-dufferin',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Terrasse Dufferin & Château Frontenac',
+        shortTitle: 'Château & Dufferin',
+        frenchName: 'Iconic Castle Hotel & River Boardwalk',
+        address: '1 Rue des Carrières, Vieux-Québec',
+        lat: 46.8119,
+        lon: -71.2051,
+        x: 454,
+        y: 318,
+        labelAbove: true,
+        category: 'landmark',
+        categoryLabel: 'Must-See Icon',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1440,
+        sundayHoursText: 'Boardwalk open 24/7 (Lobby open daily)',
+        defaultDuration: 35,
+        ages: 'All ages',
+        cost: 'Free (step inside the grand hotel lobby!)',
+        stroller: 'Wide flat wooden boardwalk (very stroller-friendly)',
+        kidsLove: 'Looking straight up at a real fairytale castle with green copper roofs, peeking into the ornate lobby, and spotting historic cannons overlooking the St. Lawrence!',
+        parentTip: 'Stop by the small Starbucks/lobby inside the Château for an easy warm-up, and check the wooden toboggan slide chute at the south end of the terrace.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Terrasse+Dufferin+Chateau+Frontenac+Quebec+City'
+      },
+      {
+        id: 'funiculaire-qc',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Funiculaire du Vieux-Québec',
+        shortTitle: 'Funiculaire',
+        frenchName: 'Cliffside Glass Cable Car (Since 1879)',
+        address: '16 Rue du Petit-Champlain / Terrasse Dufferin',
+        lat: 46.8123,
+        lon: -71.2039,
+        x: 526,
+        y: 356,
+        labelAbove: false,
+        category: 'attraction',
+        categoryLabel: 'Kid Favorite Ride',
+        colorVar: '--chart-1',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 540,   // 9:00 AM
+        sundayClose: 1260, // 9:00 PM
+        sundayHoursText: 'Daily 9:00 AM – 9:00 PM',
+        defaultDuration: 15,
+        ages: 'All ages',
+        cost: '~$5 per ride (kids under ~40" often free)',
+        stroller: 'Foldable strollers fit right inside the cabin!',
+        kidsLove: 'Gliding straight down the 45-degree Cap Diamant cliff face in a panoramic glass cable car with views of the river and rooftops!',
+        parentTip: 'Saves little legs from climbing Breakneck Stairs back up to Upper Town — worth taking at least one way (especially going uphill!).',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Funiculaire+du+Vieux-Quebec+Quebec+City'
+      },
+      {
+        id: 'petit-champlain',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Quartier Petit-Champlain',
+        shortTitle: 'Petit-Champlain',
+        frenchName: 'Storybook Pedestrian Cobblestone Lane',
+        address: 'Rue du Petit-Champlain, Basse-Ville',
+        lat: 46.8117,
+        lon: -71.2033,
+        x: 562,
+        y: 422,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Historic Walk · Lights',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 570,   // 9:30 AM
+        sundayClose: 1200, // 8:00 PM
+        sundayHoursText: 'Street 24/7 · Shops ~10 AM – 6/8 PM',
+        defaultDuration: 45,
+        ages: 'All ages',
+        cost: 'Free to stroll (maple taffy & fudge treats ~$5–10)',
+        stroller: 'Car-free flat lane (cobblestones are bumpy — sturdy wheels help)',
+        kidsLove: 'Twinkling early holiday garlands, giant nutcrackers, toy/candy boutiques, maple fudge shops, and the colorful Petit-Champlain mural!',
+        parentTip: 'Late November already has full holiday decorations up and far lighter crowds than December weekends — magical right around dusk (~4:15 PM)!',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rue+du+Petit-Champlain+Quebec+City'
+      },
+      {
+        id: 'place-royale-qc',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Place Royale & Fresque des Québécois',
+        shortTitle: 'Place Royale & Mural',
+        frenchName: 'Birthplace of French North America (1608)',
+        address: '2–4 Rue des Pains-Bénits, Basse-Ville',
+        lat: 46.8130,
+        lon: -71.2025,
+        x: 640,
+        y: 348,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Square & Giant Mural',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1440,
+        sundayHoursText: 'Open 24/7 (Notre-Dame-des-Victoires ~10–4)',
+        defaultDuration: 25,
+        ages: 'All ages',
+        cost: 'Free',
+        stroller: 'Flat paved square right off Petit-Champlain',
+        kidsLove: 'Playing “I Spy” on the 5-story optical-illusion Fresque des Québécois mural right around the corner (try spotting Samuel de Champlain, kids playing hockey, and winter sledders!).',
+        parentTip: 'Only 2 minutes from Petit-Champlain and 3 minutes from Musée de la civilisation — connects Lower Town effortlessly.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Place+Royale+Fresque+des+Quebecois+Quebec+City'
+      },
+      {
+        id: 'cochon-dingue',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Le Cochon Dingue (Family Bistro)',
+        shortTitle: 'Le Cochon Dingue',
+        frenchName: 'Classic Kid-Friendly Québec Bistro',
+        address: '46 Boulevard Champlain, Petit-Champlain',
+        lat: 46.8114,
+        lon: -71.2028,
+        x: 676,
+        y: 418,
+        labelAbove: false,
+        category: 'food',
+        categoryLabel: 'Cozy Family Bistro',
+        colorVar: '--chart-4',
+        indoor: true,
+        free: false,
+        food: true,
+        sundayOpen: 480,   // 8:00 AM
+        sundayClose: 1320, // 10:00 PM
+        sundayHoursText: 'Daily 8:00 AM – 10:00 PM',
+        defaultDuration: 55,
+        ages: 'All ages (famous kids menu!)',
+        cost: '~$18–28 adult / ~$12 kids meal',
+        stroller: 'Warm indoor seating right in Petit-Champlain',
+        kidsLove: 'Dedicated kids menu with mac & cheese, mini burgers, crispy fries, and legendary warm sugar pie (tarte au sucre) & hot chocolate!',
+        parentTip: 'One of Québec City’s most reliable sit-down warm-up lunches with kids — there’s also a second location on Rue Saint-Jean.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Le+Cochon+Dingue+46+Boulevard+Champlain+Quebec+City'
+      },
+      {
+        id: 'musee-civilisation',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Musée de la civilisation',
+        shortTitle: 'Musée civilisation',
+        frenchName: 'Interactive Family Museum · Lower Town',
+        address: '85 Rue Dalhousie, Vieux-Québec',
+        lat: 46.8152,
+        lon: -71.2023,
+        x: 696,
+        y: 274,
+        labelAbove: true,
+        category: 'museum',
+        categoryLabel: 'Top Family Museum',
+        colorVar: '--chart-3',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1020, // 5:00 PM
+        sundayHoursText: 'Tue–Sun 10:00 AM – 5:00 PM (Closed Mon)',
+        hoursByDay: {
+          mon: { closed: true, text: 'Closed Mondays (Open Tue–Sun 10 AM–5 PM)' },
+          tue: { open: 600, close: 1020, text: 'Tue 10:00 AM – 5:00 PM' },
+          wed: { open: 600, close: 1020, text: 'Wed 10:00 AM – 5:00 PM' },
+          thu: { open: 600, close: 1020, text: 'Thu 10:00 AM – 5:00 PM' },
+          fri: { open: 600, close: 1020, text: 'Fri 10:00 AM – 5:00 PM' }
+        },
+        defaultDuration: 90,
+        ages: 'All ages (phenomenal for kids!)',
+        cost: '~$22–25 adult / kids under 11 free!',
+        stroller: '100% elevator-accessible, coat check & indoor café',
+        kidsLove: 'Hands-on discovery zones, interactive Québec history exhibits, playful dressing-up & multimedia installations built specifically for curious kids.',
+        parentTip: 'Open Tue–Fri 10 AM–5 PM — the #1 indoor warm-up museum in Old Québec if the weather turns snowy or chilly!',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Musee+de+la+civilisation+85+Rue+Dalhousie+Quebec+City'
+      },
+      {
+        id: 'citadelle-qc',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'La Citadelle de Québec',
+        shortTitle: 'La Citadelle',
+        frenchName: 'Star-Shaped Active Fortress & Museum',
+        address: '1 Côte de la Citadelle, Vieux-Québec',
+        lat: 46.8077,
+        lon: -71.2068,
+        x: 298,
+        y: 364,
+        labelAbove: false,
+        category: 'museum',
+        categoryLabel: 'Historic Fortress',
+        colorVar: '--chart-3',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1020, // 5:00 PM
+        sundayHoursText: 'Daily 10:00 AM – 5:00 PM',
+        defaultDuration: 75,
+        ages: 'Best for ages 5+ (10 & under free)',
+        cost: '$22 adult / $8 (11–17) / 10 & under FREE',
+        stroller: 'Guided tour has cobbles & stairs; museum building is indoor & warm',
+        kidsLove: 'Exploring a real star-shaped military fortress with massive stone bastions, cannons, historic uniforms, and stories of the Royal 22e Régiment (and their goat mascot, Batisse!).',
+        parentTip: 'Admission includes both the guided fortress walk and the indoor Royal 22e Régiment Museum. Check guided tour start times at the gate!',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=La+Citadelle+de+Quebec+1+Cote+de+la+Citadelle'
+      },
+      {
+        id: 'plains-abraham',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Plains of Abraham & Martello Tower Walk',
+        shortTitle: 'Plains of Abraham',
+        frenchName: 'Parc des Champs-de-Bataille',
+        address: '835 Avenue Wilfrid-Laurier, Québec',
+        lat: 46.8025,
+        lon: -71.2178,
+        x: 138,
+        y: 368,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Park & Lookout',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1380,
+        sundayHoursText: 'Park open daily (Museum 9 AM – 5 PM)',
+        defaultDuration: 40,
+        ages: 'All ages',
+        cost: 'Free park walk',
+        stroller: 'Wide paved paths along the clifftop',
+        kidsLove: 'Huge open parkland to run freely, climb around historic cannons, spot the round stone Martello Towers, and gaze down at ships on the St. Lawrence.',
+        parentTip: 'Right next to La Citadelle! You can walk along the Promenade des Gouverneurs stairs/clifftop path back toward Terrasse Dufferin.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Plains+of+Abraham+Quebec+City'
+      },
+      {
+        id: 'observatoire-qc',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Observatoire de la Capitale',
+        shortTitle: 'Observatoire Capitale',
+        frenchName: '31st-Floor 360° Indoor Panorama',
+        address: '1037 Rue de la Chevrotière (Édifice Marie-Guyart)',
+        lat: 46.8087,
+        lon: -71.2147,
+        x: 110,
+        y: 215,
+        labelAbove: true,
+        category: 'attraction',
+        categoryLabel: 'Indoor 360° Views',
+        colorVar: '--chart-1',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 600,   // 10:00 AM
+        sundayClose: 1020, // 5:00 PM
+        sundayHoursText: 'Daily 10:00 AM – 5:00 PM',
+        defaultDuration: 45,
+        ages: 'All ages',
+        cost: '~$16 adult / ~$10 kids (under 5 free)',
+        stroller: 'Elevator all the way to the 31st floor!',
+        kidsLove: 'Zooming up 221 meters in an elevator to spot Château Frontenac, the star-shaped Citadelle, Montmorency Falls, and tiny ferries from warm floor-to-ceiling windows!',
+        parentTip: 'Awesome cold-weather warm-up right beside the Parliament Building and Plains of Abraham.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Observatoire+de+la+Capitale+Quebec+City'
+      },
+      {
+        id: 'paillard-st-jean',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Boulangerie Paillard (Rue Saint-Jean)',
+        shortTitle: 'Boulangerie Paillard',
+        frenchName: 'Artisan Bakery, Soup & Hot Chocolate',
+        address: '1097 Rue Saint-Jean, Vieux-Québec',
+        lat: 46.8136,
+        lon: -71.2102,
+        x: 344,
+        y: 218,
+        labelAbove: true,
+        category: 'food',
+        categoryLabel: 'Bakery & Warm-Up',
+        colorVar: '--chart-4',
+        indoor: true,
+        free: false,
+        food: true,
+        sundayOpen: 420,   // 7:00 AM
+        sundayClose: 1140, // 7:00 PM
+        sundayHoursText: 'Daily 7:00 AM – 7:00 PM',
+        defaultDuration: 40,
+        ages: 'All ages',
+        cost: '~$10–16 sandwiches/soups / ~$4–6 pastries',
+        stroller: 'Spacious indoor seating right on Rue Saint-Jean',
+        kidsLove: 'Warm flaky croissants, giant pain au chocolat, creamy hot chocolate, fresh sandwiches, and homemade gelato!',
+        parentTip: 'Fast counter service with lots of seating — the easiest family lunch or afternoon warm-up in Upper Town.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Paillard+1097+Rue+Saint-Jean+Quebec+City'
+      },
+      {
+        id: 'place-dyouville',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Place D’Youville & Fortification Walls',
+        shortTitle: 'Place D’Youville',
+        frenchName: 'Porte Saint-Jean · Ramparts Walk',
+        address: 'Place D’Youville, Vieux-Québec',
+        lat: 46.8124,
+        lon: -71.2143,
+        x: 246,
+        y: 162,
+        labelAbove: true,
+        category: 'landmark',
+        categoryLabel: 'City Gates & Walls',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: true,
+        food: false,
+        sundayOpen: 360,
+        sundayClose: 1440,
+        sundayHoursText: 'Open daily (Rink opens mid/late Nov)',
+        defaultDuration: 30,
+        ages: 'All ages',
+        cost: 'Free (skate rentals ~$10 if rink is open)',
+        stroller: 'Flat square; stairs up to the top of the rampart walls',
+        kidsLove: 'Walking right through (and on top of!) the giant stone Porte Saint-Jean archway — North America’s only fortified city walls north of Mexico — plus the outdoor ice rink!',
+        parentTip: 'Right beside Rue Saint-Jean and Place de l’Hôtel-de-Ville; easy 5-min walk from Paillard.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Place+D+Youville+Quebec+City'
+      },
+      {
+        id: 'christmas-market',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Marché de Noël allemand (German Christmas Market)',
+        shortTitle: 'German Xmas Market',
+        frenchName: 'Place de l’Hôtel-de-Ville & Place d’Armes · Thu–Sun!',
+        address: '2 Rue des Jardins & Place de l’Hôtel-de-Ville',
+        lat: 46.8139,
+        lon: -71.2082,
+        x: 432,
+        y: 204,
+        labelAbove: true,
+        category: 'food',
+        categoryLabel: 'Festive Market · Free',
+        colorVar: '--chart-4',
+        indoor: false,
+        free: true,
+        food: true,
+        sundayOpen: 660,   // 11:00 AM
+        sundayClose: 1260, // 9:00 PM
+        sundayHoursText: 'OPEN Thu–Fri 11 AM–9 PM (Closed Tue–Wed!)',
+        hoursByDay: {
+          tue: { closed: true, text: 'Closed Tuesday! Opens Thursday 11 AM–9 PM' },
+          wed: { closed: true, text: 'Closed Wednesday! Opens Thursday 11 AM–9 PM' },
+          thu: { open: 660, close: 1260, text: 'Thu 11:00 AM – 9:00 PM (Free entry!)' },
+          fri: { open: 660, close: 1260, text: 'Fri 11:00 AM – 9:00 PM (Free entry!)' }
+        },
+        defaultDuration: 75,
+        ages: 'All ages (huge holiday highlight!)',
+        cost: 'Free entry · Treats ~$5–12',
+        stroller: 'Stroller-friendly squares across 5 Old Québec sites',
+        kidsLove: 'Over 100 glowing wooden chalets, warm Bavarian pretzels, hot chocolate, gingerbread, puppets/animations, twinkling trees, and the magical kids’ Christmas village!',
+        parentTip: 'IMPORTANT: Open Thu Nov 26 & Fri Nov 27 (11 AM–9 PM), CLOSED Tue–Wed! Visiting Thursday late afternoon (~3:30–5:30 PM) lets you see it light up at dusk with minimal weekday crowds.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Marche+de+Noel+allemand+de+Quebec+Place+de+l+Hotel+de+Ville'
+      },
+      {
+        id: 'montmorency-falls',
+        mapId: 'quebec-city',
+        zone: 'qc-falls',
+        name: 'Parc de la Chute-Montmorency (Montmorency Falls)',
+        shortTitle: 'Montmorency Falls',
+        frenchName: '83m Waterfall & Suspension Bridge',
+        address: '5300 Boul. Sainte-Anne, Québec (15 min east)',
+        lat: 46.8908,
+        lon: -71.1476,
+        x: 720,
+        y: 62,
+        labelAbove: false,
+        category: 'landmark',
+        categoryLabel: 'Epic Waterfall',
+        colorVar: '--chart-2',
+        indoor: false,
+        free: false,
+        food: false,
+        sundayOpen: 480,   // 8:00 AM
+        sundayClose: 1080, // 6:00 PM
+        sundayHoursText: 'Park open daily (Best 9 AM – 4 PM)',
+        defaultDuration: 75,
+        ages: 'All ages',
+        cost: '~$10 adult park access (17 & under FREE!)',
+        stroller: 'Top park & suspension bridge approach are flat/paved',
+        kidsLove: 'A thundering 83-meter waterfall (30m taller than Niagara!) with a thrilling suspension bridge hanging right over the top crest of the falls!',
+        parentTip: '15 min Uber/drive (or RTC Bus 800) from Old Québec. Head straight to the upper Manoir Montmorency entrance for flat access to the suspension bridge (cable car runs on reduced/seasonal schedule in late Nov).',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Parc+de+la+Chute-Montmorency+Quebec'
+      },
+      {
+        id: 'aquarium-qc',
+        mapId: 'quebec-city',
+        zone: 'qc-aquarium',
+        name: 'Aquarium du Québec',
+        shortTitle: 'Aquarium du Québec',
+        frenchName: 'Polar Bears, Walruses & Ocean Tunnel',
+        address: '1675 Avenue des Hôtels, Québec (15 min west)',
+        lat: 46.7510,
+        lon: -71.2886,
+        x: 170,
+        y: 62,
+        labelAbove: false,
+        category: 'attraction',
+        categoryLabel: 'Top Kid Attraction',
+        colorVar: '--chart-1',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 540,   // 9:00 AM
+        sundayClose: 960,  // 4:00 PM
+        sundayHoursText: 'Daily 9:00 AM – 4:00 PM (Nov hours)',
+        defaultDuration: 120,
+        ages: 'All ages (dream spot for kids!)',
+        cost: '~$24 adult / ~$12 youth / under 3 free',
+        stroller: 'Fully stroller-accessible indoor pavilions & outdoor paths',
+        kidsLove: '10,000 marine animals including polar bears, Atlantic walruses, seals, glowing jellyfish, a walk-through Awesome Ocean tunnel, and a stingray touch tank!',
+        parentTip: 'Closes at 4:00 PM in November, so plan to arrive by early afternoon at the latest (~15 min Uber/drive from Old Québec). Mix of indoor warm pavilions + outdoor Arctic exhibits.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Aquarium+du+Quebec+1675+Avenue+des+Hotels'
+      },
+      {
+        id: 'grand-marche',
+        mapId: 'quebec-city',
+        zone: 'qc-grand-marche',
+        name: 'Le Grand Marché de Québec (Indoor Christmas Market)',
+        shortTitle: 'Grand Marché',
+        frenchName: 'Covered Local Food & Holiday Market',
+        address: '250 Boulevard Wilfrid-Hamel, Québec',
+        lat: 46.8304,
+        lon: -71.2463,
+        x: 450,
+        y: 62,
+        labelAbove: false,
+        category: 'food',
+        categoryLabel: 'Indoor Market · Free',
+        colorVar: '--chart-4',
+        indoor: true,
+        free: true,
+        food: true,
+        sundayOpen: 540,   // 9:00 AM
+        sundayClose: 1080, // 6:00 PM
+        sundayHoursText: 'Daily 9:00 AM – 6:00 PM (Xmas Market)',
+        defaultDuration: 45,
+        ages: 'All ages',
+        cost: 'Free entry · Local cheeses, maple & pastries',
+        stroller: 'Wide, completely flat heated indoor market hall',
+        kidsLove: 'Sampling Québec cheese curds, maple treats, wood-fired pastries, and festive indoor Christmas market displays without getting cold!',
+        parentTip: 'Open every day (including Tue & Wed when the outdoor German Market is closed!) — ~10 min ride from Old Québec.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Le+Grand+Marche+de+Quebec'
+      },
+      {
+        id: 'rue-st-paul',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Rue Saint-Paul & Old Port Stroll',
+        shortTitle: 'Rue Saint-Paul & Port',
+        frenchName: 'Cafés, Antiques & Waterfront',
+        address: 'Rue Saint-Paul, Vieux-Port de Québec',
+        lat: 46.8170,
+        lon: -71.2060,
+        x: 682,
+        y: 192,
+        labelAbove: true,
+        category: 'food',
+        categoryLabel: 'Cafés & Old Port',
+        colorVar: '--chart-4',
+        indoor: false,
+        free: true,
+        food: true,
+        sundayOpen: 480,
+        sundayClose: 1140,
+        sundayHoursText: 'Cafés ~8 AM – 5 PM · Street 24/7',
+        defaultDuration: 35,
+        ages: 'All ages',
+        cost: 'Free stroll · Great morning coffee/pastries',
+        stroller: 'Flat paved sidewalks right near Gare du Palais',
+        kidsLove: 'Quirky antique shop windows, harbor tugboats along the Old Port basin, and warm cinnamon buns at Café Saint-Henri or Buffet de l’Antiquaire.',
+        parentTip: 'Completely flat and only a 5-minute walk from Gare du Palais — ideal relaxed final morning before departure!',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rue+Saint-Paul+Old+Port+Quebec+City'
+      },
+      {
+        id: 'levis-ferry',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Québec–Lévis Ferry Scenic Crossing',
+        shortTitle: 'Lévis Ferry',
+        frenchName: '25-Min Round-Trip Skyline Boat Ride',
+        address: '10 Rue des Traversiers, Vieux-Québec',
+        lat: 46.8126,
+        lon: -71.2007,
+        x: 774,
+        y: 368,
+        labelAbove: false,
+        category: 'attraction',
+        categoryLabel: 'Scenic Boat Ride',
+        colorVar: '--chart-1',
+        indoor: true,
+        free: false,
+        food: false,
+        sundayOpen: 390,   // 6:30 AM
+        sundayClose: 1380, // 11:00 PM
+        sundayHoursText: 'Runs every 30 min (6:30 AM – 11 PM)',
+        defaultDuration: 35,
+        ages: 'All ages',
+        cost: '~$4 each way (kids under 5 free!)',
+        stroller: 'Roll-on/roll-off deck with warm heated cabin!',
+        kidsLove: 'Riding a giant boat across the St. Lawrence River (~12 min each way) with heated indoor windows and the #1 postcard view of Château Frontenac towering on the cliff!',
+        parentTip: 'Stay right on the boat or hop straight onto the return crossing — one of the best budget-friendly thrills in all of Québec City.',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Traverse+Quebec-Levis+10+Rue+des+Traversiers'
+      },
+      {
+        id: 'gare-du-palais',
+        mapId: 'quebec-city',
+        zone: 'qc-old',
+        name: 'Gare du Palais (Station & Departure)',
+        shortTitle: 'Gare du Palais',
+        frenchName: 'Château-Style Train & Bus Terminal',
+        address: '450 Rue de la Gare-du-Palais, Québec',
+        lat: 46.8174,
+        lon: -71.2138,
+        x: 590,
+        y: 142,
+        labelAbove: true,
+        category: 'museum',
+        categoryLabel: 'Train Station',
+        colorVar: '--chart-3',
+        indoor: true,
+        free: true,
+        food: false,
+        sundayOpen: 330,
+        sundayClose: 1380,
+        sundayHoursText: 'Open daily 5:30 AM – 11:00 PM',
+        defaultDuration: 40,
+        ages: 'All ages',
+        cost: 'VIA Rail / transit terminal',
+        stroller: 'Flat level boarding & elevators from Lower Town',
+        kidsLove: 'A miniature château-style historic train station with turrets and grand vaulted ceilings — feels like boarding the Hogwarts Express!',
+        parentTip: 'Completely flat 5–10 min walk from Rue Saint-Paul & Lower Town (or quick 5 min cab from Upper Town hotels with luggage).',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Gare+du+Palais+450+Rue+de+la+Gare-du-Palais+Quebec'
+      }
+    ];
+
+    const ALL_ATTRACTIONS = [...ATTRACTIONS, ...ISLAND_GARE_ATTRACTIONS, ...QUEBEC_CITY_ATTRACTIONS];
+    const byId = Object.fromEntries(ALL_ATTRACTIONS.map(a => [a.id, a]));
+    const ATTRACTIONS_BY_MAP = {
+      'old-montreal': ATTRACTIONS,
+      'island-gare': ISLAND_GARE_ATTRACTIONS,
+      'quebec-city': QUEBEC_CITY_ATTRACTIONS
+    };
+
+    const MAP_CONFIGS = {
+      'old-montreal': {
+        baseGroupId: 'mapBase-old-montreal',
+        compassAngle: -22,
+        scaleLabel: '~100 m',
+        ariaLabel: 'Interactive walking map of Old Montreal and the Old Port'
+      },
+      'island-gare': {
+        baseGroupId: 'mapBase-island-gare',
+        compassAngle: -18,
+        scaleLabel: '~250 m (Island)',
+        ariaLabel: 'Interactive map of Île Sainte-Hélène, Biosphère, and Gare Centrale'
+      },
+      'quebec-city': {
+        baseGroupId: 'mapBase-quebec-city',
+        compassAngle: -15,
+        scaleLabel: '~150 m (Old QC)',
+        ariaLabel: 'Interactive map of Old Québec City and nearby family attractions'
       }
     };
 
     // =========================================================================
-    // Application State
+    // 6-Day Trip Definitions (Sun Nov 22 – Fri Nov 27, 2026)
+    // =========================================================================
+    const TRIP_DAYS = [
+      {
+        id: 'sun-mtl',
+        shortDay: 'Sun · Nov 22',
+        dateIso: '2026-11-22',
+        city: 'Montréal',
+        cityColor: 'var(--chart-1)',
+        tabSubtitle: 'Old Montréal',
+        title: 'Old Montréal Sunday Family Walk',
+        badge: 'Sun Nov 22 · Montréal',
+        subtitle: 'Click any pin or stop to inspect Sunday hours, kid tips, tweak time spent, or customize your Old Montréal loop.',
+        dayOfWeek: 'sun',
+        hoursHeading: 'Sunday Hours',
+        mapId: 'old-montreal',
+        targetMaxMins: 240,
+        targetLabel: 'Half-Day (≤ 4h)',
+        defaultPreset: 'classic',
+        defaultStartTime: 600,
+        presets: {
+          classic: {
+            label: 'Classic Half-Day',
+            startTime: 600,
+            ids: ['grande-roue', 'marche-bonsecours', 'beavertails-pjc', 'science-centre', 'notre-dame', 'olive-gourmando']
+          },
+          little: {
+            label: 'Little Kids (2–6)',
+            startTime: 600,
+            ids: ['grande-roue', 'marche-bonsecours', 'beavertails-pjc', 'science-centre']
+          },
+          older: {
+            label: 'Explorers (6+)',
+            startTime: 630,
+            ids: ['grande-roue', 'beavertails-pjc', 'pointe-a-calliere', 'notre-dame', 'museum-illusions']
+          },
+          budget: {
+            label: 'Free / Budget Walk',
+            startTime: 630,
+            ids: ['clock-tower', 'marche-bonsecours', 'beavertails-pjc', 'olive-gourmando', 'notre-dame']
+          }
+        },
+        notes: [
+          { icon: '!', color: 'var(--warning)', title: 'Sunday & Late-Nov Hours:', body: 'Notre-Dame Basilica sightseeing starts at <strong>12:30 PM</strong> (morning Masses). Summer attractions (<em>SOS Labyrinthe</em>, <em>Voiles en Voiles</em>) are closed in November.' },
+          { icon: 'i', color: 'var(--chart-1)', title: 'Getting There & Strollers:', body: 'Start near <strong>Champ-de-Mars Metro</strong> (Orange Line) and finish by <strong>Place-d’Armes Metro</strong>. Rue Saint-Paul cobblestones are bumpy — larger stroller wheels help!' },
+          { icon: '✓', color: 'var(--chart-2)', title: 'Warm-Up Strategy:', body: 'Alternates short 4–7 min outdoor walks with cozy indoor stops (heated Grande Roue cabins, Marché Bonsecours, museums, and warm pastries).' }
+        ]
+      },
+      {
+        id: 'mon-mtl',
+        shortDay: 'Mon · Nov 23',
+        dateIso: '2026-11-23',
+        city: 'Montréal → QC',
+        cityColor: 'var(--chart-3)',
+        tabSubtitle: 'Island & Train',
+        title: 'Île Sainte-Hélène Walk & Train to Québec',
+        badge: 'Mon Nov 23 · Montréal → Québec',
+        subtitle: 'See the Biosphère from outside, explore Parc Jean-Drapeau’s Expo 67 landmarks & forest trails, then head to Gare Centrale for your VIA Rail train.',
+        dayOfWeek: 'mon',
+        hoursHeading: 'Monday Hours',
+        mapId: 'island-gare',
+        targetMaxMins: 300,
+        targetLabel: 'Pre-Train Window (≤ 5h)',
+        defaultPreset: 'classic',
+        defaultStartTime: 570,
+        presets: {
+          classic: {
+            label: 'Island Walk + Train',
+            startTime: 570,
+            ids: ['biosphere-ext', 'calder-sculpture', 'tour-de-levis', 'fort-ste-helene', 'marche-artisans', 'gare-centrale']
+          },
+          relaxed: {
+            label: 'Short Loop + Lunch',
+            startTime: 600,
+            ids: ['biosphere-ext', 'calder-sculpture', 'fort-ste-helene', 'marche-artisans', 'gare-centrale']
+          },
+          explorer: {
+            label: 'Full Island + Bridge',
+            startTime: 540,
+            ids: ['biosphere-ext', 'calder-sculpture', 'tour-de-levis', 'cosmos-bridge', 'marche-artisans', 'gare-centrale']
+          }
+        },
+        notes: [
+          { icon: '!', color: 'var(--warning)', title: 'Monday Island Note:', body: 'The Biosphère indoor museum is closed Mondays in November, so circling the giant geodesic dome outside + walking <strong>Calder’s Trois Disques</strong>, <strong>Tour de Lévis</strong> & <strong>Old Fort</strong> is ideal.' },
+          { icon: 'i', color: 'var(--chart-1)', title: 'Island → Gare Centrale:', body: 'Take Yellow Line from <strong>Jean-Drapeau</strong> (1 stop to Berri-UQAM) → Orange Line (3 stops to <strong>Bonaventure</strong>, connected indoors to Gare Centrale), ~18 min, or a ~12 min Uber/taxi.' },
+          { icon: '✓', color: 'var(--chart-2)', title: 'Lunch & Train Boarding:', body: '<strong>Marché Artisans</strong> sits directly above Gare Centrale (elevator straight to the train hall!). Plan to be at the VIA Rail gate 35–45 min before departure (~3h 15m to Québec City).' }
+        ]
+      },
+      {
+        id: 'tue-qc',
+        shortDay: 'Tue · Nov 24',
+        dateIso: '2026-11-24',
+        city: 'Québec City',
+        cityColor: 'var(--chart-2)',
+        tabSubtitle: 'Old Québec Icons',
+        title: 'Old Québec: Upper & Lower Town Icons',
+        badge: 'Tue Nov 24 · Québec City',
+        subtitle: 'Storybook introduction to Vieux-Québec: Château Frontenac, Funiculaire down to Petit-Champlain, Place Royale mural, and Musée de la civilisation.',
+        dayOfWeek: 'tue',
+        hoursHeading: 'Tuesday Hours',
+        mapId: 'quebec-city',
+        targetMaxMins: 360,
+        targetLabel: 'Comfortable Day (≤ 6h)',
+        defaultPreset: 'classic',
+        defaultStartTime: 600,
+        presets: {
+          classic: {
+            label: 'Old Town Classic',
+            startTime: 600,
+            ids: ['chateau-dufferin', 'funiculaire-qc', 'petit-champlain', 'place-royale-qc', 'cochon-dingue', 'musee-civilisation']
+          },
+          easy: {
+            label: 'Relaxed Half-Day',
+            startTime: 600,
+            ids: ['chateau-dufferin', 'funiculaire-qc', 'petit-champlain', 'place-royale-qc', 'cochon-dingue']
+          },
+          indoor: {
+            label: 'Cozy Indoor Focus',
+            startTime: 600,
+            ids: ['chateau-dufferin', 'funiculaire-qc', 'cochon-dingue', 'musee-civilisation', 'levis-ferry']
+          }
+        },
+        notes: [
+          { icon: '!', color: 'var(--warning)', title: 'Tuesday Schedule Tip:', body: '<strong>Musée de la civilisation</strong> opens Tuesday (10 AM–5 PM) — a #1 kid hit! Note: the outdoor <strong>German Christmas Market</strong> is closed Tue–Wed and opens Thursday.' },
+          { icon: 'i', color: 'var(--chart-1)', title: 'Upper ↔ Lower Town:', body: 'Old Québec sits on a steep cliff — ride the glass <strong>Funiculaire</strong> (9 AM–9 PM) between Terrasse Dufferin and Petit-Champlain to save little legs!' },
+          { icon: '✓', color: 'var(--chart-2)', title: 'Early Holiday Magic:', body: 'Petit-Champlain is already decked out with twinkling garlands and holiday window displays by late November — gorgeous right as dusk hits around 4:15 PM.' }
+        ]
+      },
+      {
+        id: 'wed-qc',
+        shortDay: 'Wed · Nov 25',
+        dateIso: '2026-11-25',
+        city: 'Québec City',
+        cityColor: 'var(--chart-2)',
+        tabSubtitle: 'Fort & Plains',
+        title: 'Québec City: Fortress, Plains & 360° Views',
+        badge: 'Wed Nov 25 · Québec City',
+        subtitle: 'Explore North America’s only walled city: star-shaped La Citadelle, Plains of Abraham, warm 31st-floor Observatoire views, and Rue Saint-Jean.',
+        dayOfWeek: 'wed',
+        hoursHeading: 'Wednesday Hours',
+        mapId: 'quebec-city',
+        targetMaxMins: 360,
+        targetLabel: 'Comfortable Day (≤ 6h)',
+        defaultPreset: 'fortress',
+        defaultStartTime: 600,
+        presets: {
+          fortress: {
+            label: 'Fortress & Views',
+            startTime: 600,
+            ids: ['citadelle-qc', 'plains-abraham', 'observatoire-qc', 'paillard-st-jean', 'place-dyouville']
+          },
+          market: {
+            label: 'Indoor Market + Views',
+            startTime: 600,
+            ids: ['grand-marche', 'observatoire-qc', 'paillard-st-jean', 'place-dyouville', 'levis-ferry']
+          },
+          aquarium: {
+            label: 'Swap: Aquarium Day',
+            startTime: 570,
+            ids: ['aquarium-qc', 'paillard-st-jean', 'place-dyouville']
+          }
+        },
+        notes: [
+          { icon: '!', color: 'var(--warning)', title: 'Wednesday Hours:', body: '<strong>La Citadelle</strong> and <strong>Observatoire de la Capitale</strong> are both open 10 AM–5 PM (kids 10 & under are free at La Citadelle!). German Market is still closed until Thursday.' },
+          { icon: 'i', color: 'var(--chart-1)', title: 'Cozy Indoor Backup:', body: '<strong>Le Grand Marché</strong> indoor Christmas food market is open daily 9 AM–6 PM (10 min ride) if you want a warm market stop on Wednesday.' },
+          { icon: '✓', color: 'var(--chart-2)', title: 'Warm-Up Stop:', body: '<strong>Boulangerie Paillard</strong> on Rue Saint-Jean has spacious indoor seating, hot soup, croissants, and hot chocolate right inside the city walls.' }
+        ]
+      },
+      {
+        id: 'thu-qc',
+        shortDay: 'Thu · Nov 26',
+        dateIso: '2026-11-26',
+        city: 'Québec City',
+        cityColor: 'var(--chart-4)',
+        tabSubtitle: 'Falls & Xmas Market',
+        title: 'Québec City: Falls, Aquarium & Christmas Market!',
+        badge: 'Thu Nov 26 · German Market Opens!',
+        subtitle: 'Big family adventure day: thundering Montmorency Falls & Aquarium du Québec, then celebrate Thursday opening of the German Christmas Market!',
+        dayOfWeek: 'thu',
+        hoursHeading: 'Thursday Hours',
+        mapId: 'quebec-city',
+        targetMaxMins: 420,
+        targetLabel: 'Full Adventure (≤ 7h)',
+        defaultPreset: 'falls-market',
+        defaultStartTime: 600,
+        presets: {
+          'falls-market': {
+            label: 'Falls + Aquarium + Market',
+            startTime: 600,
+            ids: ['montmorency-falls', 'aquarium-qc', 'paillard-st-jean', 'christmas-market']
+          },
+          'relaxed-falls': {
+            label: 'Falls + Xmas Market',
+            startTime: 630,
+            ids: ['montmorency-falls', 'paillard-st-jean', 'christmas-market', 'chateau-dufferin']
+          },
+          'aq-market': {
+            label: 'Aquarium + Xmas Market',
+            startTime: 600,
+            ids: ['aquarium-qc', 'paillard-st-jean', 'christmas-market']
+          }
+        },
+        notes: [
+          { icon: '!', color: 'var(--warning)', title: 'German Christmas Market Opens!', body: '<strong>Marché de Noël allemand</strong> opens <strong>Thu–Sun 11 AM–9 PM</strong> (free entry!). Thursday dusk (~4 PM) is magical with twinkling lights and light weekday crowds.' },
+          { icon: 'i', color: 'var(--chart-1)', title: 'Aquarium & Falls Timing:', body: '<strong>Aquarium du Québec</strong> closes at <strong>4:00 PM</strong> in November! Visit Montmorency Falls & Aquarium first (15 min Uber/drive each), then return to Old Québec for the evening market.' },
+          { icon: '✓', color: 'var(--chart-2)', title: 'Scaling for Energy:', body: 'If doing both Falls + Aquarium feels packed, use the <strong>Falls + Xmas Market</strong> or <strong>Aquarium + Xmas Market</strong> preset above and move the other to Wed or Fri!' }
+        ]
+      },
+      {
+        id: 'fri-qc',
+        shortDay: 'Fri · Nov 27',
+        dateIso: '2026-11-27',
+        city: 'Québec City',
+        cityColor: 'var(--chart-4)',
+        tabSubtitle: 'Port, Ferry & Train',
+        title: 'Québec City: Old Port, Ferry & Departure',
+        badge: 'Fri Nov 27 · Final Day',
+        subtitle: 'Easy flat final morning around Old Port & Rue Saint-Paul, a 25-min Lévis Ferry skyline ride, last German Christmas Market treats, and Gare du Palais.',
+        dayOfWeek: 'fri',
+        hoursHeading: 'Friday Hours',
+        mapId: 'quebec-city',
+        targetMaxMins: 300,
+        targetLabel: 'Relaxed Finale (≤ 5h)',
+        defaultPreset: 'departure',
+        defaultStartTime: 570,
+        presets: {
+          departure: {
+            label: 'Port + Ferry + Market + Train',
+            startTime: 570,
+            ids: ['rue-st-paul', 'levis-ferry', 'christmas-market', 'gare-du-palais']
+          },
+          flat: {
+            label: 'Easy Flat Old Port + Train',
+            startTime: 600,
+            ids: ['rue-st-paul', 'levis-ferry', 'musee-civilisation', 'gare-du-palais']
+          },
+          market: {
+            label: 'Christmas Market Finale',
+            startTime: 660,
+            ids: ['christmas-market', 'petit-champlain', 'cochon-dingue', 'gare-du-palais']
+          }
+        },
+        notes: [
+          { icon: '!', color: 'var(--warning)', title: 'Friday Market & Hours:', body: '<strong>German Christmas Market</strong> is open 11 AM–9 PM again today — great for grabbing last-minute gingerbread, maple treats, and wooden ornaments.' },
+          { icon: 'i', color: 'var(--chart-1)', title: 'Easy Departure Logistics:', body: '<strong>Rue Saint-Paul</strong>, <strong>Old Port</strong>, and <strong>Lévis Ferry</strong> are all flat in Lower Town and a 5–10 min walk (or 3 min cab) to <strong>Gare du Palais</strong>.' },
+          { icon: '✓', color: 'var(--chart-2)', title: 'Don’t Miss the Ferry:', body: 'The <strong>Québec–Lévis Ferry</strong> runs every 30 min (~$4, heated indoor cabin) and gives you the best panoramic goodbye view of Château Frontenac!' }
+        ]
+      }
+    ];
+
+    const DAY_BY_ID = Object.fromEntries(TRIP_DAYS.map(d => [d.id, d]));
+
+    function createDefaultDayState(day) {
+      const preset = day.presets[day.defaultPreset] || Object.values(day.presets)[0];
+      const mapSpots = ATTRACTIONS_BY_MAP[day.mapId] || [];
+      return {
+        activePreset: day.defaultPreset,
+        startTime: preset ? preset.startTime : day.defaultStartTime,
+        planIds: preset ? [...preset.ids] : [],
+        durations: Object.fromEntries(mapSpots.map(a => [a.id, a.defaultDuration])),
+        visitedIds: new Set(),
+        selectedId: preset && preset.ids.length ? preset.ids[0] : (mapSpots[0] ? mapSpots[0].id : null)
+      };
+    }
+
+    function guessInitialDayId() {
+      // Check URL hash first (e.g. #mon-mtl)
+      const hashId = (window.location.hash || '').replace(/^#/, '');
+      if (DAY_BY_ID[hashId]) return hashId;
+      // Match today's local date to trip days if within trip window
+      const now = new Date();
+      const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const match = TRIP_DAYS.find(d => d.dateIso === iso);
+      return match ? match.id : 'mon-mtl';
+    }
+
+    // =========================================================================
+    // Application State (Multi-Day)
     // =========================================================================
     const state = {
-      activePreset: 'classic',
-      startTime: 600, // minutes from midnight (10:00 AM)
-      planIds: [...PRESETS.classic.ids],
-      durations: Object.fromEntries(ATTRACTIONS.map(a => [a.id, a.defaultDuration])),
-      visitedIds: new Set(),
-      selectedId: 'grande-roue',
+      activeDayId: guessInitialDayId(),
+      days: Object.fromEntries(TRIP_DAYS.map(d => [d.id, createDefaultDayState(d)])),
       filter: 'all',
       showOptionalInList: false,
       // Map pan/zoom
@@ -1129,10 +2485,39 @@
       panY: 0
     };
 
-    const byId = Object.fromEntries(ATTRACTIONS.map(a => [a.id, a]));
+    function getCurrentDay() {
+      return DAY_BY_ID[state.activeDayId] || TRIP_DAYS[0];
+    }
+
+    function getDayState(dayId = state.activeDayId) {
+      return state.days[dayId] || state.days[TRIP_DAYS[0].id];
+    }
+
+    function getDayAttractions(dayId = state.activeDayId) {
+      const day = DAY_BY_ID[dayId] || TRIP_DAYS[0];
+      return ATTRACTIONS_BY_MAP[day.mapId] || [];
+    }
+
+    function getSpotHoursForDay(spot, day = getCurrentDay()) {
+      if (spot.hoursByDay && spot.hoursByDay[day.dayOfWeek]) {
+        const entry = spot.hoursByDay[day.dayOfWeek];
+        return {
+          closed: Boolean(entry.closed),
+          open: entry.open ?? spot.sundayOpen,
+          close: entry.close ?? spot.sundayClose,
+          text: entry.text || spot.sundayHoursText
+        };
+      }
+      return {
+        closed: false,
+        open: spot.sundayOpen,
+        close: spot.sundayClose,
+        text: spot.sundayHoursText
+      };
+    }
 
     // =========================================================================
-    // Geo & Time Helpers
+    // Geo, Transit & Time Helpers
     // =========================================================================
     function haversineMeters(a, b) {
       const R = 6371000;
@@ -1145,11 +2530,73 @@
       return 2 * R * Math.asin(Math.sqrt(h));
     }
 
-    function walkBetween(a, b) {
-      // Street-grid multiplier ~1.28; kid-friendly pace ~62 m/min (~3.7 km/h)
-      const meters = Math.round((haversineMeters(a, b) * 1.28) / 10) * 10;
-      const mins = Math.max(3, Math.round(meters / 62));
-      return { meters, mins };
+    function legBetween(a, b) {
+      if (a.zone === b.zone) {
+        // Street-grid multiplier ~1.28; kid-friendly pace ~62 m/min (~3.7 km/h)
+        const meters = Math.round((haversineMeters(a, b) * 1.28) / 10) * 10;
+        const mins = Math.max(3, Math.round(meters / 62));
+        return {
+          mode: 'walk',
+          meters,
+          mins,
+          label: `Walk ${mins} min (${meters} m)`,
+          pillLabel: `${mins}m`
+        };
+      }
+      // Cross-zone transit / short drive legs
+      const pair = [a.zone, b.zone].sort().join('::');
+      if (pair === 'downtown::island') {
+        return {
+          mode: 'metro',
+          meters: 0,
+          mins: 18,
+          label: 'Metro (Yellow→Orange) or Taxi ~18 min',
+          pillLabel: '🚇 18m'
+        };
+      }
+      if (pair === 'qc-falls::qc-old') {
+        return {
+          mode: 'drive',
+          meters: 0,
+          mins: 15,
+          label: 'Uber / Drive / Bus 800 ~15 min',
+          pillLabel: '🚗 15m'
+        };
+      }
+      if (pair === 'qc-aquarium::qc-old') {
+        return {
+          mode: 'drive',
+          meters: 0,
+          mins: 15,
+          label: 'Uber / Drive ~15 min',
+          pillLabel: '🚗 15m'
+        };
+      }
+      if (pair === 'qc-aquarium::qc-falls') {
+        return {
+          mode: 'drive',
+          meters: 0,
+          mins: 22,
+          label: 'Uber / Drive ~22 min',
+          pillLabel: '🚗 22m'
+        };
+      }
+      if (pair === 'qc-grand-marche::qc-old') {
+        return {
+          mode: 'drive',
+          meters: 0,
+          mins: 10,
+          label: 'Uber / Drive / Bus ~10 min',
+          pillLabel: '🚗 10m'
+        };
+      }
+      return {
+        mode: 'drive',
+        meters: 0,
+        mins: 16,
+        label: 'Uber / Drive ~16 min',
+        pillLabel: '🚗 16m'
+      };
     }
 
     function formatClock(mins) {
@@ -1177,40 +2624,54 @@
       return `${h}h ${m}m`;
     }
 
-    function computeSchedule() {
-      let cursor = state.startTime;
+    function computeSchedule(dayId = state.activeDayId) {
+      const day = DAY_BY_ID[dayId] || TRIP_DAYS[0];
+      const ds = getDayState(day.id);
+      let cursor = ds.startTime;
       let totalWalkMeters = 0;
       let totalWalkMins = 0;
+      let totalTransitMins = 0;
       const items = [];
       const warnings = [];
 
-      state.planIds.forEach((id, idx) => {
+      ds.planIds.forEach((id, idx) => {
         const spot = byId[id];
+        if (!spot) return;
         let walkFromPrev = null;
         if (idx > 0) {
-          walkFromPrev = walkBetween(byId[state.planIds[idx - 1]], spot);
+          const prevSpot = byId[ds.planIds[idx - 1]];
+          walkFromPrev = legBetween(prevSpot, spot);
           cursor += walkFromPrev.mins;
-          totalWalkMeters += walkFromPrev.meters;
-          totalWalkMins += walkFromPrev.mins;
+          if (walkFromPrev.mode === 'walk') {
+            totalWalkMeters += walkFromPrev.meters;
+            totalWalkMins += walkFromPrev.mins;
+          } else {
+            totalTransitMins += walkFromPrev.mins;
+          }
         }
         const arrive = cursor;
-        const stay = state.durations[id];
+        const stay = ds.durations[id] ?? spot.defaultDuration;
         const depart = arrive + stay;
         cursor = depart;
 
+        const hrs = getSpotHoursForDay(spot, day);
         let hoursStatus = 'open';
         let hoursNote = '';
-        if (arrive < spot.sundayOpen) {
-          hoursStatus = 'early';
-          hoursNote = `Opens ${formatClock(spot.sundayOpen)} (${spot.sundayOpen - arrive} min after arrival)`;
-          warnings.push(`${spot.name} opens at ${formatClock(spot.sundayOpen)}`);
-        } else if (arrive >= spot.sundayClose) {
+        if (hrs.closed) {
           hoursStatus = 'closed';
-          hoursNote = `Closed at ${formatClock(spot.sundayClose)}`;
-          warnings.push(`${spot.name} closes at ${formatClock(spot.sundayClose)}`);
-        } else if (depart > spot.sundayClose) {
+          hoursNote = hrs.text;
+          warnings.push(`${spot.shortTitle}: ${hrs.text}`);
+        } else if (arrive < hrs.open) {
+          hoursStatus = 'early';
+          hoursNote = `Opens ${formatClock(hrs.open)} (${hrs.open - arrive} min after arrival)`;
+          warnings.push(`${spot.shortTitle} opens at ${formatClock(hrs.open)}`);
+        } else if (arrive >= hrs.close) {
+          hoursStatus = 'closed';
+          hoursNote = `Closed at ${formatClock(hrs.close)}`;
+          warnings.push(`${spot.shortTitle} closes at ${formatClock(hrs.close)}`);
+        } else if (depart > hrs.close) {
           hoursStatus = 'closing';
-          hoursNote = `Closes at ${formatClock(spot.sundayClose)}`;
+          hoursNote = `Closes at ${formatClock(hrs.close)}`;
         }
 
         items.push({
@@ -1221,18 +2682,20 @@
           stay,
           walkFromPrev,
           hoursStatus,
-          hoursNote
+          hoursNote,
+          dayHours: hrs
         });
       });
 
-      const totalDuration = items.length > 0 ? items[items.length - 1].depart - state.startTime : 0;
-      const endTime = state.startTime + totalDuration;
-      return { items, totalDuration, endTime, totalWalkMeters, totalWalkMins, warnings };
+      const totalDuration = items.length > 0 ? items[items.length - 1].depart - ds.startTime : 0;
+      const endTime = ds.startTime + totalDuration;
+      return { items, totalDuration, endTime, totalWalkMeters, totalWalkMins, totalTransitMins, warnings };
     }
 
     function matchesFilter(spot) {
+      const ds = getDayState();
       if (state.filter === 'all') return true;
-      if (state.filter === 'active') return state.planIds.includes(spot.id);
+      if (state.filter === 'active') return ds.planIds.includes(spot.id);
       if (state.filter === 'indoor') return spot.indoor;
       if (state.filter === 'food') return spot.food;
       if (state.filter === 'free') return spot.free;
@@ -1240,34 +2703,102 @@
     }
 
     // =========================================================================
-    // Rendering: Header, Presets, Filters
+    // Rendering: Day Tabs, Header, Presets, Filters, Footer
     // =========================================================================
+    function renderDayTabs() {
+      const nav = document.getElementById('dayTabs');
+      nav.innerHTML = TRIP_DAYS.map(day => {
+        const isActive = day.id === state.activeDayId;
+        const ds = getDayState(day.id);
+        const stopCount = ds.planIds.length;
+        const doneCount = ds.planIds.filter(id => ds.visitedIds.has(id)).length;
+        const countText = doneCount > 0 ? `${doneCount}/${stopCount}✓` : `${stopCount}`;
+        return `
+          <button type="button" data-day-id="${day.id}" class="day-tab ${isActive ? 'is-active' : ''}" aria-current="${isActive ? 'page' : 'false'}">
+            <span class="day-tab-top">
+              <span class="day-city-dot" style="background:${isActive ? '#ffffff' : day.cityColor};"></span>
+              <span>${day.shortDay}</span>
+              <span class="day-tab-count">${countText}</span>
+            </span>
+            <span class="day-tab-sub">${day.tabSubtitle}</span>
+          </button>
+        `;
+      }).join('');
+
+      nav.querySelectorAll('.day-tab').forEach(btn => {
+        btn.addEventListener('click', () => selectDay(btn.dataset.dayId));
+      });
+    }
+
+    function renderPracticalFooter(day) {
+      const footer = document.getElementById('practicalFooter');
+      footer.innerHTML = day.notes.map(n => `
+        <div class="flex items-start gap-2">
+          <span class="inline-flex shrink-0 w-5 h-5 rounded-full items-center justify-center font-bold text-xs"
+            style="background: color-mix(in srgb, ${n.color} 18%, transparent); color: ${n.color};">${n.icon}</span>
+          <div>
+            <strong class="text-[var(--foreground)]">${n.title}</strong>
+            ${n.body}
+          </div>
+        </div>
+      `).join('');
+    }
+
     function renderHeader(schedule) {
-      document.getElementById('startTimeSelect').value = String(state.startTime);
+      const day = getCurrentDay();
+      const ds = getDayState();
+
+      renderDayTabs();
+      renderPracticalFooter(day);
+
+      document.getElementById('dayTitle').textContent = day.title;
+      document.getElementById('dayMetaBadge').textContent = day.badge;
+      document.getElementById('daySubtitle').textContent = day.subtitle;
+      document.getElementById('scheduleHeading').textContent = `${day.shortDay} Schedule`;
+
+      const startSelect = document.getElementById('startTimeSelect');
+      if (![...startSelect.options].some(o => Number(o.value) === ds.startTime)) {
+        const opt = document.createElement('option');
+        opt.value = String(ds.startTime);
+        opt.textContent = formatClock(ds.startTime);
+        startSelect.appendChild(opt);
+      }
+      startSelect.value = String(ds.startTime);
+
       document.getElementById('metricDuration').textContent = formatDuration(schedule.totalDuration);
       document.getElementById('metricWindow').textContent =
         schedule.items.length
-          ? `(${formatClockShort(state.startTime)}–${formatClock(schedule.endTime)})`
+          ? `(${formatClockShort(ds.startTime)}–${formatClock(schedule.endTime)})`
           : '(no stops)';
 
       const km = (schedule.totalWalkMeters / 1000).toFixed(1);
-      document.getElementById('metricWalk').textContent = `${km} km · ${schedule.totalWalkMins} min`;
+      const walkLabelEl = document.getElementById('metricWalkLabel');
+      const walkEl = document.getElementById('metricWalk');
+      if (schedule.totalTransitMins > 0) {
+        walkLabelEl.textContent = 'Travel:';
+        walkEl.textContent = schedule.totalWalkMeters > 0
+          ? `${km} km walk + ${schedule.totalTransitMins}m transit`
+          : `${schedule.totalTransitMins} min transit`;
+      } else {
+        walkLabelEl.textContent = 'Walk:';
+        walkEl.textContent = `${km} km · ${schedule.totalWalkMins} min`;
+      }
 
-      // Half-day badge (<= 240 mins = 4 hours)
+      // Day duration pace badge
       const badge = document.getElementById('halfDayBadge');
-      if (schedule.totalDuration <= 240) {
-        badge.textContent = '✓ Fits Half-Day (≤ 4h)';
+      if (schedule.totalDuration <= day.targetMaxMins) {
+        badge.textContent = `✓ Fits ${day.targetLabel}`;
         badge.style.background = 'color-mix(in srgb, var(--success) 16%, transparent)';
         badge.style.color = 'var(--success)';
         badge.style.border = '1px solid color-mix(in srgb, var(--success) 35%, transparent)';
       } else {
-        badge.textContent = `⚠ ${formatDuration(schedule.totalDuration)} (Over 4h)`;
+        badge.textContent = `⚠ ${formatDuration(schedule.totalDuration)} (Packed)`;
         badge.style.background = 'color-mix(in srgb, var(--warning) 16%, transparent)';
         badge.style.color = 'var(--warning)';
         badge.style.border = '1px solid color-mix(in srgb, var(--warning) 35%, transparent)';
       }
 
-      // Warning banner for Sunday hours conflicts
+      // Warning banner for day-of-week hours conflicts
       const warnEl = document.getElementById('scheduleWarningBanner');
       if (schedule.warnings.length > 0) {
         warnEl.classList.remove('hidden');
@@ -1275,26 +2806,24 @@
         warnEl.style.background = 'color-mix(in srgb, var(--warning) 14%, transparent)';
         warnEl.style.color = 'var(--warning)';
         warnEl.style.borderColor = 'color-mix(in srgb, var(--warning) 35%, transparent)';
-        warnEl.textContent = `⚠ Sunday hours note: ${schedule.warnings[0]} — shift start time or reorder.`;
+        warnEl.textContent = `⚠ Hours note: ${schedule.warnings[0]} — shift start time, reorder, or swap days.`;
       } else {
         warnEl.classList.add('hidden');
         warnEl.classList.remove('inline-flex');
       }
 
-      // Preset buttons
-      document.querySelectorAll('.preset-btn').forEach(btn => {
-        const key = btn.dataset.preset;
-        btn.textContent = PRESETS[key].label;
-        const isActive = state.activePreset === key;
-        if (isActive) {
-          btn.style.background = 'var(--primary)';
-          btn.style.color = 'var(--primary-foreground)';
-          btn.style.borderColor = 'var(--primary)';
-        } else {
-          btn.style.background = 'var(--background)';
-          btn.style.color = 'var(--foreground)';
-          btn.style.borderColor = 'var(--border)';
-        }
+      // Dynamic Preset buttons for the active day
+      const presetWrap = document.getElementById('presetButtons');
+      presetWrap.innerHTML = `<span class="text-xs font-medium text-[var(--muted-foreground)] mr-1">Route Presets:</span>` +
+        Object.entries(day.presets).map(([key, preset]) => {
+          const isActive = ds.activePreset === key;
+          const style = isActive
+            ? 'background: var(--primary); color: var(--primary-foreground); border-color: var(--primary);'
+            : 'background: var(--background); color: var(--foreground); border-color: var(--border);';
+          return `<button type="button" data-preset="${key}" class="preset-btn px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors" style="${style}">${preset.label}</button>`;
+        }).join('');
+      presetWrap.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
       });
 
       // Filter buttons
@@ -1774,6 +3303,289 @@
       `
     };
 
+    // Custom 24x24 kid-friendly SVG pictograms for Mon (Island & Train) + Tue–Fri (Québec City)
+    Object.assign(ATTRACTION_ICONS, {
+      'biosphere-ext': `
+        <circle cx="12" cy="12" r="8" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+        <ellipse cx="12" cy="12" rx="4" ry="8" fill="none" stroke="#BAE6FD" stroke-width="1.1"/>
+        <ellipse cx="12" cy="12" rx="8" ry="3.5" fill="none" stroke="#BAE6FD" stroke-width="1.1"/>
+        <path d="M5.5 7.5L18.5 16.5M18.5 7.5L5.5 16.5" stroke="#FDE047" stroke-width="0.95" opacity="0.85"/>
+      `,
+      'calder-sculpture': `
+        <path d="M5 19.5L10.5 5.5L13 13L18.5 6.5L19 19.5" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="8,11 12,4 15,11" fill="#FDE047" opacity="0.9"/>
+        <line x1="4" y1="20" x2="20" y2="20" stroke="#E2E8F0" stroke-width="1.4"/>
+      `,
+      'tour-de-levis': `
+        <path d="M6 19.5V10.5L9 7.5L12 10.5L15 7.5L18 10.5V19.5Z" fill="#E2E8F0" stroke="#FFFFFF" stroke-width="1"/>
+        <rect x="9.5" y="4.5" width="5" height="15" rx="0.8" fill="#FFFFFF"/>
+        <path d="M9 4.5H15M10.5 3V4.5M13.5 3V4.5" stroke="#FDE047" stroke-width="1.3"/>
+        <rect x="11" y="9" width="2" height="3" rx="1" fill="#0F172A"/>
+      `,
+      'fort-ste-helene': `
+        <path d="M4 19V10H7V12H10V10H14V12H17V10H20V19Z" fill="#FFFFFF"/>
+        <rect x="10" y="14.5" width="4" height="4.5" rx="2" fill="#334155"/>
+        <path d="M12 5V10M12 5L16 6.5L12 8" stroke="#FDE047" stroke-width="1.3" fill="#FDE047"/>
+      `,
+      'espace67-river': `
+        <path d="M4 16Q8 13.5 12 16T20 16M4 19.5Q8 17 12 19.5T20 19.5" fill="none" stroke="#BAE6FD" stroke-width="1.6" stroke-linecap="round"/>
+        <rect x="6" y="7" width="4" height="4" rx="0.5" fill="#FFFFFF"/>
+        <rect x="10" y="5" width="4" height="4" rx="0.5" fill="#FDE047"/>
+        <rect x="13.5" y="8" width="4" height="4" rx="0.5" fill="#FFFFFF"/>
+      `,
+      'cosmos-bridge': `
+        <path d="M3 15.5H21" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M4 15.5Q12 6 20 15.5" fill="none" stroke="#FDE047" stroke-width="1.6"/>
+        <path d="M8 11.5V15.5M12 9.5V15.5M16 11.5V15.5" stroke="#FFFFFF" stroke-width="1.1"/>
+        <path d="M4 19Q8 17.5 12 19T20 19" fill="none" stroke="#BAE6FD" stroke-width="1.3"/>
+      `,
+      'marche-artisans': `
+        <path d="M5 13.5C5.5 8.5 8.5 7 12 7C15.5 7 18.5 8.5 19 13.5Z" fill="#FDE047" stroke="#FFFFFF" stroke-width="1.1"/>
+        <rect x="4.5" y="13.5" width="15" height="3.2" rx="1.4" fill="#FFFFFF"/>
+        <path d="M7 16.7L8.2 19.5H15.8L17 16.7" fill="#F59E0B"/>
+      `,
+      'cathcart-pvm': `
+        <polygon points="12,4 20,10 20,19 4,19 4,10" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>
+        <path d="M12 4V19M4 10H20M8 7V19M16 7V19" stroke="#FDE047" stroke-width="1" opacity="0.85"/>
+      `,
+      'gare-centrale': `
+        <rect x="6" y="4.5" width="12" height="12" rx="2.5" fill="#FFFFFF"/>
+        <rect x="8" y="6.8" width="8" height="4.5" rx="1" fill="#38BDF8"/>
+        <circle cx="9" cy="14" r="1.2" fill="#F59E0B"/>
+        <circle cx="15" cy="14" r="1.2" fill="#F59E0B"/>
+        <path d="M8 17L6 20.5M16 17L18 20.5M7 19H17" stroke="#FDE047" stroke-width="1.5" stroke-linecap="round"/>
+      `,
+      'chateau-dufferin': `
+        <rect x="5" y="11" width="14" height="8.5" rx="0.8" fill="#FEF3C7"/>
+        <rect x="9.5" y="6.5" width="5" height="13" fill="#FFFFFF"/>
+        <polygon points="9,6.5 12,2.5 15,6.5" fill="#10B981"/>
+        <polygon points="4.5,11 7,7.5 9.5,11" fill="#10B981"/>
+        <polygon points="14.5,11 17,7.5 19.5,11" fill="#10B981"/>
+        <rect x="11" y="15" width="2" height="4.5" fill="#78350F"/>
+      `,
+      'funiculaire-qc': `
+        <line x1="4" y1="5" x2="20" y2="19" stroke="#FDE047" stroke-width="1.6"/>
+        <rect x="8.5" y="8" width="7" height="7" rx="1.5" transform="rotate(38 12 11.5)" fill="#FFFFFF" stroke="#0F172A" stroke-width="0.9"/>
+        <circle cx="12" cy="11.5" r="1.6" fill="#38BDF8"/>
+      `,
+      'petit-champlain': `
+        <path d="M4 9Q8 12 12 9T20 9" fill="none" stroke="#FDE047" stroke-width="1.4"/>
+        <circle cx="7" cy="10.5" r="1.1" fill="#F87171"/>
+        <circle cx="12" cy="9" r="1.1" fill="#34D399"/>
+        <circle cx="17" cy="10.5" r="1.1" fill="#60A5FA"/>
+        <rect x="5" y="12.5" width="6" height="7" fill="#FFFFFF"/>
+        <rect x="13" y="12.5" width="6" height="7" fill="#FEF3C7"/>
+      `,
+      'place-royale-qc': `
+        <polygon points="6,11 12,5 18,11" fill="#FDE047"/>
+        <rect x="7" y="11" width="10" height="8.5" fill="#FFFFFF"/>
+        <rect x="10.5" y="14.5" width="3" height="5" rx="1.5" fill="#3B82F6"/>
+        <circle cx="12" cy="8.5" r="1.2" fill="#0F172A"/>
+      `,
+      'cochon-dingue': `
+        <circle cx="12" cy="12.5" r="6.5" fill="#FDE68A" stroke="#FFFFFF" stroke-width="1.3"/>
+        <circle cx="9.5" cy="11" r="1" fill="#0F172A"/>
+        <circle cx="14.5" cy="11" r="1" fill="#0F172A"/>
+        <ellipse cx="12" cy="14" rx="2.4" ry="1.6" fill="#F472B6"/>
+      `,
+      'musee-civilisation': `
+        <polygon points="4,10 12,4.5 20,10" fill="#FDE047"/>
+        <rect x="5" y="10" width="14" height="9" fill="#FFFFFF"/>
+        <path d="M8 12V17M12 12V17M16 12V17" stroke="#6366F1" stroke-width="1.6" stroke-linecap="round"/>
+      `,
+      'citadelle-qc': `
+        <polygon points="12,3.5 14.3,8.5 19.8,9.2 15.8,13 16.8,18.5 12,15.8 7.2,18.5 8.2,13 4.2,9.2 9.7,8.5" fill="#FFFFFF" stroke="#FDE047" stroke-width="1.2"/>
+        <circle cx="12" cy="11.8" r="2.2" fill="#EF4444"/>
+      `,
+      'plains-abraham': `
+        <path d="M4 17.5Q12 12 20 17.5V20H4Z" fill="#34D399"/>
+        <path d="M8 14L10.5 7.5L13 14Z" fill="#FFFFFF"/>
+        <path d="M13 15L15.5 9L18 15Z" fill="#FEF3C7"/>
+        <circle cx="17" cy="6" r="2" fill="#FDE047"/>
+      `,
+      'observatoire-qc': `
+        <rect x="8" y="4.5" width="8" height="15" rx="1.2" fill="#FFFFFF"/>
+        <rect x="9.5" y="6.5" width="5" height="3" fill="#38BDF8"/>
+        <path d="M4 7.5L7 8M20 7.5L17 8M4.5 11L7 10.5M19.5 11L17 10.5" stroke="#FDE047" stroke-width="1.4" stroke-linecap="round"/>
+      `,
+      'paillard-st-jean': `
+        <path d="M5 14.5C5.5 9.5 8.5 7.5 12 7.5C15.5 7.5 18.5 9.5 19 14.5C17 16 14.5 15 12 15C9.5 15 7 16 5 14.5Z" fill="#FBBF24" stroke="#FEF3C7" stroke-width="1.2"/>
+        <path d="M9 8.5L10 14.8M15 8.5L14 14.8" stroke="#92400E" stroke-width="1.3"/>
+      `,
+      'place-dyouville': `
+        <path d="M4 19V8H20V19H15.5V14C15.5 12 8.5 12 8.5 14V19Z" fill="#FFFFFF"/>
+        <path d="M5 6V8M9 6V8M15 6V8M19 6V8" stroke="#FDE047" stroke-width="1.6"/>
+      `,
+      'christmas-market': `
+        <polygon points="12,3 6.5,11 17.5,11" fill="#34D399"/>
+        <polygon points="12,7.5 5.5,16.5 18.5,16.5" fill="#10B981"/>
+        <rect x="10.6" y="16.5" width="2.8" height="3.5" fill="#FEF3C7"/>
+        <circle cx="12" cy="3.5" r="1.5" fill="#FDE047"/>
+        <circle cx="9.8" cy="12" r="1" fill="#F87171"/>
+        <circle cx="14.2" cy="14" r="1" fill="#FDE047"/>
+      `,
+      'montmorency-falls': `
+        <path d="M4 6H20" stroke="#FDE047" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M8.5 6V18M12 6V19M15.5 6V18" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M5 19.5Q9 17 12 19.5T19 19.5" fill="none" stroke="#BAE6FD" stroke-width="1.8"/>
+      `,
+      'aquarium-qc': `
+        <path d="M5 13.5C7 8.5 14 8.5 17 12.5L20 10V16L17 13.5C14 17 7 17 5 13.5Z" fill="#FFFFFF"/>
+        <circle cx="9.2" cy="12.2" r="1.1" fill="#0F172A"/>
+        <circle cx="15" cy="7" r="1.2" fill="#BAE6FD"/>
+        <circle cx="17.5" cy="5.5" r="0.9" fill="#BAE6FD"/>
+      `,
+      'grand-marche': `
+        <path d="M4 10L6 5.5H18L20 10Z" fill="#F87171"/>
+        <rect x="5" y="10" width="14" height="9" fill="#FFFFFF"/>
+        <rect x="9" y="13" width="6" height="6" fill="#FDE047"/>
+      `,
+      'rue-st-paul': `
+        <path d="M6 12H16V15.5C16 17.5 14 19 11 19C8 19 6 17.5 6 15.5Z" fill="#FFFFFF"/>
+        <path d="M16 13H17.8C18.8 13 19.2 14.5 17.8 15.5H16" fill="none" stroke="#FFFFFF" stroke-width="1.4"/>
+        <path d="M9 8.5C9 7 10.5 7 10.5 5.5M13 8.5C13 7 14.5 7 14.5 5.5" fill="none" stroke="#FDE047" stroke-width="1.3" stroke-linecap="round"/>
+      `,
+      'levis-ferry': `
+        <path d="M4 14.5H20L18 18.5H6Z" fill="#FFFFFF"/>
+        <rect x="7" y="9.5" width="10" height="5" rx="1" fill="#FDE047"/>
+        <rect x="9.5" y="6.5" width="4" height="3" fill="#38BDF8"/>
+        <path d="M3 20Q7.5 18.5 12 20T21 20" fill="none" stroke="#BAE6FD" stroke-width="1.4"/>
+      `,
+      'gare-du-palais': `
+        <rect x="6" y="6.5" width="12" height="11" rx="2" fill="#FFFFFF"/>
+        <polygon points="8,6.5 12,3 16,6.5" fill="#10B981"/>
+        <rect x="8.5" y="9" width="7" height="3.8" rx="0.8" fill="#38BDF8"/>
+        <path d="M8 18L6.5 20.5M16 18L17.5 20.5" stroke="#FDE047" stroke-width="1.5" stroke-linecap="round"/>
+      `
+    });
+
+    function buildThemedHeroScene(spot) {
+      const paletteByCat = {
+        attraction: ['#0284C7', '#38BDF8', '#E0F2FE'],
+        landmark: ['#047857', '#10B981', '#D1FAE5'],
+        museum: ['#4338CA', '#7C3AED', '#EDE9FE'],
+        food: ['#C2410C', '#F59E0B', '#FEF3C7']
+      };
+      const [c1, c2, c3] = paletteByCat[spot.category] || paletteByCat.landmark;
+      const gid = `grad-${spot.id}`;
+
+      // Custom signature foreground silhouettes for key trip highlights
+      let art = '';
+      if (spot.id === 'biosphere-ext') {
+        art = `
+          <g transform="translate(160, 62)">
+            <circle r="44" fill="rgba(255,255,255,0.14)" stroke="#FFFFFF" stroke-width="2.2"/>
+            <ellipse rx="24" ry="44" fill="none" stroke="#BAE6FD" stroke-width="1.4"/>
+            <ellipse rx="44" ry="18" fill="none" stroke="#BAE6FD" stroke-width="1.4"/>
+            <ellipse rx="36" ry="30" fill="none" stroke="#FDE047" stroke-width="1.1" opacity="0.7"/>
+            <path d="M-38 -20L38 20M-38 20L38 -20M0 -44V44M-44 0H44" stroke="#FFFFFF" stroke-width="1" opacity="0.65"/>
+          </g>
+          <rect x="0" y="94" width="320" height="18" fill="#0369A1" opacity="0.75"/>
+        `;
+      } else if (spot.id === 'gare-centrale' || spot.id === 'gare-du-palais') {
+        art = `
+          <rect x="0" y="88" width="320" height="24" fill="#1E293B"/>
+          <line x1="0" y1="96" x2="320" y2="96" stroke="#FDE047" stroke-width="2.5" stroke-dasharray="14 10"/>
+          <g transform="translate(160, 66)">
+            <rect x="-86" y="-22" width="172" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+            <rect x="-72" y="-13" width="28" height="14" rx="3" fill="#38BDF8"/>
+            <rect x="-36" y="-13" width="28" height="14" rx="3" fill="#38BDF8"/>
+            <rect x="0" y="-13" width="28" height="14" rx="3" fill="#38BDF8"/>
+            <rect x="36" y="-13" width="36" height="14" rx="3" fill="#0EA5E9"/>
+            <rect x="-86" y="4" width="172" height="6" fill="#F59E0B"/>
+            <circle cx="-55" cy="18" r="6" fill="#334155" stroke="#CBD5E1" stroke-width="2"/>
+            <circle cx="-20" cy="18" r="6" fill="#334155" stroke="#CBD5E1" stroke-width="2"/>
+            <circle cx="25" cy="18" r="6" fill="#334155" stroke="#CBD5E1" stroke-width="2"/>
+            <circle cx="60" cy="18" r="6" fill="#334155" stroke="#CBD5E1" stroke-width="2"/>
+          </g>
+        `;
+      } else if (spot.id === 'chateau-dufferin') {
+        art = `
+          <rect x="0" y="90" width="320" height="22" fill="#0369A1"/>
+          <rect x="0" y="78" width="320" height="14" fill="#92400E"/>
+          <g transform="translate(160, 78)">
+            <rect x="-66" y="-34" width="132" height="34" fill="#FEF3C7" stroke="#B45309" stroke-width="1.4"/>
+            <rect x="-24" y="-60" width="48" height="60" fill="#FFFFFF" stroke="#B45309" stroke-width="1.4"/>
+            <polygon points="-28,-60 0,-78 28,-60" fill="#10B981"/>
+            <polygon points="-70,-34 -50,-56 -30,-34" fill="#10B981"/>
+            <polygon points="30,-34 50,-56 70,-34" fill="#10B981"/>
+            <rect x="-12" y="-44" width="8" height="12" rx="4" fill="#FDE047"/>
+            <rect x="4" y="-44" width="8" height="12" rx="4" fill="#FDE047"/>
+          </g>
+        `;
+      } else if (spot.id === 'christmas-market') {
+        art = `
+          <rect x="0" y="0" width="320" height="112" fill="#1E1B4B"/>
+          <path d="M10 18 Q80 34 160 18 T310 18" fill="none" stroke="#FDE047" stroke-width="1.8"/>
+          <circle cx="52" cy="24" r="3" fill="#F87171"/><circle cx="110" cy="24" r="3" fill="#FDE047"/>
+          <circle cx="160" cy="18" r="3" fill="#34D399"/><circle cx="215" cy="24" r="3" fill="#FDE047"/><circle cx="268" cy="24" r="3" fill="#60A5FA"/>
+          <g transform="translate(88, 96)">
+            <rect x="-32" y="-36" width="64" height="36" fill="#92400E" stroke="#FDE68A" stroke-width="1.5"/>
+            <polygon points="-38,-36 0,-58 38,-36" fill="#B91C1C" stroke="#FFFFFF" stroke-width="1.5"/>
+            <rect x="-18" y="-26" width="36" height="16" rx="2" fill="#FEF08A"/>
+          </g>
+          <g transform="translate(226, 96)">
+            <polygon points="0,-68 -28,-32 28,-32" fill="#10B981"/>
+            <polygon points="0,-46 -34,-6 34,-6" fill="#059669"/>
+            <rect x="-6" y="-6" width="12" height="10" fill="#78350F"/>
+            <circle cx="0" cy="-68" r="5" fill="#FDE047"/>
+            <circle cx="-10" cy="-24" r="3" fill="#F87171"/><circle cx="12" cy="-16" r="3" fill="#FDE047"/><circle cx="4" cy="-38" r="3" fill="#60A5FA"/>
+          </g>
+          <rect x="0" y="96" width="320" height="16" fill="#F8FAFC"/>
+        `;
+      } else if (spot.id === 'montmorency-falls') {
+        art = `
+          <rect x="0" y="18" width="110" height="94" fill="#334155"/>
+          <rect x="210" y="18" width="110" height="94" fill="#334155"/>
+          <rect x="110" y="18" width="100" height="76" fill="#E0F2FE"/>
+          <path d="M126 18V92M148 18V92M172 18V92M194 18V92" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="14 8"/>
+          <path d="M75 24 Q160 36 245 24" fill="none" stroke="#FDE047" stroke-width="3"/>
+          <line x1="75" y1="24" x2="245" y2="24" stroke="#F59E0B" stroke-width="2"/>
+          <ellipse cx="160" cy="96" rx="76" ry="16" fill="#FFFFFF" opacity="0.88"/>
+          <rect x="0" y="96" width="320" height="16" fill="#0284C7"/>
+        `;
+      } else if (spot.id === 'aquarium-qc') {
+        art = `
+          <rect x="0" y="0" width="320" height="112" fill="#0C4A6E"/>
+          <circle cx="70" cy="30" r="5" fill="#7DD3FC" opacity="0.6"/>
+          <circle cx="84" cy="46" r="3" fill="#BAE6FD" opacity="0.7"/>
+          <circle cx="248" cy="28" r="6" fill="#7DD3FC" opacity="0.5"/>
+          <path d="M96 58 C120 26 186 26 210 56 L236 38 V78 L210 60 C186 86 120 86 96 58 Z" fill="#E0F2FE"/>
+          <circle cx="132" cy="52" r="4" fill="#0F172A"/>
+          <path d="M0 92 Q40 82 80 92 T160 92 T240 92 T320 92 V112 H0 Z" fill="#0284C7"/>
+        `;
+      } else {
+        art = `
+          <circle cx="268" cy="26" r="24" fill="#FFFFFF" opacity="0.14"/>
+          <circle cx="52" cy="94" r="36" fill="#FFFFFF" opacity="0.12"/>
+          <g transform="translate(160, 56)">
+            <circle r="34" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+            <g transform="translate(-22, -22) scale(1.83)">
+              ${ATTRACTION_ICONS[spot.id] || ''}
+            </g>
+          </g>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 320 112" class="w-full h-full block" role="img" aria-label="${spot.name}">
+          <defs>
+            <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="${c1}"/>
+              <stop offset="65%" stop-color="${c2}"/>
+              <stop offset="100%" stop-color="${c3}"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="112" fill="url(#${gid})"/>
+          ${art}
+        </svg>
+      `;
+    }
+
+    function getAttractionScene(spot) {
+      return ATTRACTION_SCENES[spot.id] || buildThemedHeroScene(spot);
+    }
+
     function iconSvgHtml(spotId, size = 20) {
       return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" class="shrink-0 block" aria-hidden="true">${ATTRACTION_ICONS[spotId] || ''}</svg>`;
     }
@@ -1791,24 +3603,40 @@
     }
 
     function renderMap(schedule) {
+      const day = getCurrentDay();
+      const ds = getDayState();
+      const daySpots = getDayAttractions();
+      const mapCfg = MAP_CONFIGS[day.mapId] || MAP_CONFIGS['old-montreal'];
+
+      // Toggle active SVG base map layer
+      Object.values(MAP_CONFIGS).forEach(cfg => {
+        const el = document.getElementById(cfg.baseGroupId);
+        if (el) el.classList.toggle('hidden', cfg.baseGroupId !== mapCfg.baseGroupId);
+      });
+      const compassNeedle = document.getElementById('compassNeedle');
+      if (compassNeedle) compassNeedle.setAttribute('transform', `rotate(${mapCfg.compassAngle})`);
+      const scaleLabel = document.getElementById('mapScaleLabel');
+      if (scaleLabel) scaleLabel.textContent = mapCfg.scaleLabel;
+      document.getElementById('mapSvg').setAttribute('aria-label', mapCfg.ariaLabel);
+
       const routeLayer = document.getElementById('routeLayer');
       const pinsLayer = document.getElementById('pinsLayer');
       routeLayer.innerHTML = '';
       pinsLayer.innerHTML = '';
 
-      // 1. Draw walking route segments between consecutive active stops
+      // 1. Draw route segments between consecutive active stops (walk vs transit/drive)
       for (let i = 0; i < schedule.items.length - 1; i++) {
         const from = schedule.items[i].spot;
         const to = schedule.items[i + 1].spot;
-        const walk = schedule.items[i + 1].walkFromPrev;
+        const leg = schedule.items[i + 1].walkFromPrev;
+        const isTransit = leg.mode !== 'walk';
 
-        // Subtle curved path so overlapping legs stay readable
         const mx = (from.x + to.x) / 2;
         const my = (from.y + to.y) / 2;
         const dx = to.x - from.x;
         const dy = to.y - from.y;
         const dist = Math.hypot(dx, dy) || 1;
-        const curveOffset = Math.min(22, dist * 0.12) * (i % 2 === 0 ? -1 : 1);
+        const curveOffset = Math.min(26, dist * 0.13) * (i % 2 === 0 ? -1 : 1);
         const cx = mx + (-dy / dist) * curveOffset;
         const cy = my + (dx / dist) * curveOffset;
         const d = `M ${from.x} ${from.y} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${to.x} ${to.y}`;
@@ -1823,25 +3651,26 @@
           opacity: 0.78
         }));
 
-        // Animated primary dashed route
+        // Animated dashed route
         routeLayer.appendChild(svgEl('path', {
           d,
           fill: 'none',
-          stroke: 'var(--primary)',
-          'stroke-width': 3.4,
+          stroke: isTransit ? 'var(--chart-3)' : 'var(--primary)',
+          'stroke-width': isTransit ? 3.2 : 3.4,
           'stroke-linecap': 'round',
           class: 'route-animated'
         }));
 
-        // Midpoint walking-time pill
+        // Midpoint travel-time pill
         const lx = 0.25 * from.x + 0.5 * cx + 0.25 * to.x;
         const ly = 0.25 * from.y + 0.5 * cy + 0.25 * to.y;
+        const pillW = isTransit ? 58 : 44;
         const pillG = svgEl('g', { transform: `translate(${lx.toFixed(1)}, ${ly.toFixed(1)})` });
         pillG.appendChild(svgEl('rect', {
-          x: -22, y: -9, width: 44, height: 18, rx: 9,
+          x: -pillW / 2, y: -9, width: pillW, height: 18, rx: 9,
           fill: 'var(--card)',
-          stroke: 'var(--primary)',
-          'stroke-width': 1.1,
+          stroke: isTransit ? 'var(--chart-3)' : 'var(--primary)',
+          'stroke-width': 1.2,
           opacity: 0.96
         }));
         const label = svgEl('text', {
@@ -1851,16 +3680,16 @@
           'font-weight': 700,
           fill: 'var(--foreground)'
         });
-        label.textContent = `${walk.mins}m`;
+        label.textContent = leg.pillLabel;
         pillG.appendChild(label);
         routeLayer.appendChild(pillG);
       }
 
       // 2. Draw illustrated attraction pins (optional first, then active, then selected on top)
       const orderMap = Object.fromEntries(schedule.items.map(it => [it.spot.id, it]));
-      const sortedSpots = [...ATTRACTIONS].sort((a, b) => {
-        if (a.id === state.selectedId) return 1;
-        if (b.id === state.selectedId) return -1;
+      const sortedSpots = [...daySpots].sort((a, b) => {
+        if (a.id === ds.selectedId) return 1;
+        if (b.id === ds.selectedId) return -1;
         const aIn = Boolean(orderMap[a.id]);
         const bIn = Boolean(orderMap[b.id]);
         return Number(aIn) - Number(bIn);
@@ -1869,9 +3698,10 @@
       sortedSpots.forEach(spot => {
         const schedItem = orderMap[spot.id];
         const isInPlan = Boolean(schedItem);
-        const isSelected = spot.id === state.selectedId;
-        const isVisited = state.visitedIds.has(spot.id);
+        const isSelected = spot.id === ds.selectedId;
+        const isVisited = ds.visitedIds.has(spot.id);
         const visible = matchesFilter(spot);
+        const dayHrs = getSpotHoursForDay(spot, day);
 
         const g = svgEl('g', {
           class: 'pin-group',
@@ -1879,10 +3709,10 @@
           opacity: visible ? 1 : 0.22,
           tabindex: 0,
           role: 'button',
-          'aria-label': `${spot.name} (${spot.sundayHoursText})`
+          'aria-label': `${spot.name} (${dayHrs.text})`
         });
 
-        // Pulse ring on selected attraction (non-interactive, outside scaled dot)
+        // Pulse ring on selected attraction
         if (isSelected) {
           g.appendChild(svgEl('circle', {
             cx: 0, cy: 0, r: 21,
@@ -1899,10 +3729,7 @@
           }));
         }
 
-        // Inner group for hover scaling around local (0, 0) without clobbering parent translate
         const dotG = svgEl('g', { class: 'pin-dot' });
-
-        // Main circular illustrated badge
         const radius = isInPlan ? (isSelected ? 19.5 : 17.5) : (isSelected ? 16.5 : 14.5);
         dotG.appendChild(svgEl('circle', {
           cx: 0, cy: 0, r: radius,
@@ -1913,7 +3740,6 @@
           filter: 'url(#pinShadow)'
         }));
 
-        // Subtle inner backdrop for optional pins so white icon elements stay crisp
         if (!isInPlan) {
           dotG.appendChild(svgEl('circle', {
             cx: 0, cy: 0, r: radius - 3,
@@ -1922,7 +3748,6 @@
           }));
         }
 
-        // Custom playful landmark pictogram inside pin
         const iconSize = isInPlan ? 22 : 18;
         const iconWrap = svgEl('g', {
           transform: `translate(${-iconSize / 2}, ${-iconSize / 2}) scale(${(iconSize / 24).toFixed(3)})`,
@@ -1931,7 +3756,7 @@
         iconWrap.innerHTML = ATTRACTION_ICONS[spot.id] || '';
         dotG.appendChild(iconWrap);
 
-        // Corner stop-order number badge (or "+" for optional swaps)
+        // Corner stop-order number badge
         const bx = -radius * 0.72;
         const by = -radius * 0.72;
         dotG.appendChild(svgEl('circle', {
@@ -1951,8 +3776,8 @@
         numText.textContent = isInPlan ? (isVisited ? '✓' : String(schedItem.index)) : '+';
         dotG.appendChild(numText);
 
-        // Warning dot if Sunday hours conflict
-        if (schedItem && (schedItem.hoursStatus === 'early' || schedItem.hoursStatus === 'closed')) {
+        // Warning dot if hours conflict or closed on this day
+        if ((schedItem && (schedItem.hoursStatus === 'early' || schedItem.hoursStatus === 'closed')) || (!isInPlan && dayHrs.closed)) {
           dotG.appendChild(svgEl('circle', {
             cx: radius * 0.74, cy: -radius * 0.74, r: 6.5,
             fill: 'var(--warning)',
@@ -1973,19 +3798,9 @@
         g.appendChild(dotG);
 
         // Compact readable label pill beneath or above pin
-        const labelAbove = ['notre-dame', 'museum-illusions', 'marche-bonsecours', 'beavertails-pjc'].includes(spot.id);
-        const ly = labelAbove ? -(radius + 14) : (radius + 15);
-        const shortTitle = spot.id === 'marche-bonsecours' ? 'Marché Bonsecours'
-          : spot.id === 'beavertails-pjc' ? 'BeaverTails & PJC'
-          : spot.id === 'notre-dame' ? 'Notre-Dame Basilica'
-          : spot.id === 'science-centre' ? 'Science Centre'
-          : spot.id === 'grande-roue' ? 'La Grande Roue'
-          : spot.id === 'pointe-a-calliere' ? 'Pointe-à-Callière'
-          : spot.id === 'museum-illusions' ? 'Museum of Illusions'
-          : spot.id === 'olive-gourmando' ? 'Olive & Gourmando'
-          : 'Clock Tower';
-
-        const pillW = shortTitle.length * 6.4 + 14;
+        const ly = spot.labelAbove ? -(radius + 14) : (radius + 15);
+        const shortTitle = spot.shortTitle || spot.name;
+        const pillW = Math.min(156, shortTitle.length * 6.2 + 14);
         g.appendChild(svgEl('rect', {
           x: -pillW / 2,
           y: ly - 10,
@@ -2002,14 +3817,13 @@
           x: 0,
           y: ly + 2.5,
           'text-anchor': 'middle',
-          'font-size': 10.5,
+          'font-size': 10.2,
           'font-weight': isSelected ? 700 : 600,
           fill: 'var(--foreground)'
         });
         lbl.textContent = shortTitle;
         g.appendChild(lbl);
 
-        // Interaction handlers
         g.addEventListener('click', e => {
           e.stopPropagation();
           selectAttraction(spot.id);
@@ -2020,7 +3834,7 @@
             selectAttraction(spot.id);
           }
         });
-        g.addEventListener('mouseenter', e => showTooltip(spot, schedItem, e));
+        g.addEventListener('mouseenter', e => showTooltip(spot, schedItem, dayHrs, e));
         g.addEventListener('mousemove', e => moveTooltip(e));
         g.addEventListener('mouseleave', hideTooltip);
 
@@ -2034,12 +3848,20 @@
     // Rendering: Selected Attraction Inspector Card (with Illustrated Banner)
     // =========================================================================
     function renderInspector(schedule) {
-      const spot = byId[state.selectedId];
+      const day = getCurrentDay();
+      const ds = getDayState();
+      const daySpots = getDayAttractions();
+      let spot = byId[ds.selectedId];
+      if (!spot || spot.mapId !== day.mapId) {
+        spot = daySpots[0];
+        ds.selectedId = spot.id;
+      }
       const schedItem = schedule.items.find(it => it.spot.id === spot.id);
       const isInPlan = Boolean(schedItem);
-      const idx = state.planIds.indexOf(spot.id);
-      const stay = state.durations[spot.id];
-      const isVisited = state.visitedIds.has(spot.id);
+      const idx = ds.planIds.indexOf(spot.id);
+      const stay = ds.durations[spot.id] ?? spot.defaultDuration;
+      const isVisited = ds.visitedIds.has(spot.id);
+      const dayHrs = getSpotHoursForDay(spot, day);
 
       let statusPillHtml = '';
       if (schedItem) {
@@ -2048,6 +3870,8 @@
         } else {
           statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold" style="background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning);">⚠ ${schedItem.hoursNote}</span>`;
         }
+      } else if (dayHrs.closed) {
+        statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold" style="background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning);">⚠ Closed ${day.shortDay.split(' ')[0]}</span>`;
       } else {
         statusPillHtml = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">Optional Swap</span>`;
       }
@@ -2056,7 +3880,7 @@
       card.innerHTML = `
         <!-- Illustrated Kid-Friendly Hero Scene -->
         <div class="relative -mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl border-b border-[var(--card-border)] aspect-[320/106] max-h-[148px]">
-          ${ATTRACTION_SCENES[spot.id] || ''}
+          ${getAttractionScene(spot)}
           <div class="absolute top-2.5 left-3 flex items-center gap-1.5">
             ${isInPlan ? `<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-extrabold shadow-sm" style="background: var(${spot.colorVar}); color: var(--background);">Stop #${schedItem.index}</span>` : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold shadow-sm bg-[var(--card)]/95 text-[var(--foreground)] border border-[var(--border)]">Optional Swap</span>`}
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold shadow-sm bg-[var(--card)]/90 text-[var(--foreground)] border border-[var(--border)]">${spot.indoor ? 'Indoor / Warm' : 'Outdoor'}</span>
@@ -2081,11 +3905,11 @@
         <!-- Key Facts Grid -->
         <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
           <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg px-2.5 py-2">
-            <div class="text-[var(--muted-foreground)]">Sunday Hours</div>
-            <div class="font-semibold text-[var(--foreground)] mt-0.5">${spot.sundayHoursText}</div>
+            <div class="text-[var(--muted-foreground)]">${day.hoursHeading}</div>
+            <div class="font-semibold text-[var(--foreground)] mt-0.5">${dayHrs.text}</div>
           </div>
           <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg px-2.5 py-2">
-            <div class="text-[var(--muted-foreground)]">Kids & Cost</div>
+            <div class="text-[var(--muted-foreground)]">Kids &amp; Cost</div>
             <div class="font-semibold text-[var(--foreground)] mt-0.5">${spot.ages}</div>
             <div class="text-[var(--muted-foreground)] truncate" title="${spot.cost}">${spot.cost}</div>
           </div>
@@ -2098,7 +3922,7 @@
             <span class="text-[var(--foreground)]"> ${spot.kidsLove}</span>
           </div>
           <div class="bg-[var(--background)] border border-[var(--card-border)] rounded-lg p-2.5">
-            <span class="font-bold text-[var(--foreground)]">Parent & Stroller tip:</span>
+            <span class="font-bold text-[var(--foreground)]">Parent &amp; Stroller tip:</span>
             <span class="text-[var(--muted-foreground)]"> ${spot.parentTip} (${spot.stroller}.)</span>
           </div>
         </div>
@@ -2110,7 +3934,7 @@
               style="${isInPlan
                 ? 'background: var(--background); color: var(--error); border-color: color-mix(in srgb, var(--error) 40%, var(--border));'
                 : 'background: var(--primary); color: var(--primary-foreground); border-color: var(--primary);'}">
-              ${isInPlan ? 'Remove from Plan' : '+ Add to My Plan'}
+              ${isInPlan ? 'Remove from Plan' : '+ Add to This Day'}
             </button>
             ${isInPlan ? `
               <button id="markVisitedBtn" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors"
@@ -2131,29 +3955,28 @@
               </div>
               <div class="inline-flex items-center border border-[var(--border)] rounded-lg bg-[var(--background)] overflow-hidden text-xs">
                 <button id="moveUpBtn" ${idx === 0 ? 'disabled' : ''} class="px-2 py-1 hover:bg-[var(--secondary)] disabled:opacity-35" title="Move earlier">↑</button>
-                <button id="moveDownBtn" ${idx === state.planIds.length - 1 ? 'disabled' : ''} class="px-2 py-1 hover:bg-[var(--secondary)] disabled:opacity-35 border-l border-[var(--border)]" title="Move later">↓</button>
+                <button id="moveDownBtn" ${idx === ds.planIds.length - 1 ? 'disabled' : ''} class="px-2 py-1 hover:bg-[var(--secondary)] disabled:opacity-35 border-l border-[var(--border)]" title="Move later">↓</button>
               </div>
             </div>
           ` : ''}
         </div>
       `;
 
-      // Bind inspector buttons
       document.getElementById('togglePlanBtn').addEventListener('click', () => toggleStopInPlan(spot.id));
       if (isInPlan) {
         document.getElementById('markVisitedBtn').addEventListener('click', () => {
-          if (state.visitedIds.has(spot.id)) state.visitedIds.delete(spot.id);
-          else state.visitedIds.add(spot.id);
+          if (ds.visitedIds.has(spot.id)) ds.visitedIds.delete(spot.id);
+          else ds.visitedIds.add(spot.id);
           renderAll();
         });
         document.getElementById('durMinusBtn').addEventListener('click', () => {
-          state.durations[spot.id] = Math.max(15, state.durations[spot.id] - 15);
-          state.activePreset = null;
+          ds.durations[spot.id] = Math.max(15, (ds.durations[spot.id] ?? spot.defaultDuration) - 15);
+          ds.activePreset = null;
           renderAll();
         });
         document.getElementById('durPlusBtn').addEventListener('click', () => {
-          state.durations[spot.id] = Math.min(150, state.durations[spot.id] + 15);
-          state.activePreset = null;
+          ds.durations[spot.id] = Math.min(180, (ds.durations[spot.id] ?? spot.defaultDuration) + 15);
+          ds.activePreset = null;
           renderAll();
         });
         document.getElementById('moveUpBtn').addEventListener('click', () => moveStop(spot.id, -1));
@@ -2162,14 +3985,17 @@
     }
 
     // =========================================================================
-    // Rendering: Chronological Timeline List (with Mini Illustrated Badges)
+    // Rendering: Chronological Timeline List (with Walk & Transit Legs)
     // =========================================================================
     function renderTimeline(schedule) {
+      const day = getCurrentDay();
+      const ds = getDayState();
+      const daySpots = getDayAttractions();
       const list = document.getElementById('timelineList');
       const countPill = document.getElementById('stopCountPill');
       const toggleOptBtn = document.getElementById('toggleOptionalBtn');
 
-      const optionalSpots = ATTRACTIONS.filter(a => !state.planIds.includes(a.id));
+      const optionalSpots = daySpots.filter(a => !ds.planIds.includes(a.id));
       countPill.textContent = `${schedule.items.length} stops`;
       toggleOptBtn.textContent = state.showOptionalInList
         ? `Hide optional (${optionalSpots.length})`
@@ -2183,14 +4009,16 @@
 
       schedule.items.forEach(item => {
         const { spot, index, arrive, depart, stay, walkFromPrev, hoursStatus } = item;
-        const isSelected = spot.id === state.selectedId;
-        const isVisited = state.visitedIds.has(spot.id);
+        const isSelected = spot.id === ds.selectedId;
+        const isVisited = ds.visitedIds.has(spot.id);
 
         if (walkFromPrev) {
+          const isTransit = walkFromPrev.mode !== 'walk';
+          const iconChar = walkFromPrev.mode === 'metro' ? '🚇' : (walkFromPrev.mode === 'drive' ? '🚗' : '↓');
           html += `
             <div class="px-4 py-1.5 bg-[var(--background)]/60 flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-              <span class="w-8 text-center font-mono">↓</span>
-              <span>Walk <strong>${walkFromPrev.mins} min</strong> (${walkFromPrev.meters} m)</span>
+              <span class="w-8 text-center font-mono">${iconChar}</span>
+              <span style="${isTransit ? 'color: var(--chart-3); font-weight: 600;' : ''}">${walkFromPrev.label}</span>
             </div>
           `;
         }
@@ -2225,11 +4053,12 @@
       if (state.showOptionalInList && optionalSpots.length > 0) {
         html += `
           <div class="px-4 py-1.5 bg-[var(--background)] text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
-            Optional Swaps & Add-Ons
+            Optional Swaps &amp; Add-Ons
           </div>
         `;
         optionalSpots.forEach(spot => {
-          const isSelected = spot.id === state.selectedId;
+          const isSelected = spot.id === ds.selectedId;
+          const dayHrs = getSpotHoursForDay(spot, day);
           html += `
             <button data-stop-id="${spot.id}"
               class="timeline-row w-full text-left px-4 py-2.5 flex items-center justify-between gap-2 transition-colors hover:bg-[var(--secondary)]/50 ${isSelected ? 'bg-[var(--secondary)]/80' : ''}">
@@ -2241,8 +4070,11 @@
                     style="color: var(${spot.colorVar});">+</span>
                 </div>
                 <div class="min-w-0">
-                  <div class="text-xs font-semibold text-[var(--foreground)] truncate">${spot.name}</div>
-                  <div class="text-xs text-[var(--muted-foreground)]">${spot.sundayHoursText} · ${spot.ages}</div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-semibold text-[var(--foreground)] truncate">${spot.name}</span>
+                    ${dayHrs.closed ? `<span class="text-xs font-bold" style="color: var(--warning);">⚠</span>` : ''}
+                  </div>
+                  <div class="text-xs text-[var(--muted-foreground)] truncate">${dayHrs.text}</div>
                 </div>
               </div>
               <span class="shrink-0 text-xs font-medium text-[var(--link)]">Inspect</span>
@@ -2261,40 +4093,62 @@
     // =========================================================================
     // User Actions
     // =========================================================================
+    function selectDay(dayId) {
+      if (!DAY_BY_ID[dayId]) return;
+      state.activeDayId = dayId;
+      state.filter = 'all';
+      state.zoom = 1;
+      state.panX = 0;
+      state.panY = 0;
+      hideTooltip();
+      try {
+        localStorage.setItem(ACTIVE_DAY_KEY, dayId);
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, '', `#${dayId}`);
+        }
+      } catch (_) {}
+      renderAll();
+    }
+
     function selectAttraction(id) {
-      state.selectedId = id;
+      const ds = getDayState();
+      ds.selectedId = id;
       renderAll();
     }
 
     function toggleStopInPlan(id) {
-      const idx = state.planIds.indexOf(id);
+      const ds = getDayState();
+      const idx = ds.planIds.indexOf(id);
       if (idx >= 0) {
-        state.planIds.splice(idx, 1);
+        ds.planIds.splice(idx, 1);
       } else {
-        state.planIds.push(id);
+        ds.planIds.push(id);
       }
-      state.activePreset = null;
+      ds.activePreset = null;
       renderAll();
     }
 
     function moveStop(id, delta) {
-      const idx = state.planIds.indexOf(id);
+      const ds = getDayState();
+      const idx = ds.planIds.indexOf(id);
       const next = idx + delta;
-      if (idx < 0 || next < 0 || next >= state.planIds.length) return;
-      const [removed] = state.planIds.splice(idx, 1);
-      state.planIds.splice(next, 0, removed);
-      state.activePreset = null;
+      if (idx < 0 || next < 0 || next >= ds.planIds.length) return;
+      const [removed] = ds.planIds.splice(idx, 1);
+      ds.planIds.splice(next, 0, removed);
+      ds.activePreset = null;
       renderAll();
     }
 
     function applyPreset(key) {
-      const preset = PRESETS[key];
+      const day = getCurrentDay();
+      const ds = getDayState();
+      const preset = day.presets[key];
       if (!preset) return;
-      state.activePreset = key;
-      state.startTime = preset.startTime;
-      state.planIds = [...preset.ids];
-      state.selectedId = preset.ids[0];
-      ATTRACTIONS.forEach(a => { state.durations[a.id] = a.defaultDuration; });
+      ds.activePreset = key;
+      ds.startTime = preset.startTime;
+      ds.planIds = [...preset.ids];
+      ds.selectedId = preset.ids[0] || ds.selectedId;
+      getDayAttractions().forEach(a => { ds.durations[a.id] = a.defaultDuration; });
       renderAll();
     }
 
@@ -2305,7 +4159,7 @@
     const mapContainer = document.getElementById('mapContainer');
     const viewportGroup = document.getElementById('viewportGroup');
 
-    function showTooltip(spot, schedItem, evt) {
+    function showTooltip(spot, schedItem, dayHrs, evt) {
       tooltipEl.innerHTML = `
         <div class="flex items-center gap-2">
           <div class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background: var(${spot.colorVar});">
@@ -2313,7 +4167,7 @@
           </div>
           <div class="min-w-0">
             <div class="font-bold text-[var(--foreground)] leading-tight">${spot.name}</div>
-            <div class="text-[var(--muted-foreground)] mt-0.5">${spot.sundayHoursText}</div>
+            <div class="text-[var(--muted-foreground)] mt-0.5">${dayHrs.text}</div>
           </div>
         </div>
         <div class="mt-1 font-medium" style="color: var(${spot.colorVar});">
@@ -2340,7 +4194,6 @@
     }
 
     function applyMapTransform() {
-      // Scale around map center (420, 260)
       const cx = 420;
       const cy = 260;
       const tx = state.panX + cx * (1 - state.zoom);
@@ -2396,15 +4249,13 @@
     }, { passive: false });
 
     // =========================================================================
-    // Wire Static Controls & Initial Render
+    // Wire Static Controls
     // =========================================================================
     document.getElementById('startTimeSelect').addEventListener('change', e => {
-      state.startTime = Number(e.target.value);
+      const ds = getDayState();
+      ds.startTime = Number(e.target.value);
+      ds.activePreset = null;
       renderAll();
-    });
-
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
     });
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -2437,10 +4288,12 @@
     });
 
     // =========================================================================
-    // Local + GitHub Server-Side Persistence (plan.json in radovanbauer/montreal-trip)
+    // Local + GitHub Server-Side Persistence (Multi-Day plan.json v2)
     // =========================================================================
-    const STORAGE_KEY = 'old_montreal_sunday_walk_v1';
-    const SYNCED_SNAPSHOT_KEY = 'old_montreal_synced_snapshot_v1';
+    const STORAGE_KEY = 'montreal_quebec_trip_v2';
+    const LEGACY_STORAGE_KEY = 'old_montreal_sunday_walk_v1';
+    const ACTIVE_DAY_KEY = 'montreal_quebec_active_day_v2';
+    const SYNCED_SNAPSHOT_KEY = 'montreal_quebec_synced_snapshot_v2';
     const GH_TOKEN_KEY = 'old_montreal_gh_token_v1';
     const GH_OWNER = 'radovanbauer';
     const GH_REPO = 'montreal-trip';
@@ -2477,24 +4330,30 @@
       } catch (_) {}
     }
 
-    function getSchedulePayload(source = state) {
+    function normalizeDayPayload(day, source) {
+      const def = createDefaultDayState(day);
+      const mapSpots = ATTRACTIONS_BY_MAP[day.mapId] || [];
+      const validSet = new Set(mapSpots.map(a => a.id));
+      const src = source && typeof source === 'object' ? source : def;
+
       const durations = {};
-      ATTRACTIONS.forEach(a => {
-        const rawVal = source.durations ? Number(source.durations[a.id]) : NaN;
+      mapSpots.forEach(a => {
+        const rawVal = src.durations ? Number(src.durations[a.id]) : NaN;
         durations[a.id] = Number.isFinite(rawVal) && rawVal > 0 ? rawVal : a.defaultDuration;
       });
-      const planIds = Array.isArray(source.planIds)
-        ? source.planIds.filter(id => byId[id])
-        : [...PRESETS.classic.ids];
-      const visitedList = source.visitedIds instanceof Set
-        ? [...source.visitedIds]
-        : (Array.isArray(source.visitedIds) ? source.visitedIds : []);
-      const visitedIds = [...new Set(visitedList.filter(id => byId[id]))].sort();
-      const startTime = typeof source.startTime === 'number' && Number.isFinite(source.startTime)
-        ? source.startTime
-        : 600;
+      const planIds = Array.isArray(src.planIds)
+        ? src.planIds.filter(id => validSet.has(id))
+        : [...def.planIds];
+      const visitedList = src.visitedIds instanceof Set
+        ? [...src.visitedIds]
+        : (Array.isArray(src.visitedIds) ? src.visitedIds : []);
+      const visitedIds = [...new Set(visitedList.filter(id => validSet.has(id)))].sort();
+      const startTime = typeof src.startTime === 'number' && Number.isFinite(src.startTime)
+        ? src.startTime
+        : def.startTime;
+      const activePreset = src.activePreset && day.presets[src.activePreset] ? src.activePreset : null;
       return {
-        activePreset: source.activePreset ?? null,
+        activePreset,
         startTime,
         planIds,
         durations,
@@ -2502,23 +4361,54 @@
       };
     }
 
-    function canonicalScheduleJson(payload = getSchedulePayload()) {
+    function getTripPayload(sourceDays = state.days) {
+      const days = {};
+      TRIP_DAYS.forEach(day => {
+        days[day.id] = normalizeDayPayload(day, sourceDays ? sourceDays[day.id] : null);
+      });
+      return { version: 2, days };
+    }
+
+    function canonicalTripJson(payload = getTripPayload()) {
       return JSON.stringify(payload);
     }
 
-    function applySchedulePayload(saved) {
-      if (!saved || typeof saved !== 'object') return;
-      const normalized = getSchedulePayload(saved);
-      state.planIds = normalized.planIds;
-      state.startTime = normalized.startTime;
-      Object.assign(state.durations, normalized.durations);
-      state.visitedIds = new Set(normalized.visitedIds);
-      state.activePreset = normalized.activePreset;
-      if (saved.selectedId && byId[saved.selectedId]) {
-        state.selectedId = saved.selectedId;
-      } else if (state.planIds.length && !byId[state.selectedId]) {
-        state.selectedId = state.planIds[0];
+    function parseAndNormalizeTripData(saved) {
+      if (!saved || typeof saved !== 'object') return getTripPayload();
+      // Backward compatibility with v1 single-day Old Montreal plan.json
+      if (!saved.days && Array.isArray(saved.planIds)) {
+        const mergedDays = {};
+        TRIP_DAYS.forEach(day => {
+          mergedDays[day.id] = day.id === 'sun-mtl'
+            ? normalizeDayPayload(day, saved)
+            : normalizeDayPayload(day, state.days[day.id]);
+        });
+        return { version: 2, days: mergedDays };
       }
+      const days = {};
+      TRIP_DAYS.forEach(day => {
+        const incoming = saved.days && saved.days[day.id] ? saved.days[day.id] : state.days[day.id];
+        days[day.id] = normalizeDayPayload(day, incoming);
+      });
+      return { version: 2, days };
+    }
+
+    function applyTripPayload(normalized) {
+      if (!normalized || !normalized.days) return;
+      TRIP_DAYS.forEach(day => {
+        const dData = normalized.days[day.id];
+        if (!dData) return;
+        const ds = state.days[day.id];
+        ds.planIds = [...dData.planIds];
+        ds.startTime = dData.startTime;
+        Object.assign(ds.durations, dData.durations);
+        ds.visitedIds = new Set(dData.visitedIds);
+        ds.activePreset = dData.activePreset;
+        const mapSpots = ATTRACTIONS_BY_MAP[day.mapId] || [];
+        if (!byId[ds.selectedId] || byId[ds.selectedId].mapId !== day.mapId) {
+          ds.selectedId = ds.planIds[0] || (mapSpots[0] ? mapSpots[0].id : null);
+        }
+      });
     }
 
     function base64ToUtf8(b64) {
@@ -2538,7 +4428,7 @@
 
     function isScheduleDirty() {
       if (syncState.lastSyncedJson === null) return false;
-      return canonicalScheduleJson() !== syncState.lastSyncedJson;
+      return canonicalTripJson() !== syncState.lastSyncedJson;
     }
 
     function setSyncStatus(note = '', tone = '') {
@@ -2612,9 +4502,10 @@
 
     function saveState() {
       try {
+        const selectedByDay = Object.fromEntries(TRIP_DAYS.map(d => [d.id, state.days[d.id].selectedId]));
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          ...getSchedulePayload(),
-          selectedId: state.selectedId
+          ...getTripPayload(),
+          selectedByDay
         }));
       } catch (_) {}
       updateSyncUI();
@@ -2622,12 +4513,37 @@
 
     function loadState() {
       try {
+        const hashId = (window.location.hash || '').replace(/^#/, '');
+        if (!DAY_BY_ID[hashId]) {
+          const savedActiveDay = localStorage.getItem(ACTIVE_DAY_KEY);
+          if (savedActiveDay && DAY_BY_ID[savedActiveDay]) {
+            state.activeDayId = savedActiveDay;
+          }
+        }
         const syncedRaw = localStorage.getItem(SYNCED_SNAPSHOT_KEY);
         if (syncedRaw) syncState.lastSyncedJson = syncedRaw;
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        syncState.hadLocalStorage = true;
-        applySchedulePayload(JSON.parse(raw));
+
+        const rawV2 = localStorage.getItem(STORAGE_KEY);
+        if (rawV2) {
+          const parsed = JSON.parse(rawV2);
+          syncState.hadLocalStorage = true;
+          applyTripPayload(parseAndNormalizeTripData(parsed));
+          if (parsed.selectedByDay) {
+            TRIP_DAYS.forEach(d => {
+              const sid = parsed.selectedByDay[d.id];
+              if (sid && byId[sid] && byId[sid].mapId === d.mapId) {
+                state.days[d.id].selectedId = sid;
+              }
+            });
+          }
+          return;
+        }
+
+        // Migrate any legacy v1 local edits for Sunday
+        const rawV1 = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (rawV1) {
+          applyTripPayload(parseAndNormalizeTripData(JSON.parse(rawV1)));
+        }
       } catch (_) {}
     }
 
@@ -2677,16 +4593,16 @@
         if (remote.missing || !remote.data) {
           syncState.remoteSha = null;
           if (syncState.lastSyncedJson === null) {
-            syncState.lastSyncedJson = canonicalScheduleJson();
+            syncState.lastSyncedJson = canonicalTripJson();
           }
           if (force) setSyncStatus('No saved plan on GitHub yet', 'warning');
           return;
         }
 
         syncState.remoteSha = remote.sha;
-        const remotePayload = getSchedulePayload(remote.data);
-        const remoteCanonical = canonicalScheduleJson(remotePayload);
-        const localCanonical = canonicalScheduleJson();
+        const remotePayload = parseAndNormalizeTripData(remote.data);
+        const remoteCanonical = canonicalTripJson(remotePayload);
+        const localCanonical = canonicalTripJson();
         const hadUnsavedLocal = syncState.hadLocalStorage && (
           syncState.lastSyncedJson !== null
             ? localCanonical !== syncState.lastSyncedJson
@@ -2694,14 +4610,13 @@
         );
 
         if (force || !hadUnsavedLocal) {
-          applySchedulePayload(remotePayload);
+          applyTripPayload(remotePayload);
           syncState.lastSyncedJson = remoteCanonical;
           try { localStorage.setItem(SYNCED_SNAPSHOT_KEY, remoteCanonical); } catch (_) {}
           renderAll();
           if (force) flashSavedConfirmation('Loaded latest');
           else setSyncStatus('', '');
         } else {
-          // Preserve user's unsaved local edits while updating the baseline to remote
           syncState.lastSyncedJson = remoteCanonical;
           try { localStorage.setItem(SYNCED_SNAPSHOT_KEY, remoteCanonical); } catch (_) {}
           if (localCanonical !== remoteCanonical) {
@@ -2720,7 +4635,7 @@
 
     async function putPlanToGitHub(prettyJson, sha, token) {
       const body = {
-        message: 'Update Old Montreal walk schedule',
+        message: 'Update Montréal & Québec trip schedule',
         content: utf8ToBase64(prettyJson),
         branch: GH_BRANCH
       };
@@ -2747,8 +4662,8 @@
         return;
       }
 
-      const payload = getSchedulePayload();
-      const canonical = canonicalScheduleJson(payload);
+      const payload = getTripPayload();
+      const canonical = canonicalTripJson(payload);
       if (syncState.lastSyncedJson === canonical && syncState.remoteSha) {
         flashSavedConfirmation();
         return;
@@ -2771,7 +4686,6 @@
         const prettyJson = JSON.stringify(payload, null, 2) + '\n';
         let res = await putPlanToGitHub(prettyJson, sha, token);
 
-        // Retry once if another device updated plan.json in between (stale sha)
         if (res.status === 409 || res.status === 422) {
           const freshMeta = await fetchRemoteFileFromApi();
           sha = freshMeta.sha;
